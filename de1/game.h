@@ -1,0 +1,54 @@
+#ifndef GAME
+#define GAME
+
+#include "test/test.h"
+
+typedef char board[8][8];
+
+#define WPAWN0   0
+#define WPAWN1   1
+#define WPAWN2   2
+#define WPAWN3   3
+#define WPAWN4   4
+#define WPAWN5   5
+#define WPAWN6   6
+#define WPAWN7   7
+#define WROOK0   8
+#define WROOK1   9
+#define WKNIGHT0 10
+#define WKNIGHT1 11
+#define WBISHOP0 12
+#define WBISHOP1 13
+#define WQUEEN   14
+#define WKING    15
+
+#define BPAWN0   16
+#define BPAWN1   17
+#define BPAWN2   18
+#define BPAWN3   19
+#define BPAWN4   20
+#define BPAWN5   21
+#define BPAWN6   22
+#define BPAWN7   23
+#define BROOK0   24
+#define BROOK1   25
+#define BKNIGHT0 26
+#define BKNIGHT1 27
+#define BBISHOP0 28
+#define BBISHOP1 29
+#define BQUEEN   30
+#define BKING    31
+
+#define EMPTY    32
+
+board* current_game;
+
+board* init_board();
+void init_and_set_board();
+board* copy_board(board* original);
+void destroy_board();
+t_test_result board_equals(board* expected, board* actual);
+
+#endif
+
+
