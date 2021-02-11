@@ -1,8 +1,6 @@
 #ifndef GAME
 #define GAME
 
-#include "test/test.h"
-
 typedef char board_t[8][8];
 
 #define WPAWN0   0
@@ -47,7 +45,6 @@ board_t* init_board();
 void init_and_set_board();
 board_t* copy_board(board_t* original);
 void destroy_board();
-t_test_result board_equals(board_t* expected, board_t* actual);
 
 #endif
 

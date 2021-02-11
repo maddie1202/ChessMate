@@ -7,6 +7,23 @@ board_t* init_board()
 {
     board_t* new_game = malloc(sizeof(board_t));
 
+    board_t reference = {
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+        };
+
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            (*new_game)[i][j] = reference[i][j];
+        }
+    }
+
     return new_game;
 }
 
@@ -25,19 +42,3 @@ void destroy_board()
     free(current_game);
 }
 
-t_test_result board_equals(board_t* expected, board_t* actual)
-{
-    t_test_result result;
-
-    if (expected == NULL || actual == NULL) return return_test_result(0, "NULL parameter(s)");
-
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if ((*expected)[i][j] != (*actual)[i][j]) {
-                return return_test_result(0, "Mismatch");
-            }
-        }
-    }
-
-    return return_test_result(1, "Passed");
-}

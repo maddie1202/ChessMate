@@ -18,10 +18,10 @@ int test_init_board()
             {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
     
-    t_test_result t = board_equals(&expected, actual);
+    test_result_t t = board_equals(&expected, actual);
 
-    assert(t.passed);
     printf("%s\n", t.message);
+    assert(t.passed);
 
     free(actual);
 }
