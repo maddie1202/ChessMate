@@ -3,14 +3,14 @@
 #include "game.h"
 #include "test/test.h"
 
-board* init_board()
+board_t* init_board()
 {
-    board* new_game = malloc(sizeof(board));
+    board_t* new_game = malloc(sizeof(board_t));
 
     return new_game;
 }
 
-board* copy_board(board* original)
+board_t* copy_board(board_t* original)
 {
 
 }
@@ -25,7 +25,7 @@ void destroy_board()
     free(current_game);
 }
 
-t_test_result board_equals(board* expected, board* actual)
+t_test_result board_equals(board_t* expected, board_t* actual)
 {
     t_test_result result;
 

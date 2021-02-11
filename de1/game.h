@@ -3,7 +3,7 @@
 
 #include "test/test.h"
 
-typedef char board[8][8];
+typedef char board_t[8][8];
 
 #define WPAWN0   0
 #define WPAWN1   1
@@ -41,13 +41,13 @@ typedef char board[8][8];
 
 #define EMPTY    32
 
-board* current_game;
+board_t* current_game;
 
-board* init_board();
+board_t* init_board();
 void init_and_set_board();
-board* copy_board(board* original);
+board_t* copy_board(board_t* original);
 void destroy_board();
-t_test_result board_equals(board* expected, board* actual);
+t_test_result board_equals(board_t* expected, board_t* actual);
 
 #endif
 
