@@ -29,7 +29,15 @@ board_t* init_board()
 
 board_t* copy_board(board_t* original)
 {
+    board_t* copied_board = malloc(sizeof(board_t));
 
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            (*copied_board)[i][j] = (*original)[i][j];
+        }
+    }
+
+    return copied_board;
 }
 
 void init_and_set_board()

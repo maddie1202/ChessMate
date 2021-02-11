@@ -34,6 +34,7 @@ test_result_t board_equals(board_t* expected, board_t* actual)
 int test_game()
 {
     test_init_board();
+    test_copy_board();
 }
 
 int main()
