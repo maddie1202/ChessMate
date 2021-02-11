@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.h"
-#include "test/test.h"
+#include "include/game.h"
+#include "test/include/test.h"
 
 board_t* init_board()
 {

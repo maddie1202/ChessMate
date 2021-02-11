@@ -1,3 +1,4 @@
 *.exe
 .vscode/*
 de1/bin/*
+de1/.vscode/*

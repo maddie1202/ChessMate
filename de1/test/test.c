@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "test-game.h"
-#include "test.h"
-#include "../game.h"
+#include "include/test-game.h"
+#include "include/test.h"
+#include "../include/game.h"
 #include <string.h>
 
 test_result_t return_test_result(int passed, char message[80])

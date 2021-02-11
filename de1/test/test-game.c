@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "../game.h"
-#include "test.h"
+#include "../include/game.h"
+#include "include/test.h"
 #include <assert.h>
 #include <stdlib.h>
 

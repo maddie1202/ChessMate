@@ -2,7 +2,7 @@
 #define TEST
 
 #include <assert.h>
-#include "../game.h"
+#include "../../include/game.h"
 
 typedef struct test_result
 {
