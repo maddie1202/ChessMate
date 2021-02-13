@@ -48,3 +48,9 @@ int test_copy_board()
 
     free(actual);
 }
+
+int test_game()
+{
+    test_init_board();
+    test_copy_board();
+}

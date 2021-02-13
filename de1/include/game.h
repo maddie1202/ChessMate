@@ -3,6 +3,7 @@
 
 typedef char board_t[8][8];
 
+// for pawn upgrade: use upper #s (tbd)
 #define WPAWN0   0
 #define WPAWN1   1
 #define WPAWN2   2
