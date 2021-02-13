@@ -22,12 +22,12 @@ test_result_t board_equals(board_t* expected, board_t* actual)
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if ((*expected)[i][j] != (*actual)[i][j]) {
-                return test_result(0, "Error: Mismatch");
+                return test_result(0, "Mismatch");
             }
         }
     }
 
-    return test_result(1, "Passed");
+    return test_result(1, "");
 }
 
 test_result_t board_list_equals(move_list_t* expected, move_list_t* actual)
@@ -47,13 +47,24 @@ test_result_t board_list_equals(move_list_t* expected, move_list_t* actual)
         if (matches == 0) return test_result(0, "Incorrect move(s)");
     }
 
-    return test_result(1, "Passed");
+    return test_result(1, "");
+}
+
+void print_test_result(test_result_t result, const char* test)
+{
+    if (result.passed) printf("%s: PASSED\n", test);
+    else printf("%s: FAILED (%s)\n", test, result.message);
 }
 
 int main()
 {
+    printf("Running test_game...\n");
     test_game();
+    printf("\n\n");
 
-    test_pawn_generator();
+    printf("Running test_possible_moves...\n");
+    test_possible_moves();
+    printf("\n\n");
+
     return 0;
 }

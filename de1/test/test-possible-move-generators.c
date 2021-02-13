@@ -1,12 +1,11 @@
 #include "include/test-possible-move-generators.h"
 
-int test_pawn_generator()
-{
-    // call all 5 tests
-    pawn_test0();
-}
-
-int test_possible_moves()
+void test_possible_moves()
 {
     test_pawn_generator();
+    test_rook_generator();
+    test_knight_generator();
+    test_bishop_generator();
+    test_queen_generator();
+    test_king_generator();
 }

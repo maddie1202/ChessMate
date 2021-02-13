@@ -1,12 +1,8 @@
-// pawn tests
-int pawn_test0();
+void test_possible_moves();
 
-// rook tests
-
-// knight tests
-
-// bishop tests
-
-// queen tests
-
-// king tests
+void test_pawn_generator();
+void test_rook_generator();
+void test_knight_generator();
+void test_bishop_generator();
+void test_queen_generator();
+void test_king_generator();

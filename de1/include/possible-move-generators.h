@@ -1,3 +1,6 @@
+#ifndef POSSIBLE_MOVE_GENERATORS
+#define POSSIBLE_MOVE_GENERATORS
+
 #include "game.h"
 
 typedef struct move_list {
@@ -6,3 +9,5 @@ typedef struct move_list {
 } move_list_t;
 
 move_list_t *generate_pawn_moves(board_t *current, int pawn);
+
+#endif

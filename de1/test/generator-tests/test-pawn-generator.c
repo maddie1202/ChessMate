@@ -1,9 +1,10 @@
- #include "../../include/game.h"
- #include "../../include/possible-move-generators.h"
- #include "../include/test.h"
- 
- 
- /* 
+#include "../../include/game.h"
+#include "../../include/possible-move-generators.h"
+#include "../include/test.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+/* 
  * This file contains 5 tests for the pawn move generator.
  * TEST 0: Pawn's first move (can move ahead by either one or two spaces)
  * TEST 1: No possible moves
@@ -16,7 +17,7 @@
  * Test a pawn straight from initial setup for both black and white 
  * Each pawn should have 2 options: move forward either 1 or 2 squares
  */
-int pawn_test0()
+static void pawn_test0()
 {
     board_t* curr = init_board();
 
@@ -43,7 +44,8 @@ int pawn_test0()
         }; // move WPAWN2 from (2, 1) to (2, 3)
 
         move_list_t w_expected;
-        w_expected.moves = {w_expected1, w_expected2};
+        board_t* w_expected_moves[2] = {&w_expected1, &w_expected2};
+        w_expected.moves = w_expected_moves;
         w_expected.num_moves = 2;
 
         // generate WPAWN2 moves
@@ -72,7 +74,8 @@ int pawn_test0()
         }; // move BPAWN2 from (2, 6) to (2, 4)
 
         move_list_t b_expected;
-        b_expected.moves = {b_expected1, b_expected2};
+        board_t* b_expected_moves[2] = {&b_expected1, &b_expected2};
+        b_expected.moves = b_expected_moves;
         b_expected.num_moves = 2;
 
         // generate BPAWN2 moves
@@ -83,8 +86,8 @@ int pawn_test0()
         test_result_t b_result = board_list_equals(&b_expected, b_actual);
 
         // display results
-        printf("White: %s   Black: %s\n", w_result.message, b_result.message);
-        assert(w_result.passed && b_result.passed);
+        print_test_result(w_result, __func__);
+        print_test_result(b_result, __func__);
 
         // free generated stuff
         free(curr);
@@ -97,7 +100,7 @@ int pawn_test0()
 //  * Pawn has no possible moves
 //  * Tests both black and white pawns
 //  */
-// int pawn_test1()
+// static void pawn_test1()
 // {
 //     board_t curr = {
 //             {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
@@ -117,7 +120,7 @@ int pawn_test0()
 //  * Pawn can move diagonally to take another piece
 //  * Test both black and white pawns
 //  */
-// int pawn_test2()
+// static void pawn_test2()
 // {
 //     board_t curr = {
 //             {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
@@ -185,7 +188,7 @@ int pawn_test0()
 //  * Ensure a pawn can only move ahead one space if it has already made its' initial move
 //  * Tests both black and white pawns
 //  */
-// int pawn_test3()
+// static void pawn_test3()
 // {
 //     board_t curr = {
 //             {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
@@ -232,7 +235,7 @@ int pawn_test0()
 //  * No friendly fire! Ensure a pawn can't take a piece the same colour as itself
 //  * Tests both black and white pawns
 //  */
-// int pawn_test4()
+// static void pawn_test4()
 // {
 //     board_t curr = {
 //             {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
@@ -273,3 +276,14 @@ int pawn_test0()
 
 //     // need to cmp lists of boards: in this fcn, make sure order doesn't matter
 // }
+
+void test_pawn_generator()
+{
+    // call all 5 tests
+    pawn_test0();
+    // pawn_test1();
+    // pawn_test2();
+    // pawn_test3();
+    // pawn_test4();
+    // pawn_test5();
+}

@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-int test_init_board()
+void test_init_board()
 {
     board_t* actual = init_board();
     board_t expected = {
@@ -20,13 +20,12 @@ int test_init_board()
     
     test_result_t t = board_equals(&expected, actual);
 
-    printf("%s\n", t.message);
-    assert(t.passed);
+    print_test_result(t, __func__);
 
     free(actual);
 }
 
-int test_copy_board()
+void test_copy_board()
 {
     board_t expected = {
             {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
@@ -43,13 +42,12 @@ int test_copy_board()
     
     test_result_t t = board_equals(&expected, actual);
 
-    printf("%s\n", t.message);
-    assert(t.passed);
+    print_test_result(t, __func__);
 
     free(actual);
 }
 
-int test_game()
+void test_game()
 {
     test_init_board();
     test_copy_board();
