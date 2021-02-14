@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 /* 
- * This file contains BLANK tests for the knight move generator.
+ * This file contains 3 tests for the knight move generator.
  * TEST 0: Knight's first move
  * TEST 1: No possible moves/can't take pieces of the same colour as themselves
  * TEST 2: Take an enemy piece
@@ -161,7 +161,7 @@ static void knight_test2()
     w_expected.num_moves = 6;
 
     // generate WKNIGHT0 moves
-    move_list_t *w_actual = generate_pawn_moves(&curr, WKNIGHT0);
+    move_list_t *w_actual = generate_knight_moves(&curr, WKNIGHT0);
 
     // move BKNIGHT0 from (3, 3) to (2, 5)
     board_t* b_expected1 = copy_board(&curr);
@@ -193,7 +193,7 @@ static void knight_test2()
     b_expected.num_moves = 6;
 
     // generate BKNIGHT0 moves
-    move_list_t *b_actual = generate_pawn_moves(&curr, BKNIGHT0);
+    move_list_t *b_actual = generate_knight_moves(&curr, BKNIGHT0);
     
     // CMP boards
     test_result_t w_result = board_list_equals(&w_expected, w_actual);
