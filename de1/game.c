@@ -74,3 +74,16 @@ void move_piece(board_t *board, char piece, int dest_x, int dest_y)
     (*board)[dest_y][dest_x] = piece;
 }
 
+void print_board(board_t *board)
+{
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            printf("%2d ", (*board)[i][j]);
+        }
+
+        printf("\n");
+    }
+
+    printf("\n");
+}
+
