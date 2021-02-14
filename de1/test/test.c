@@ -52,8 +52,8 @@ test_result_t board_list_equals(move_list_t* expected, move_list_t* actual)
 
 void print_test_result(test_result_t result, const char* test)
 {
-    if (result.passed) printf("%s: PASSED\n", test);
-    else printf("%s: FAILED (%s)\n", test, result.message);
+    if (result.passed) printf("%-20s: PASSED\n", test);
+    else printf("%-20s: FAILED (%s)\n", test, result.message);
 }
 
 int main()
