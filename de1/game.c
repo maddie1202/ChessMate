@@ -50,3 +50,27 @@ void destroy_board()
     free(current_game);
 }
 
+int find_piece(board_t *board, char piece, int *x, int *y) 
+{
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if ((*board)[i][j] == piece) {
+                *x = j;
+                *y = i;
+                return 1;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+void move_piece(board_t *board, char piece, int dest_x, int dest_y) 
+{
+    int src_x, src_y;
+    find_piece(board, piece, &src_x, &src_y);
+
+    (*board)[src_y][src_x] = EMPTY;
+    (*board)[dest_y][dest_x] = piece;
+}
+

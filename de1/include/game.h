@@ -47,6 +47,9 @@ void init_and_set_board();
 board_t* copy_board(board_t* original);
 void destroy_board();
 
+int find_piece(board_t *board, char piece, int *x, int *y);
+void move_piece(board_t *board, char piece, int dest_x, int dest_y);
+
 #endif
 
 
