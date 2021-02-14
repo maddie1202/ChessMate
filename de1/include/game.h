@@ -50,6 +50,8 @@ void destroy_board();
 int find_piece(board_t *board, char piece, int *x, int *y);
 void move_piece(board_t *board, char piece, int dest_x, int dest_y);
 
+void print_board(board_t *board);
+
 #endif
 
 
