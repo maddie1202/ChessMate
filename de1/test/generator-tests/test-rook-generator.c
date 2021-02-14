@@ -176,7 +176,7 @@ static void rook_test1w()
     board_t* expected_moves[11] = {&expected1, &expected2, &expected3, &expected4, &expected5, &expected6, 
         &expected7, &expected8, &expected9, &expected10, &expected11};
     expected.moves = expected_moves;
-    expected.num_moves = 2;
+    expected.num_moves = 11;
 
     move_list_t *actual = generate_rook_moves(&board, WROOK0);
     test_result_t result = board_list_equals(&expected, actual);
@@ -309,10 +309,10 @@ static void rook_test1b()
         };
 
     move_list_t expected;
-    board_t* expected_moves[11] = {&expected1, &expected2, &expected3, &expected4, &expected5, &expected6, 
+    board_t* expected_moves[10] = {&expected1, &expected2, &expected3, &expected4, &expected5, &expected6, 
         &expected7, &expected8, &expected9, &expected10};
     expected.moves = expected_moves;
-    expected.num_moves = 2;
+    expected.num_moves = 10;
 
     move_list_t *actual = generate_rook_moves(&board, WROOK0);
     test_result_t result = board_list_equals(&expected, actual);
