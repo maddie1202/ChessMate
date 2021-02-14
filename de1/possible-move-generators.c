@@ -21,12 +21,12 @@ move_list_t *generate_bishop_moves(board_t *current, int bishop)
     return NULL;
 }
 
-move_list_t *generate_queen_moves(board_t *current, int pawn)
+move_list_t *generate_queen_moves(board_t *current, int queen)
 {
     return NULL;
 }
 
-move_list_t *generate_king_moves(board_t *current, int pawn)
+move_list_t *generate_king_moves(board_t *current, int king)
 {
     return NULL;
 }
