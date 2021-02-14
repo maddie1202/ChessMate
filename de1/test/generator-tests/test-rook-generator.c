@@ -181,6 +181,8 @@ static void rook_test1w()
     move_list_t *actual = generate_rook_moves(&board, WROOK0);
     test_result_t result = board_list_equals(&expected, actual);
     print_test_result(result, __func__);
+
+    free(actual);
 }
 
 static void rook_test1b()
@@ -315,6 +317,8 @@ static void rook_test1b()
     move_list_t *actual = generate_rook_moves(&board, WROOK0);
     test_result_t result = board_list_equals(&expected, actual);
     print_test_result(result, __func__);
+
+    free(actual);
 }
 
 void test_rook_generator()
