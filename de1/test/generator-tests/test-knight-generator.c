@@ -110,8 +110,8 @@ static void knight_test1()
     print_test_result(b_result, __func__);
 
     // free generated boards
-    free(w_actual);
-    free(b_actual);
+    destroy_move_list(w_actual);
+    destroy_move_list(b_actual);
 }
 
 /* TEST 2:

@@ -46,6 +46,7 @@ static void king_test0()
     print_test_result(b_result, __func__);
 
     // free generated boards
+    free(curr);
     destroy_move_list(w_actual);
     destroy_move_list(b_actual);
 }
@@ -257,9 +258,11 @@ static void king_test2()
     free(w_expected1);
     free(w_expected2);
     free(w_expected3);
+    free(w_expected4);
     free(b_expected1);
     free(b_expected2);
     free(b_expected3);
+    free(b_expected4);
     destroy_move_list(w_actual);
     destroy_move_list(b_actual);
 }
