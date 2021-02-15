@@ -91,7 +91,7 @@ static void knight_test1()
     w_expected.num_moves = 0;
 
     // generate WKNIGHT1 moves
-    move_list_t *w_actual = generate_knight_moves(&curr, WPAWN4);
+    move_list_t *w_actual = generate_knight_moves(&curr, WKNIGHT1);
 
     move_list_t b_expected;
     board_t* b_expected_moves[0];
@@ -99,7 +99,7 @@ static void knight_test1()
     b_expected.num_moves = 0;
 
     // generate BKNIGHT1 moves
-    move_list_t *b_actual = generate_knight_moves(&curr, BPAWN4);
+    move_list_t *b_actual = generate_knight_moves(&curr, BKNIGHT1);
 
     // CMP boards
     test_result_t w_result = board_list_equals(&w_expected, w_actual);
