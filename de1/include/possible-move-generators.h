@@ -17,5 +17,6 @@ move_list_t *generate_knight_moves(board_t *board, char knight);
 move_list_t *generate_bishop_moves(board_t *board, char bishop);
 move_list_t *generate_queen_moves(board_t *board, char pawn);
 move_list_t *generate_king_moves(board_t *board, char pawn);
+move_list_t *generate_castling_moves(game_t *game, char king, char rook);
 
 #endif

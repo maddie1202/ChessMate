@@ -145,4 +145,32 @@ bool is_queen(char piece)
     return piece == WQUEEN || piece == BQUEEN;
 }
 
+// requires king is a valid king
+bool has_king_moved(game_t *game, char king)
+{
+    if (king == WKING) {
+        return game->wking_has_moved;
+    } else if (king == BKING) {
+        return game->bking_has_moved;
+    } else {
+        return false;
+    }
+}
+
+// requires rook is a valid rook
+bool has_rook_moved(game_t *game, char rook)
+{
+    if (rook == WROOK0) {
+        return game->wrook0_has_moved;
+    } else if (rook == WROOK1) {
+        return game->wrook1_has_moved;
+    } else if (rook == BROOK0) {
+        return game->brook0_has_moved;
+    } else if (rook == BROOK1) {
+        return game->brook1_has_moved;
+    } else {
+        return false;
+    }
+}
+
 

@@ -75,6 +75,9 @@ bool is_bishop(char piece);
 bool is_rook(char piece);
 bool is_queen(char piece);
 
+bool has_king_moved(game_t *game, char king);
+bool has_rook_moved(game_t *game, char rook);
+
 #endif
 
 

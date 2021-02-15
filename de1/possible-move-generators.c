@@ -276,3 +276,8 @@ move_list_t *generate_king_moves(board_t *board, char king)
 
     return move_list;
 }
+
+move_list_t *generate_castling_moves(game_t *game, char king, char rook)
+{
+    return NULL;
+}
