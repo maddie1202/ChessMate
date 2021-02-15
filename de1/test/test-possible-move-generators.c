@@ -8,4 +8,5 @@ void test_possible_moves()
     test_bishop_generator();
     test_queen_generator();
     test_king_generator();
+    test_castling_generator();
 }
