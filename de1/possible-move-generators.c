@@ -12,6 +12,24 @@ static char get_colour(char piece)
     return piece < 16 ? WHITE : (piece == 32 ? EMPTY : BLACK);
 }
 
+move_list_t *create_move_list(int size)
+{
+    move_list_t *move_list = malloc(sizeof(move_list_t));
+    move_list->moves = malloc(size * sizeof(board_t*)); 
+    move_list->num_moves = 0;
+    return move_list;
+}
+
+void destroy_move_list(move_list_t *move_list)
+{
+    for (int i = 0; i < move_list->num_moves; i++) {
+        free(move_list->moves[i]);
+    }
+
+    free(move_list->moves);
+    free(move_list);
+}
+
 static void add_move_to_list(move_list_t* move_list, board_t *current, char piece, int x, int y)
 {
     move_list->moves[move_list->num_moves] = copy_board(current);
@@ -46,9 +64,7 @@ move_list_t *generate_pawn_moves(board_t *current, char pawn)
 
     int home_row = colour == WHITE ? 1 : 6;
 
-    move_list_t *move_list = malloc(sizeof(move_list_t));
-    move_list->moves = malloc(4*sizeof(board_t*)); // max 4 moves for a pawn
-    move_list->num_moves = 0;
+    move_list_t *move_list = create_move_list(4); // max 4 moves for a pawn
 
     // move forward by 1
     int forward = colour == WHITE ? 1 : -1;
@@ -89,9 +105,7 @@ move_list_t *generate_rook_moves(board_t *current, char rook)
     int rook_x, rook_y;
     if (!find_piece(current, rook, &rook_x, &rook_y)) return NULL;
     
-    move_list_t *move_list = malloc(sizeof(move_list_t));
-    move_list->moves = malloc(14*sizeof(board_t*));
-    move_list->num_moves = 0;
+    move_list_t *move_list = create_move_list(14); // max 14 moves for a rook
     
     // check for backwards moves
     for (int yb = rook_y - 1; yb >= 0; yb--) {
@@ -122,9 +136,7 @@ move_list_t *generate_knight_moves(board_t *current, char knight)
     int src_x, src_y;
     find_piece(current, knight, &src_x, &src_y);
 
-    move_list_t *move_list = malloc(sizeof(move_list_t));
-    move_list->moves = malloc(8*sizeof(board_t*)); // max 8 moves for a knight
-    move_list->num_moves = 0;
+    move_list_t *move_list = create_move_list(8); // max 8 moves for a knight
 
     int offsets[8][2] = {{1, 2}, {-1, 2}, {1, -2}, {-1, -2}, {2, 1}, 
         {-2, 1}, {2, -1}, {-2, -1}};
@@ -156,9 +168,7 @@ move_list_t *generate_bishop_moves(board_t *current, char bishop)
     int bishop_x, bishop_y;
     if (!find_piece(current, bishop, &bishop_x, &bishop_y)) return NULL;
     
-    move_list_t *move_list = malloc(sizeof(move_list_t));
-    move_list->moves = malloc(14*sizeof(board_t*));
-    move_list->num_moves = 0;
+    move_list_t *move_list = create_move_list(14); // max 14 moves for a bishop
 
     // check for diagonal moves (x and y increasing)
     for (int i = 1; i < 8; i++) {
@@ -199,9 +209,7 @@ move_list_t *generate_queen_moves(board_t *current, char queen)
     int queen_x, queen_y;
     if (!find_piece(current, queen, &queen_x, &queen_y)) return NULL;
     
-    move_list_t *move_list = malloc(sizeof(move_list_t));
-    move_list->moves = malloc(28*sizeof(board_t*));
-    move_list->num_moves = 0;
+    move_list_t *move_list = create_move_list(28); // max 28 moves for a queen
 
     // check for backwards moves
     for (int yb = queen_y - 1; yb >= 0; yb--) {
@@ -256,9 +264,7 @@ move_list_t *generate_king_moves(board_t *current, char king)
     int src_x, src_y;
     find_piece(current, king, &src_x, &src_y);
 
-    move_list_t *move_list = malloc(sizeof(move_list_t));
-    move_list->moves = malloc(8*sizeof(board_t*)); // max 8 moves for a king
-    move_list->num_moves = 0;
+    move_list_t *move_list = create_move_list(8); // max 8 moves for a king
 
     int offsets[8][2] = {{1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}};
 
