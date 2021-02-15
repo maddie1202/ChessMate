@@ -8,13 +8,13 @@ static void rook_test0w()
 {
     board_t *board = init_board();
 
-    move_list_t exptected;
-    exptected.moves = NULL;
-    exptected.num_moves = 0;
+    move_list_t expected;
+    expected.moves = NULL;
+    expected.num_moves = 0;
 
     move_list_t *actual = generate_rook_moves(board, WROOK0);
 
-    test_result_t result = board_list_equals(&exptected, actual);
+    test_result_t result = board_list_equals(&expected, actual);
     print_test_result(result, __func__);
 
     free(board);
@@ -25,13 +25,13 @@ static void rook_test0b()
 {
     board_t *board = init_board();
 
-    move_list_t exptected;
-    exptected.moves = NULL;
-    exptected.num_moves = 0;
+    move_list_t expected;
+    expected.moves = NULL;
+    expected.num_moves = 0;
 
     move_list_t *actual = generate_rook_moves(board, BROOK1);
 
-    test_result_t result = board_list_equals(&exptected, actual);
+    test_result_t result = board_list_equals(&expected, actual);
     print_test_result(result, __func__);
 
     free(board);
@@ -314,7 +314,7 @@ static void rook_test1b()
     expected.moves = expected_moves;
     expected.num_moves = 10;
 
-    move_list_t *actual = generate_rook_moves(&board, WROOK0);
+    move_list_t *actual = generate_rook_moves(&board, BROOK1);
     test_result_t result = board_list_equals(&expected, actual);
     print_test_result(result, __func__);
 

@@ -74,6 +74,11 @@ void move_piece(board_t *board, char piece, int dest_x, int dest_y)
     (*board)[dest_y][dest_x] = piece;
 }
 
+char get_piece(board_t *board, int x, int y)
+{
+    return (*board)[y][x];
+}
+
 void print_board(board_t *board)
 {
     for (int i = 0; i < 8; i++) {
