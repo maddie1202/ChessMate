@@ -70,7 +70,7 @@ static void king_test1()
 
     // move WKING left from (4, 1) to (3, 1)
     board_t* w_expected1 = copy_board(&curr);
-    move_piece(w_expected1, WKING, 2, 2);
+    move_piece(w_expected1, WKING, 3, 1);
 
     // move WKING diagonally from (4, 1) to (3, 2)
     board_t* w_expected2 = copy_board(&curr);
