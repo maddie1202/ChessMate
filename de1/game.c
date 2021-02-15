@@ -76,6 +76,7 @@ void move_piece(board_t *board, char piece, int dest_x, int dest_y)
 
 char get_piece(board_t *board, int x, int y)
 {
+    if (x < 0 || x > 7 || y < 0 || y > 7) return OUT_OF_BOUNDS;
     return (*board)[y][x];
 }
 

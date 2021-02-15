@@ -40,6 +40,8 @@ typedef char board_t[8][8];
 
 #define EMPTY    32
 
+#define OUT_OF_BOUNDS 33
+
 board_t* current_game;
 
 board_t* init_board();
