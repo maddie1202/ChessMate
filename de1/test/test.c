@@ -4,6 +4,7 @@
 #include "../include/game.h"
 #include "include/test-possible-move-generators.h"
 #include <string.h>
+#include <stdbool.h>
 
 test_result_t test_result(int passed, char message[80])
 {
@@ -22,12 +23,12 @@ test_result_t board_equals(board_t* expected, board_t* actual)
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if ((*expected)[i][j] != (*actual)[i][j]) {
-                return test_result(0, "Mismatch");
+                return test_result(false, "Mismatch");
             }
         }
     }
 
-    return test_result(1, "");
+    return test_result(true, "");
 }
 
 test_result_t board_list_equals(move_list_t* expected, move_list_t* actual)
@@ -44,10 +45,10 @@ test_result_t board_list_equals(move_list_t* expected, move_list_t* actual)
                 break;
             }
         }
-        if (matches == 0) return test_result(0, "Incorrect move(s)");
+        if (matches == 0) return test_result(false, "Incorrect move(s)");
     }
 
-    return test_result(1, "");
+    return test_result(true, "");
 }
 
 void print_test_result(test_result_t result, const char* test)

@@ -1,7 +1,20 @@
 #ifndef GAME
 #define GAME
 
+#include <stdbool.h>
+
 typedef char board_t[8][8];
+
+typedef struct game
+{
+    board_t *board;
+    bool wking_has_moved;
+    bool wrook0_has_moved;
+    bool wrook1_has_moved;
+    bool bking_has_moved;
+    bool brook0_has_moved;
+    bool brook1_has_moved;
+} game_t;
 
 // for pawn upgrade: use upper #s (tbd)
 #define WPAWN0   0
@@ -40,9 +53,9 @@ typedef char board_t[8][8];
 
 #define EMPTY    32
 
-#define OUT_OF_BOUNDS 33
+#define OUT_OF_BOUNDS -1
 
-board_t* current_game;
+game_t* current_game;
 
 board_t* init_board();
 void init_and_set_board();
@@ -55,12 +68,12 @@ char get_piece(board_t *board, int x, int y);
 
 void print_board(board_t *board);
 
-int is_pawn(char piece);
-int is_knight(char piece);
-int is_king(char piece);
-int is_bishop(char piece);
-int is_rook(char piece);
-int is_queen(char piece);
+bool is_pawn(char piece);
+bool is_knight(char piece);
+bool is_king(char piece);
+bool is_bishop(char piece);
+bool is_rook(char piece);
+bool is_queen(char piece);
 
 #endif
 

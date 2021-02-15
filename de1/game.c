@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "include/game.h"
 #include "test/include/test.h"
+#include <stdbool.h>
 
 board_t* init_board()
 {
@@ -42,7 +43,17 @@ board_t* copy_board(board_t* original)
 
 void init_and_set_board()
 {
-    current_game = init_board();
+    board_t *board = init_board();
+    
+    current_game = malloc(sizeof(game_t));
+
+    current_game->board = board;
+    current_game->wking_has_moved = false;
+    current_game->wrook0_has_moved = false;
+    current_game->wrook1_has_moved = false;
+    current_game->bking_has_moved = false;
+    current_game->brook0_has_moved = false;
+    current_game->brook1_has_moved = false;
 }
 
 void destroy_board()
@@ -93,32 +104,32 @@ void print_board(board_t *board)
     printf("\n");
 }
 
-int is_pawn(char piece)
+bool is_pawn(char piece)
 {
     return (WPAWN0 >= 0 && WPAWN7 <= 7) || (BPAWN0 >= 16 && BPAWN7 <= 23);
 }
 
-int is_knight(char piece)
+bool is_knight(char piece)
 {
     return piece == WKNIGHT0 || piece == WKNIGHT1 || piece == BKNIGHT0 || piece == BKNIGHT1;
 }
 
-int is_king(char piece)
+bool is_king(char piece)
 {
     return piece == WKING || piece == BKING;
 }
 
-int is_bishop(char piece)
+bool is_bishop(char piece)
 {
     return piece == WBISHOP0 || piece == WBISHOP1 || piece == BBISHOP0 || piece == BBISHOP1;
 }
 
-int is_rook(char piece)
+bool is_rook(char piece)
 {
     return piece == WROOK0 || piece == WROOK1 || piece == BROOK0 || piece == BROOK1;
 }
 
-int is_queen(char piece)
+bool is_queen(char piece)
 {
     return piece == WQUEEN || piece == BQUEEN;
 }

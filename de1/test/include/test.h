@@ -4,10 +4,11 @@
 #include <assert.h>
 #include "../../include/game.h"
 #include "../../include/possible-move-generators.h"
+#include <stdbool.h>
 
 typedef struct test_result
 {
-    int passed;
+    bool passed;
     char message[80];
 } test_result_t;
 
