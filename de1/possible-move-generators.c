@@ -58,6 +58,8 @@ static int check_move(board_t *current, int x, int y, char piece, move_list_t *m
 
 move_list_t *generate_pawn_moves(board_t *current, char pawn)
 {
+    if (current == NULL || !is_pawn(pawn)) return NULL;
+
     char colour = get_colour(pawn);
     int src_x, src_y;
     find_piece(current, pawn, &src_x, &src_y);
@@ -95,11 +97,7 @@ move_list_t *generate_pawn_moves(board_t *current, char pawn)
 
 move_list_t *generate_rook_moves(board_t *current, char rook)
 {
-    // check that board isn't NULL
-    if (current == NULL) return NULL;
-    
-    // check that we were given a rook (check pawn upgrades later)
-    if (rook != WROOK0 && rook != WROOK1 && rook != BROOK0 && rook != BROOK1) return NULL;
+    if (current == NULL || !is_rook(rook)) return NULL;
     
     // find current position on board and colour of piece
     int rook_x, rook_y;
@@ -132,6 +130,8 @@ move_list_t *generate_rook_moves(board_t *current, char rook)
 
 move_list_t *generate_knight_moves(board_t *current, char knight)
 {
+    if (current == NULL || !is_knight(knight)) return NULL;
+
     char colour = get_colour(knight);
     int src_x, src_y;
     find_piece(current, knight, &src_x, &src_y);
@@ -158,11 +158,7 @@ move_list_t *generate_knight_moves(board_t *current, char knight)
 
 move_list_t *generate_bishop_moves(board_t *current, char bishop)
 {
-    // check that board isn't NULL
-    if (current == NULL) return NULL;
-    
-    // check that we were given a bishop (check pawn upgrades later)
-    if (bishop != WBISHOP0 && bishop != WBISHOP1 && bishop != BBISHOP0 && bishop != BBISHOP1) return NULL;
+    if (current == NULL || !is_bishop(bishop)) return NULL;
     
     // find current position on board and colour of piece
     int bishop_x, bishop_y;
@@ -199,11 +195,7 @@ move_list_t *generate_bishop_moves(board_t *current, char bishop)
 
 move_list_t *generate_queen_moves(board_t *current, char queen)
 {
-    // check that board isn't NULL
-    if (current == NULL) return NULL;
-    
-    // check that we were given a queen (check pawn upgrades later)
-    if (queen != WQUEEN && queen != BQUEEN) return NULL;
+    if (current == NULL || !is_queen(queen)) return NULL;
     
     // find current position on board and colour of piece
     int queen_x, queen_y;
@@ -260,6 +252,8 @@ move_list_t *generate_queen_moves(board_t *current, char queen)
 
 move_list_t *generate_king_moves(board_t *current, char king)
 {
+    if (current == NULL || !is_king(king)) return NULL;
+
     char colour = get_colour(king);
     int src_x, src_y;
     find_piece(current, king, &src_x, &src_y);
