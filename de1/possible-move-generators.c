@@ -281,3 +281,8 @@ move_list_t *generate_castling_moves(game_t *game, char king, char rook)
 {
     return NULL;
 }
+
+move_list_t *generate_all_moves(game_t *game, int colour)
+{
+    return NULL;
+}

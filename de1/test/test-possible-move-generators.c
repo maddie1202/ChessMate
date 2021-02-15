@@ -1,4 +1,5 @@
 #include "include/test-possible-move-generators.h"
+#include <stdio.h> 
 
 void test_possible_moves()
 {
@@ -9,4 +10,10 @@ void test_possible_moves()
     test_queen_generator();
     test_king_generator();
     test_castling_generator();
+    test_all_moves();
+}
+
+void test_all_moves()
+{
+    
 }
