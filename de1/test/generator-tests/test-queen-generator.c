@@ -18,7 +18,7 @@ static void queen_test0w()
     print_test_result(result, __func__);
 
     free(board);
-    free(actual);
+    destroy_move_list(actual);
 }
 
 static void queen_test0b()
@@ -35,7 +35,7 @@ static void queen_test0b()
     print_test_result(result, __func__);
 
     free(board);
-    free(actual);
+    destroy_move_list(actual);
 }
 
 static void queen_test1w()
@@ -216,7 +216,7 @@ static void queen_test1w()
     test_result_t result = board_list_equals(&expected, actual);
     print_test_result(result, __func__);
 
-    free(actual);
+    destroy_move_list(actual);
 }
 
 static void queen_test1b()
@@ -420,7 +420,7 @@ static void queen_test1b()
     test_result_t result = board_list_equals(&expected, actual);
     print_test_result(result, __func__);
 
-    free(actual);
+    destroy_move_list(actual);
 }
 
 void test_queen_generator()
