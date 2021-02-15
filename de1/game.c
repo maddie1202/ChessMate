@@ -41,24 +41,35 @@ board_t* copy_board(board_t* original)
     return copied_board;
 }
 
-void init_and_set_board()
+game_t *init_game()
 {
-    board_t *board = init_board();
-    
-    current_game = malloc(sizeof(game_t));
+    game_t *game = malloc(sizeof(game_t));
 
-    current_game->board = board;
-    current_game->wking_has_moved = false;
-    current_game->wrook0_has_moved = false;
-    current_game->wrook1_has_moved = false;
-    current_game->bking_has_moved = false;
-    current_game->brook0_has_moved = false;
-    current_game->brook1_has_moved = false;
+    game->board = init_board();
+    game->wking_has_moved = false;
+    game->wrook0_has_moved = false;
+    game->wrook1_has_moved = false;
+    game->bking_has_moved = false;
+    game->brook0_has_moved = false;
+    game->brook1_has_moved = false;
+
+    return game;
+}
+
+void init_and_set_game()
+{
+    current_game = init_game();
 }
 
 void destroy_board()
 {
     free(current_game);
+}
+
+void destroy_game(game_t *game)
+{
+    free(game->board);
+    free(game);
 }
 
 int find_piece(board_t *board, char piece, int *x, int *y) 
