@@ -55,6 +55,13 @@ char get_piece(board_t *board, int x, int y);
 
 void print_board(board_t *board);
 
+int is_pawn(char piece);
+int is_knight(char piece);
+int is_king(char piece);
+int is_bishop(char piece);
+int is_rook(char piece);
+int is_queen(char piece);
+
 #endif
 
 
