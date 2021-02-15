@@ -8,6 +8,9 @@ typedef struct move_list {
     int num_moves;
 } move_list_t;
 
+move_list_t *create_move_list(int size);
+void destroy_move_list(move_list_t *move_list);
+
 move_list_t *generate_pawn_moves(board_t *current, char pawn);
 move_list_t *generate_rook_moves(board_t *current, char rook);
 move_list_t *generate_knight_moves(board_t *current, char knight);
