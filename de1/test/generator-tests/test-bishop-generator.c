@@ -41,11 +41,11 @@ static void bishop_test0b()
 static void bishop_test1w()
 {
     board_t board = {
-            {WROOK0, WKNIGHT0, EMPTY, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    EMPTY,    WPAWN3,  EMPTY,  WBISHOP0,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {WROOK0, WKNIGHT0, EMPTY,    WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0, WPAWN1,   WPAWN2,   EMPTY,  WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    WPAWN3, EMPTY,  WBISHOP0, EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
             {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
@@ -259,8 +259,8 @@ static void bishop_test1b()
 
 void test_bishop_generator()
 {
-    bishop_test0w();
-    bishop_test0b();
+    // bishop_test0w();
+    // bishop_test0b();
     bishop_test1w();
     bishop_test1b();
 }

@@ -89,7 +89,45 @@ move_list_t *generate_knight_moves(board_t *current, int knight)
 
 move_list_t *generate_bishop_moves(board_t *current, int bishop)
 {
-    return NULL;
+    // check that board isn't NULL
+    if (current == NULL) return NULL;
+    
+    // check that we were given a rook (check pawn upgrades later)
+    if (bishop != WBISHOP0 && bishop != WBISHOP1 && bishop != BBISHOP0 && bishop != BBISHOP1) return NULL;
+    
+    // find current position on board and colour of piece
+    int bishop_x, bishop_y;
+    if (!find_piece(current, bishop, &bishop_x, &bishop_y)) return NULL;
+    
+    move_list_t *move_list = malloc(sizeof(move_list_t));
+    move_list->moves = malloc(14*sizeof(board_t*));
+    move_list->num_moves = 0;
+
+    // check for diagonal moves (x and y increasing)
+    for (int i = 1; i < 8; i++) {
+        if (bishop_x + i >= 8 || bishop_y + i >= 8) break;
+        if (check_move(current, bishop_x + i, bishop_y + i, bishop, move_list)) break;
+    }
+
+    // check for diagonal moves (x increasing, y decreasing)
+    for (int i = 1; i < 8; i++) {
+        if (bishop_x + i >= 8 || bishop_y - i < 0) break;
+        if (check_move(current, bishop_x + i, bishop_y - i, bishop, move_list)) break;
+    }
+
+    // check for diagonal moves (x decreasing, y increasing)
+    for (int i = 1; i < 8; i++) {
+        if (bishop_x - i < 0 || bishop_y + i >= 8) break;
+        if (check_move(current, bishop_x - i, bishop_y + i, bishop, move_list)) break;
+    }
+
+    // check for diagonal moves (x increasing, y decreasing)
+    for (int i = 1; i < 8; i++) {
+        if (bishop_x - i < 0 || bishop_y - i < 0) break;
+        if (check_move(current, bishop_x - i, bishop_y - i, bishop, move_list)) break;
+    }
+
+    return move_list;
 }
 
 move_list_t *generate_queen_moves(board_t *current, int queen)
