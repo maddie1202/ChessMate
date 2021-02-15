@@ -8,7 +8,7 @@
 /* Implement extra checks later for pawn upgrades!!! */
 static char get_colour(char piece)
 {
-    return piece < 15 ? WHITE : (piece == 32 ? EMPTY : BLACK);
+    return piece < 16 ? WHITE : (piece == 32 ? EMPTY : BLACK);
 }
 
 static void add_move_to_list(move_list_t* move_list, board_t *current, char piece, int x, int y)
@@ -91,7 +91,7 @@ move_list_t *generate_bishop_moves(board_t *current, char bishop)
     // check that board isn't NULL
     if (current == NULL) return NULL;
     
-    // check that we were given a rook (check pawn upgrades later)
+    // check that we were given a bishop (check pawn upgrades later)
     if (bishop != WBISHOP0 && bishop != WBISHOP1 && bishop != BBISHOP0 && bishop != BBISHOP1) return NULL;
     
     // find current position on board and colour of piece
@@ -131,7 +131,65 @@ move_list_t *generate_bishop_moves(board_t *current, char bishop)
 
 move_list_t *generate_queen_moves(board_t *current, char queen)
 {
-    return NULL;
+    // check that board isn't NULL
+    if (current == NULL) return NULL;
+    
+    // check that we were given a queen (check pawn upgrades later)
+    if (queen != WQUEEN && queen != BQUEEN) return NULL;
+    
+    // find current position on board and colour of piece
+    int queen_x, queen_y;
+    if (!find_piece(current, queen, &queen_x, &queen_y)) return NULL;
+    
+    move_list_t *move_list = malloc(sizeof(move_list_t));
+    move_list->moves = malloc(28*sizeof(board_t*));
+    move_list->num_moves = 0;
+
+    // check for backwards moves
+    for (int yb = queen_y - 1; yb >= 0; yb--) {
+        if (check_move(current, queen_x, yb, queen, move_list)) break;
+    }
+    
+    // check for forwards moves
+    for (int yf = queen_y + 1; yf < 8; yf++) {
+        if (check_move(current, queen_x, yf, queen, move_list)) break;
+    }
+
+    // check for left moves
+    for (int xl = queen_x - 1; xl >= 0; xl--) {
+        if (check_move(current, xl, queen_y, queen, move_list)) break;
+    }
+
+    // check for right moves
+    for (int xr = queen_x + 1; xr < 8; xr++) {
+        if (check_move(current, xr, queen_y, queen, move_list)) break;
+    }
+
+    // check for diagonal moves (x and y increasing)
+    for (int i = 1; i < 8; i++) {
+        if (queen_x + i >= 8 || queen_y + i >= 8) break;
+        if (check_move(current, queen_x + i, queen_y + i, queen, move_list)) break;
+    }
+
+    // check for diagonal moves (x increasing, y decreasing)
+    for (int i = 1; i < 8; i++) {
+        if (queen_x + i >= 8 || queen_y - i < 0) break;
+        if (check_move(current, queen_x + i, queen_y - i, queen, move_list)) break;
+    }
+
+    // check for diagonal moves (x decreasing, y increasing)
+    for (int i = 1; i < 8; i++) {
+        if (queen_x - i < 0 || queen_y + i >= 8) break;
+        if (check_move(current, queen_x - i, queen_y + i, queen, move_list)) break;
+    }
+
+    // check for diagonal moves (x increasing, y decreasing)
+    for (int i = 1; i < 8; i++) {
+        if (queen_x - i < 0 || queen_y - i < 0) break;
+        if (check_move(current, queen_x - i, queen_y - i, queen, move_list)) break;
+    }
+
+    return move_list;
 }
 
 move_list_t *generate_king_moves(board_t *current, char king)
