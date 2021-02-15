@@ -6,7 +6,7 @@ $(wildcard test/generator-tests/*.c) \
 game.c \
 possible-move-generators.c
 
-	gcc -o bin/runtest \
+	gcc -g -o bin/runtest \
 	test/test.c \
 	test/test-game.c \
 	test/test-possible-move-generators.c \
