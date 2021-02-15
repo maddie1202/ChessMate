@@ -64,8 +64,8 @@ static void knight_test0()
     free(w_expected2);
     free(b_expected1);
     free(b_expected2);
-    free(w_actual);
-    free(b_actual);
+    destroy_move_list(w_actual);
+    destroy_move_list(b_actual);
 }
 
 /* TEST 1: 
@@ -216,8 +216,8 @@ static void knight_test2()
     free(b_expected4);
     free(b_expected5);
     free(b_expected6);
-    free(w_actual);
-    free(b_actual);
+    destroy_move_list(w_actual);
+    destroy_move_list(b_actual);
 }
 
 /*

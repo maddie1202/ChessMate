@@ -67,8 +67,8 @@ static void pawn_test0()
     free(w_expected2);
     free(b_expected1);
     free(b_expected2);
-    free(w_actual);
-    free(b_actual);
+    destroy_move_list(w_actual);
+    destroy_move_list(b_actual);
 }
 
 /* TEST 1: 
@@ -113,8 +113,8 @@ static void pawn_test1()
     print_test_result(b_result, __func__);
 
     // free generated boards
-    free(w_actual);
-    free(b_actual);
+    destroy_move_list(w_actual);
+    destroy_move_list(b_actual);
 }
 
 /* TEST 2:
@@ -179,8 +179,8 @@ static void pawn_test2()
     free(w_expected2);
     free(b_expected1);
     free(b_expected2);
-    free(w_actual);
-    free(b_actual);
+    destroy_move_list(w_actual);
+    destroy_move_list(b_actual);
 }
 
 /* TEST 3:
@@ -235,8 +235,8 @@ static void pawn_test3()
     // free generated boards
     free(w_expected1);
     free(b_expected1);
-    free(w_actual);
-    free(b_actual);
+    destroy_move_list(w_actual);
+    destroy_move_list(b_actual);
 }
 
 /* TEST 4:
@@ -291,8 +291,8 @@ static void pawn_test4()
     // free generated boards
     free(w_expected1);
     free(b_expected1);
-    free(w_actual);
-    free(b_actual);
+    destroy_move_list(w_actual);
+    destroy_move_list(b_actual);
 }
 
 /*
