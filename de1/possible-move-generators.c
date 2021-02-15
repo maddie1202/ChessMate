@@ -28,7 +28,7 @@ static int check_move(board_t *current, int x, int y, char piece, move_list_t *m
     char curr_piece = get_piece(current, x, y);
     char curr_colour = get_colour(curr_piece);
     
-    // if curr_piece is the same colour as rook, can't move here, or any further
+    // if curr_piece is the same colour as piece, can't move here, or any further
     if (curr_colour == colour) return 1;
     else {
         add_move_to_list(moves, current, piece, x, y);
@@ -37,12 +37,12 @@ static int check_move(board_t *current, int x, int y, char piece, move_list_t *m
     }
 }
 
-move_list_t *generate_pawn_moves(board_t *current, int pawn)
+move_list_t *generate_pawn_moves(board_t *current, char pawn)
 {
     return NULL;
 }
 
-move_list_t *generate_rook_moves(board_t *current, int rook)
+move_list_t *generate_rook_moves(board_t *current, char rook)
 {
     // check that board isn't NULL
     if (current == NULL) return NULL;
@@ -86,7 +86,7 @@ move_list_t *generate_knight_moves(board_t *current, int knight)
     return NULL;
 }
 
-move_list_t *generate_bishop_moves(board_t *current, int bishop)
+move_list_t *generate_bishop_moves(board_t *current, char bishop)
 {
     // check that board isn't NULL
     if (current == NULL) return NULL;
@@ -129,12 +129,12 @@ move_list_t *generate_bishop_moves(board_t *current, int bishop)
     return move_list;
 }
 
-move_list_t *generate_queen_moves(board_t *current, int queen)
+move_list_t *generate_queen_moves(board_t *current, char queen)
 {
     return NULL;
 }
 
-move_list_t *generate_king_moves(board_t *current, int king)
+move_list_t *generate_king_moves(board_t *current, char king)
 {
     return NULL;
 }
