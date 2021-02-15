@@ -81,7 +81,7 @@ move_list_t *generate_rook_moves(board_t *current, char rook)
     return move_list;
 }
 
-move_list_t *generate_knight_moves(board_t *current, int knight)
+move_list_t *generate_knight_moves(board_t *current, char knight)
 {
     return NULL;
 }
