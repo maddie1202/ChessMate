@@ -259,8 +259,8 @@ static void bishop_test1b()
 
 void test_bishop_generator()
 {
-    // bishop_test0w();
-    // bishop_test0b();
+    bishop_test0w();
+    bishop_test0b();
     bishop_test1w();
     bishop_test1b();
 }

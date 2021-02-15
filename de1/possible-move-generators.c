@@ -13,7 +13,6 @@ static char get_colour(char piece)
 
 static void add_move_to_list(move_list_t* move_list, board_t *current, char piece, int x, int y)
 {
-    move_list->moves[move_list->num_moves] = malloc(sizeof(board_t));
     move_list->moves[move_list->num_moves] = copy_board(current);
     move_piece(move_list->moves[move_list->num_moves], piece, x, y);
     move_list->num_moves++;
