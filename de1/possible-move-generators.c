@@ -287,11 +287,39 @@ move_list_t *generate_castling_moves(game_t *game, char king, char rook)
     return NULL;
 }
 
+void add_all(move_list_t *dest, move_list_t *src)
+{
+    int new_num_moves = dest->num_moves + src->num_moves;
+    board_t **new_moves = malloc(new_num_moves * sizeof(board_t*));
+
+    int index = 0;
+
+    for (int i = 0; i < dest->num_moves; i++) {
+        new_moves[index++] = dest->moves[i];
+    }
+
+    for (int i = 0; i < src->num_moves; i++) {
+        new_moves[index++] = src->moves[i];
+    }
+
+    free(dest->moves);
+
+    dest->moves = new_moves;
+    dest->num_moves = new_num_moves;
+}
+
 move_list_t *generate_all_moves(game_t *game, int colour)
 {
     if (game == NULL || game->board == NULL || (colour != WHITE && colour != BLACK)) {
         return NULL;
     }
 
-    return NULL;
+    move_list_t *pawn0 = generate_pawn_moves(game->board, WPAWN0);
+    move_list_t *pawn1 = generate_pawn_moves(game->board, WPAWN1);
+
+    add_all(pawn0, pawn1);
+
+    for (int i = 0; i < pawn0->num_moves; i++) {
+        print_board(pawn0->moves[i]);
+    }
 }
