@@ -1,4 +1,5 @@
 #include "include/possible-move-generators.h"
+#include "include/ai-move-generator.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include "include/game.h"
@@ -337,12 +338,54 @@ move_list_t *generate_king_moves(board_t *board, char king)
  * Generates a castling move for the given king and rook if:
  * 1. neither king nor rook has moved from its original position
  * 2. there are no pieces between the king and rook
- * Does not check for moving into/out of/through check: this will
- * be evaluated elsewhere.
+ * 3. the king is not castling out of check
+ * 4. the king is not castling into check
+ * 5. the king is not castling through check
  */
 move_list_t *generate_castling_moves(game_t *game, char king, char rook)
 {
-    return NULL;
+    // make sure we have been given valid pieces to castle with
+    if (!is_king(king) || !is_rook(rook) || get_colour(king) != get_colour(rook)) return NULL;
+
+    move_list_t *move_list = create_move_list(1);
+
+    /* 1. neither king nor rook has moved from its original position */
+    if (has_king_moved(game, king) || has_rook_moved(game, rook)) return move_list;
+
+    int king_x, king_y, rook_x, rook_y;
+    find_piece(game->board, king, &king_x, &king_y);
+    find_piece(game->board, rook, &rook_x, &rook_y);
+    int colour = get_colour(king);
+
+    int kingside = king_x < rook_x ? 1 : -1;
+
+    /* 2. there are no pieces between the king and rook */
+    for (int i = 1; i < kingside == 1 ? 3 : 4; i++) {
+        if (get_piece(game->board, king_x + kingside * i, king_y) != EMPTY) return move_list;
+    }
+
+    /* 3. the king is not castling out of check */
+    if (in_check(game->board, colour)) return move_list;
+
+    /* 4/5: the king is not castling into or through check */
+    for (int i = 0; i < kingside == 1 ? 3 : 4; i++) {
+        board_t *check_spot = copy_board(game->board);
+        move_piece(check_spot, king, king_x + i, king_y);
+        bool check = in_check(check_spot, colour);
+        free(check_spot);
+        if (check) return move_list;
+    }
+
+    /* Move is valid: construct board */
+    board_t *castle = copy_board(game->board);
+    move_piece(castle, rook, kingside == 1 ? rook_x - 2 : rook_x + 3, rook_y);
+
+    // moves the king and adds the move to the list
+    add_move_to_list(move_list, castle, king, king_x + 2 * kingside, king_y); 
+    
+    free(castle); // got copied into the list
+
+    return move_list;
 }
 
 // WARNING: FREES src
