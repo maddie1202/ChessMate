@@ -3,6 +3,7 @@
 #include "include/test.h"
 #include "../include/game.h"
 #include "include/test-possible-move-generators.h"
+#include "include/test-ai-move-generator.h"
 #include <string.h>
 #include <stdbool.h>
 
@@ -65,6 +66,10 @@ int main()
 
     printf("Running test_possible_moves...\n");
     test_possible_moves();
+    printf("\n\n");
+
+    printf("Running test_ai_move_generator...\n");
+    test_ai_move_generator();
     printf("\n\n");
 
     return 0;
