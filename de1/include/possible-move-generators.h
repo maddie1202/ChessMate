@@ -11,9 +11,6 @@ typedef struct move_list {
     int num_moves;
 } move_list_t;
 
-#define WHITE 1
-#define BLACK 2
-
 move_list_t *create_move_list(int size);
 void destroy_move_list(move_list_t *move_list);
 

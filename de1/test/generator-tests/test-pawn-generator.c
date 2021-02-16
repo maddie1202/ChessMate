@@ -304,23 +304,23 @@ static void pawn_test5()
 {
     board_t curr = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WKING,  WQUEEN,   EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
+            {WKING,  WQUEEN0,   EMPTY,    EMPTY,  BPAWN4, BPAWN5,  BPAWN6,   BPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN,   BKING},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN0,  BKING},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     board_t wp0_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WKING,  WQUEEN,   EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
+            {WKING,  WQUEEN0,  EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN,   BKING},
+            {EMPTY,  WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN0,  BKING},
             {WROOK2, EMPTY,    EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
@@ -334,12 +334,12 @@ static void pawn_test5()
 
     board_t wp1_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WKING,  WQUEEN,   EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
+            {WKING,  WQUEEN0,  EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WPAWN0, EMPTY,    WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN,   BKING},
+            {WPAWN0, EMPTY,    WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN0,   BKING},
             {EMPTY,  WKNIGHT3, EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
     
@@ -353,12 +353,12 @@ static void pawn_test5()
 
     board_t wp2_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WKING,  WQUEEN,   EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
+            {WKING,  WQUEEN0,  EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WPAWN0, WPAWN1,   EMPTY,    WPAWN3, EMPTY,  EMPTY,    BQUEEN,   BKING},
+            {WPAWN0, WPAWN1,   EMPTY,    WPAWN3, EMPTY,  EMPTY,    BQUEEN0,  BKING},
             {EMPTY,  EMPTY,    WBISHOP4, EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
     
@@ -372,13 +372,13 @@ static void pawn_test5()
 
     board_t wp3_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WKING,  WQUEEN,   EMPTY,    EMPTY,   BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
+            {WKING,  WQUEEN0,  EMPTY,    EMPTY,   BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WPAWN0, WPAWN1,   WPAWN2,   EMPTY,   EMPTY,  EMPTY,    BQUEEN,   BKING},
-            {EMPTY,  EMPTY,    EMPTY,    WQUEEN3, EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
+            {WPAWN0, WPAWN1,   WPAWN2,   EMPTY,   EMPTY,  EMPTY,    BQUEEN0,  BKING},
+            {EMPTY,  EMPTY,    EMPTY,    WQUEEN4, EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     move_list_t wp3_expected;
@@ -390,13 +390,13 @@ static void pawn_test5()
     move_list_t *wp3_actual = generate_pawn_moves(&curr, WPAWN3);
 
     board_t bp4_expected1 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  BQUEEN4, EMPTY,    EMPTY,    EMPTY},
-            {WKING,  WQUEEN,   EMPTY,    EMPTY,  EMPTY,   BPAWN5,   BPAWN6,   BPAWN7},       
+            {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  BQUEEN5, EMPTY,    EMPTY,    EMPTY},
+            {WKING,  WQUEEN0,  EMPTY,    EMPTY,  EMPTY,   BPAWN5,   BPAWN6,   BPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,   EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,   EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,   EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,   EMPTY,    EMPTY,    EMPTY},
-            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,   EMPTY,    BQUEEN,   BKING},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,   EMPTY,    BQUEEN0,  BKING},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,   BBISHOP1, BKNIGHT1, BROOK1}
         };
 
@@ -410,12 +410,12 @@ static void pawn_test5()
 
     board_t bp5_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  BBISHOP7, EMPTY,    EMPTY},
-            {WKING,  WQUEEN,   EMPTY,    EMPTY,  BPAWN4, EMPTY,    BPAWN6,   BPAWN7},       
+            {WKING,  WQUEEN0,  EMPTY,    EMPTY,  BPAWN4, EMPTY,    BPAWN6,   BPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN,   BKING},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN0,  BKING},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
@@ -429,12 +429,12 @@ static void pawn_test5()
 
     board_t bp6_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    BKNIGHT8, EMPTY},
-            {WKING,  WQUEEN,   EMPTY,    EMPTY,  BPAWN4, BPAWN5,   EMPTY,    BPAWN7},       
+            {WKING,  WQUEEN0,  EMPTY,    EMPTY,  BPAWN4, BPAWN5,   EMPTY,    BPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN,   BKING},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN0,  BKING},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
@@ -448,12 +448,12 @@ static void pawn_test5()
 
     board_t bp7_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    BROOK9},
-            {WKING,  WQUEEN,   EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   EMPTY},       
+            {WKING,  WQUEEN0,  EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   EMPTY},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN,   BKING},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN0,  BKING},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 

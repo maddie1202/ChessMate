@@ -10,14 +10,14 @@
 static void castling_test0()
 {
     board_t curr = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,    EMPTY,  EMPTY,  WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,   EMPTY,  EMPTY,  WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, WBISHOP1, WPAWN5, WPAWN6, WPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,  EMPTY,  WKNIGHT1},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WPAWN4,   EMPTY,  EMPTY,  EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  BPAWN4,   EMPTY,  EMPTY,  EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,  EMPTY,  BKNIGHT1},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BBISHOP1, BPAWN5, BPAWN6, BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,    EMPTY,  EMPTY,  BROOK1}
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,   EMPTY,  EMPTY,  BROOK1}
         };
 
     game_t game;
@@ -30,14 +30,14 @@ static void castling_test0()
     game.wrook1_has_moved = false;
     
     board_t w_expected1 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,    EMPTY,  EMPTY,  WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,   EMPTY,  EMPTY,  WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, WBISHOP1, WPAWN5, WPAWN6, WPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,  EMPTY,  WKNIGHT1},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WPAWN4,   EMPTY,  EMPTY,  EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  BPAWN4,   EMPTY,  EMPTY,  EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,  EMPTY,  BKNIGHT1},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BBISHOP1, BPAWN5, BPAWN6, BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, EMPTY,    BROOK1, BKING,  EMPTY}
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, EMPTY,   BROOK1, BKING,  EMPTY}
         };
 
     // generate white castling moves
@@ -49,14 +49,14 @@ static void castling_test0()
     w_expected.num_moves = 1;
 
     board_t b_expected1 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,    EMPTY,  EMPTY,  WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,   EMPTY,  EMPTY,  WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, WBISHOP1, WPAWN5, WPAWN6, WPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,  EMPTY,  WKNIGHT1},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WPAWN4,   EMPTY,  EMPTY,  EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  BPAWN4,   EMPTY,  EMPTY,  EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,  EMPTY,  BKNIGHT1},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BBISHOP1, BPAWN5, BPAWN6, BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, EMPTY,    BROOK1, BKING,  EMPTY}
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, EMPTY,   BROOK1, BKING,  EMPTY}
         };
 
     // generate black castling moves
@@ -86,14 +86,14 @@ static void castling_test0()
 static void castling_test1()
 {
     board_t curr = {
-            {WROOK0,   EMPTY,  EMPTY,  EMPTY,    WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN, WPAWN5,   WPAWN6,   WPAWN7},       
-            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0,   EMPTY,  EMPTY,  EMPTY,    BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {WROOK0,   EMPTY,  EMPTY,  EMPTY,    WKING,   WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN0, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN0, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0,   EMPTY,  EMPTY,  EMPTY,    BKING,   BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     game_t game;
@@ -106,14 +106,14 @@ static void castling_test1()
     game.wrook1_has_moved = false;
 
     board_t w_expected1 = {
-            {EMPTY,    EMPTY,  WKING,  WROOK0,   EMPTY,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN, WPAWN5,   WPAWN6,   WPAWN7},       
-            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0,   EMPTY,  EMPTY,  EMPTY,    BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {EMPTY,    EMPTY,  WKING,  WROOK0,   EMPTY,   WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN0, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN0, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0,   EMPTY,  EMPTY,  EMPTY,    BKING,   BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     // generate white castling moves
@@ -125,14 +125,14 @@ static void castling_test1()
     w_expected.num_moves = 1;
 
     board_t b_expected1 = {
-            {WROOK0,   EMPTY,  EMPTY,  EMPTY,    WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN, WPAWN5,   WPAWN6,   WPAWN7},       
-            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN, BPAWN5,   BPAWN6,   BPAWN7},
-            {EMPTY,    EMPTY,  BKING,  BROOK0,   EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
+            {WROOK0,   EMPTY,  EMPTY,  EMPTY,    WKING,   WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN0, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN0, BPAWN5,   BPAWN6,   BPAWN7},
+            {EMPTY,    EMPTY,  BKING,  BROOK0,   EMPTY,   BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     // generate black castling moves
@@ -164,14 +164,14 @@ static void castling_test1()
 static void castling_test2()
 {
     board_t curr = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,    EMPTY,  EMPTY,  WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,   EMPTY,  EMPTY,  WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, WBISHOP1, WPAWN5, WPAWN6, WPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,  EMPTY,  WKNIGHT1},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WPAWN4,   EMPTY,  EMPTY,  EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  BPAWN4,   EMPTY,  EMPTY,  EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,  EMPTY,  BKNIGHT1},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BBISHOP1, BPAWN5, BPAWN6, BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,    EMPTY,  EMPTY,  BROOK1}
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,   EMPTY,  EMPTY,  BROOK1}
         };
 
     game_t game;
@@ -220,14 +220,14 @@ static void castling_test2()
 static void castling_test3()
 {
     board_t curr = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,    EMPTY,  EMPTY,  WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,   EMPTY,  EMPTY,  WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, WBISHOP1, WPAWN5, WPAWN6, WPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,  EMPTY,  WKNIGHT1},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WPAWN4,   EMPTY,  EMPTY,  EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  BPAWN4,   EMPTY,  EMPTY,  EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,  EMPTY,  BKNIGHT1},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BBISHOP1, BPAWN5, BPAWN6, BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,    EMPTY,  EMPTY,  BROOK1}
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,   EMPTY,  EMPTY,  BROOK1}
         };
 
     game_t game;
@@ -276,14 +276,14 @@ static void castling_test3()
 static void castling_test4()
 {
     board_t curr = {
-            {WROOK0,   EMPTY,  EMPTY,  EMPTY,    WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN, WPAWN5,   WPAWN6,   WPAWN7},       
-            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0,   EMPTY,  EMPTY,  EMPTY,    BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {WROOK0,   EMPTY,  EMPTY,  EMPTY,    WKING,   WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN0, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN0, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0,   EMPTY,  EMPTY,  EMPTY,    BKING,   BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     game_t game;
@@ -332,14 +332,14 @@ static void castling_test4()
 static void castling_test5()
 {
     board_t curr = {
-            {WROOK0,   EMPTY,  EMPTY,  EMPTY,    WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN, WPAWN5,   WPAWN6,   WPAWN7},       
-            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0,   EMPTY,  EMPTY,  EMPTY,    BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {WROOK0,   EMPTY,  EMPTY,  EMPTY,    WKING,   WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN0, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN0, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0,   EMPTY,  EMPTY,  EMPTY,    BKING,   BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     game_t game;
@@ -388,14 +388,14 @@ static void castling_test5()
 static void castling_test6()
 {
     board_t curr = {
-            {WROOK0, WKNIGHT0, EMPTY,  EMPTY,    WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0, WPAWN1,   WPAWN2, WBISHOP0, WQUEEN, WPAWN5,   WPAWN6,   WPAWN7},       
-            {EMPTY,  EMPTY,    EMPTY,  WPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,  EMPTY,    WPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,  EMPTY,    BPAWN4, EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,  BPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BPAWN0, BPAWN1,   BPAWN2, BBISHOP0, BQUEEN, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, EMPTY,  EMPTY,    BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {WROOK0, WKNIGHT0, EMPTY,  EMPTY,    WKING,   WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0, WPAWN1,   WPAWN2, WBISHOP0, WQUEEN0, WPAWN5,   WPAWN6,   WPAWN7},       
+            {EMPTY,  EMPTY,    EMPTY,  WPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,  EMPTY,    WPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,  EMPTY,    BPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,  BPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0, BPAWN1,   BPAWN2, BBISHOP0, BQUEEN0, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0, BKNIGHT0, EMPTY,  EMPTY,    BKING,   BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     game_t game;
@@ -466,14 +466,14 @@ static void castling_test6()
 static void castling_test7()
 {
     board_t curr = {
-            {EMPTY,  WKNIGHT0, WBISHOP0, WQUEEN, EMPTY,  WBISHOP1, WKNIGHT1, EMPTY},   
-            {WROOK0, EMPTY,    EMPTY,    EMPTY,  WKING,  EMPTY,    EMPTY,    WROOK1},
-            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},    
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, EMPTY,    EMPTY,    EMPTY,  BKING,  EMPTY,    EMPTY,    BROOK1},
-            {EMPTY,  BKNIGHT0, BBISHOP0, BQUEEN, EMPTY,  BBISHOP1, BKNIGHT1, EMPTY}
+            {EMPTY,  WKNIGHT0, WBISHOP0, WQUEEN0, EMPTY,  WBISHOP1, WKNIGHT1, EMPTY},   
+            {WROOK0, EMPTY,    EMPTY,    EMPTY,   WKING,  EMPTY,    EMPTY,    WROOK1},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3,  WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},    
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0, EMPTY,    EMPTY,    EMPTY,   BKING,  EMPTY,    EMPTY,    BROOK1},
+            {EMPTY,  BKNIGHT0, BBISHOP0, BQUEEN0, EMPTY,  BBISHOP1, BKNIGHT1, EMPTY}
         };
 
     game_t game;

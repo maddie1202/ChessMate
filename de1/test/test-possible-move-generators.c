@@ -20,14 +20,14 @@ void test_possible_moves()
 void test_all_moves()
 {
     board_t curr = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {EMPTY,  WPAWN1,   WPAWN2,   EMPTY,  EMPTY,  EMPTY,    WPAWN6,   WPAWN7},       
-            {WPAWN0, EMPTY,    EMPTY,    WPAWN3, WPAWN4, WPAWN5,   EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BPAWN0, EMPTY,    EMPTY,    BPAWN3, BPAWN4, BPAWN5,   EMPTY,    EMPTY},
-            {EMPTY,  BPAWN1,   BPAWN2,   EMPTY,  EMPTY,  EMPTY,    BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {EMPTY,  WPAWN1,   WPAWN2,   EMPTY,   EMPTY,  EMPTY,    WPAWN6,   WPAWN7},       
+            {WPAWN0, EMPTY,    EMPTY,    WPAWN3,  WPAWN4, WPAWN5,   EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0, EMPTY,    EMPTY,    BPAWN3,  BPAWN4, BPAWN5,   EMPTY,    EMPTY},
+            {EMPTY,  BPAWN1,   BPAWN2,   EMPTY,   EMPTY,  EMPTY,    BPAWN6,   BPAWN7},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     game_t game;
@@ -93,11 +93,11 @@ void test_all_moves()
     board_t* wbishop0 = copy_board(&curr);
     move_piece(wbishop0, WBISHOP0, 3, 1); // from (2, 0) to (3, 1)
 
-    // WQUEEN (2)
-    board_t* wqueen_1 = copy_board(&curr);
-    move_piece(wqueen_1, WQUEEN, 3, 1); // from (3, 0) to (3, 1)
-    board_t* wqueen_2 = copy_board(&curr);
-    move_piece(wqueen_2, WQUEEN, 4, 1); // from (3, 0) to (4, 1)
+    // WQUEEN0 (2)
+    board_t* wqueen0_1 = copy_board(&curr);
+    move_piece(wqueen0_1, WQUEEN0, 3, 1); // from (3, 0) to (3, 1)
+    board_t* wqueen0_2 = copy_board(&curr);
+    move_piece(wqueen0_2, WQUEEN0, 4, 1); // from (3, 0) to (4, 1)
 
     // WKING (3)
     board_t* wking_1 = copy_board(&curr);
@@ -172,10 +172,10 @@ void test_all_moves()
     move_piece(bbishop0, BBISHOP0, 3, 6); // from (2, 7) to (3, 6)
 
     // BQUEEN (2)
-    board_t* bqueen_1 = copy_board(&curr);
-    move_piece(bqueen_1, BQUEEN, 3, 6); // from (3, 7) to (3, 6)
-    board_t* bqueen_2 = copy_board(&curr);
-    move_piece(bqueen_2, BQUEEN, 4, 6); // from (3, 7) to (4, 6)
+    board_t* bqueen0_1 = copy_board(&curr);
+    move_piece(bqueen0_1, BQUEEN0, 3, 6); // from (3, 7) to (3, 6)
+    board_t* bqueen0_2 = copy_board(&curr);
+    move_piece(bqueen0_2, BQUEEN0, 4, 6); // from (3, 7) to (4, 6)
 
     // BKING (3)
     board_t* bking_1 = copy_board(&curr);
@@ -198,7 +198,7 @@ void test_all_moves()
     move_list_t w_expected;
     board_t* w_expected_moves[24] = {wpawn0, wpawn1_1, wpawn1_2, wpawn2_1, wpawn2_2, wpawn3, wpawn4, 
                                     wpawn5, wpawn6_1, wpawn6_2, wpawn7_1, wpawn7_2, 
-                                    wrook0, wknight0_1, wknight0_2, wbishop0, wqueen_1, wqueen_2, 
+                                    wrook0, wknight0_1, wknight0_2, wbishop0, wqueen0_1, wqueen0_2, 
                                     wking_1, wking_2, wking_3, wbishop1, wknight1_1, wknight1_2};
     w_expected.moves = w_expected_moves;
     w_expected.num_moves = 24;
@@ -208,7 +208,7 @@ void test_all_moves()
     move_list_t b_expected;
     board_t* b_expected_moves[24] = {bpawn0, bpawn1_1, bpawn1_2, bpawn2_1, bpawn2_2, bpawn3, bpawn4, 
                                     bpawn5, bpawn6_1, bpawn6_2, bpawn7_1, bpawn7_2,
-                                    brook0, bknight0_1, bknight0_2, bbishop0, bqueen_1, bqueen_2, 
+                                    brook0, bknight0_1, bknight0_2, bbishop0, bqueen0_1, bqueen0_2, 
                                     bking_1, bking_2, bking_3, bbishop1, bknight1_1, bknight1_2};
     b_expected.moves = b_expected_moves;
     b_expected.num_moves = 24;
@@ -243,8 +243,8 @@ void test_all_moves()
     free(wknight1_2);
     free(wbishop0);
     free(wbishop1);
-    free(wqueen_1);
-    free(wqueen_2);
+    free(wqueen0_1);
+    free(wqueen0_2);
     free(wking_1);
     free(wking_2);
     free(wking_3);
@@ -267,8 +267,8 @@ void test_all_moves()
     free(bknight1_2);
     free(bbishop0);
     free(bbishop1);
-    free(bqueen_1);
-    free(bqueen_2);
+    free(bqueen0_1);
+    free(bqueen0_2);
     free(bking_1);
     free(bking_2);
     free(bking_3);
