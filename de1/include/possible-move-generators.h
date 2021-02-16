@@ -3,8 +3,8 @@
 
 #include "game.h"
 
-#define WHITE 0
-#define BLACK 1
+#define WHITE 1
+#define BLACK 2
 
 typedef struct move_list {
     board_t** moves;
