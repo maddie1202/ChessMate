@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "include/game.h"
 
-/* Implement extra checks later for pawn upgrades!!! */
 static char get_colour(char piece)
 {
     return piece == 0 ? EMPTY : (piece > 0 ? WHITE : BLACK);
@@ -45,7 +44,7 @@ static int check_move(board_t *board, int x, int y, char piece, move_list_t *mov
     // get colour of piece to be moved
     char colour = get_colour(piece);
 
-    // get curr piece and colour
+    // get piece and colour at (x, y)
     char curr_piece = get_piece(board, x, y);
     char curr_colour = get_colour(curr_piece);
     
@@ -58,7 +57,30 @@ static int check_move(board_t *board, int x, int y, char piece, move_list_t *mov
     }
 }
 
-move_list_t *generate_pawn_moves(board_t *board, char pawn)
+/*
+ * Upgrades the pawn on the board to a rook, knight, bishop or queen.
+ * If a specific upgrade wasn't selected, defaults to queen.
+ * Alters move directly.
+ */
+static void upgrade_pawn(board_t *move, int x, int y, char pawn, char upgrade_to)
+{
+    char colour = get_colour(pawn);
+
+    if (upgrade_to == ROOK) pawn = colour == WHITE ? pawn + 10 : pawn - 10;
+    else if (upgrade_to == KNIGHT) pawn = colour == WHITE ? pawn + 20 : pawn - 20;
+    else if (upgrade_to == BISHOP) pawn = colour == WHITE ? pawn + 30 : pawn -30;
+    else pawn = colour == WHITE ? pawn + 39 : pawn - 39;
+
+    // note coordinate swap
+    (*move)[y][x] = pawn;
+}
+
+/*
+ * Generates all legal moves for the given pawn.
+ * If the pawn reaches the other side of the board, it is upgraded
+ * to a rook, bishop, knight, or queen.
+ */
+move_list_t *generate_pawn_moves(board_t *board, char pawn, char upgrade_to)
 {
     if (board == NULL || !is_pawn(pawn)) return NULL;
 
@@ -74,21 +96,36 @@ move_list_t *generate_pawn_moves(board_t *board, char pawn)
     int forward = colour == WHITE ? 1 : -1;
     if (get_piece(board, src_x, src_y + forward) == EMPTY) {
         add_move_to_list(move_list, board, pawn, src_x, src_y + forward);
+        // pawn upgrade
+        if ((colour == WHITE && (src_y + forward == 7)) || (colour == BLACK && (src_y + forward == 0))) {
+            board_t *move = move_list->moves[move_list->num_moves - 1];
+            upgrade_pawn(move, src_x, src_y + forward, pawn, upgrade_to);
+        }
     }
 
     // diagonal capture x + 1
     char dest_piece = get_piece(board, src_x + 1, src_y + forward);
     if (dest_piece != OUT_OF_BOUNDS && dest_piece != EMPTY && get_colour(dest_piece) == reverse_colour(colour)) {
         add_move_to_list(move_list, board, pawn, src_x + 1, src_y + forward);
+        // pawn upgrade
+        if ((colour == WHITE && (src_y + forward == 7)) || (colour == BLACK && (src_y + forward == 0))) {
+            board_t *move = move_list->moves[move_list->num_moves - 1];
+            upgrade_pawn(move, src_x, src_y + forward, pawn, upgrade_to);
+        }
     }
 
     // diagonal capture x - 1
     dest_piece = get_piece(board, src_x - 1, src_y + forward);
     if (dest_piece != OUT_OF_BOUNDS && dest_piece != EMPTY && get_colour(dest_piece) == reverse_colour(colour)) {
         add_move_to_list(move_list, board, pawn, src_x - 1, src_y + forward);
+        // pawn upgrade
+        if ((colour == WHITE && (src_y + forward == 7)) || (colour == BLACK && (src_y + forward == 0))) {
+            board_t *move = move_list->moves[move_list->num_moves - 1];
+            upgrade_pawn(move, src_x, src_y + forward, pawn, upgrade_to);
+        }
     }
 
-    // move forward by 2
+    // move forward by 2 (if pawn is in its initial position only)
     int two_forward = 2 * forward;
     if (src_y == home_row && get_piece(board, src_x, src_y + two_forward) == EMPTY) {
         add_move_to_list(move_list, board, pawn, src_x, src_y + two_forward); 
@@ -97,6 +134,9 @@ move_list_t *generate_pawn_moves(board_t *board, char pawn)
     return move_list;
 }
 
+/*
+ * Generates all legal moves for the given rook.
+ */
 move_list_t *generate_rook_moves(board_t *board, char rook)
 {
     if (board == NULL || !is_rook(rook)) return NULL;
@@ -130,6 +170,9 @@ move_list_t *generate_rook_moves(board_t *board, char rook)
     return move_list;
 }
 
+/*
+ * Generates all legal moves for the given knight.
+ */
 move_list_t *generate_knight_moves(board_t *board, char knight)
 {
     if (board == NULL || !is_knight(knight)) return NULL;
@@ -158,6 +201,9 @@ move_list_t *generate_knight_moves(board_t *board, char knight)
     return move_list;
 }
 
+/*
+ * Generates all legal moves for the given bishop.
+ */
 move_list_t *generate_bishop_moves(board_t *board, char bishop)
 {
     if (board == NULL || !is_bishop(bishop)) return NULL;
@@ -195,6 +241,9 @@ move_list_t *generate_bishop_moves(board_t *board, char bishop)
     return move_list;
 }
 
+/*
+ * Generates all legal moves for the given queen.
+ */
 move_list_t *generate_queen_moves(board_t *board, char queen)
 {
     if (board == NULL || !is_queen(queen)) return NULL;
@@ -252,6 +301,11 @@ move_list_t *generate_queen_moves(board_t *board, char queen)
     return move_list;
 }
 
+/*
+ * Generates all moves for the given king.
+ * Does not check for moving into check: this will be
+ * filtered out elsewhere.
+ */
 move_list_t *generate_king_moves(board_t *board, char king)
 {
     if (board == NULL || !is_king(king)) return NULL;
@@ -279,6 +333,13 @@ move_list_t *generate_king_moves(board_t *board, char king)
     return move_list;
 }
 
+/*
+ * Generates a castling move for the given king and rook if:
+ * 1. neither king nor rook has moved from its original position
+ * 2. there are no pieces between the king and rook
+ * Does not check for moving into/out of/through check: this will
+ * be evaluated elsewhere.
+ */
 move_list_t *generate_castling_moves(game_t *game, char king, char rook)
 {
     return NULL;
@@ -308,6 +369,9 @@ void add_all(move_list_t *dest, move_list_t *src)
     dest->num_moves = new_num_moves;
 }
 
+/*
+ * Generates all moves for a given player.
+ */
 move_list_t *generate_all_moves(game_t *game, int colour)
 {
     if (game == NULL || game->board == NULL || (colour != WHITE && colour != BLACK)) {
