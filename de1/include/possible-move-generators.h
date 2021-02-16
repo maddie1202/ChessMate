@@ -3,6 +3,9 @@
 
 #include "game.h"
 
+#define WHITE 0
+#define BLACK 1
+
 typedef struct move_list {
     board_t** moves;
     int num_moves;

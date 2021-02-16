@@ -3,9 +3,6 @@
 #include <stdio.h>
 #include "include/game.h"
 
-#define WHITE 0
-#define BLACK 1
-
 /* Implement extra checks later for pawn upgrades!!! */
 static char get_colour(char piece)
 {
