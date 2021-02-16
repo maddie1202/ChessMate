@@ -3,9 +3,6 @@
 #include <stdio.h>
 #include "include/game.h"
 
-#define WHITE 1
-#define BLACK 2
-
 /* Implement extra checks later for pawn upgrades!!! */
 static char get_colour(char piece)
 {
@@ -287,6 +284,7 @@ move_list_t *generate_castling_moves(game_t *game, char king, char rook)
     return NULL;
 }
 
+// WARNING: FREES src
 void add_all(move_list_t *dest, move_list_t *src)
 {
     int new_num_moves = dest->num_moves + src->num_moves;
@@ -303,6 +301,8 @@ void add_all(move_list_t *dest, move_list_t *src)
     }
 
     free(dest->moves);
+    free(src->moves);
+    free(src);
 
     dest->moves = new_moves;
     dest->num_moves = new_num_moves;
@@ -314,12 +314,5 @@ move_list_t *generate_all_moves(game_t *game, int colour)
         return NULL;
     }
 
-    move_list_t *pawn0 = generate_pawn_moves(game->board, WPAWN0);
-    move_list_t *pawn1 = generate_pawn_moves(game->board, WPAWN1);
-
-    add_all(pawn0, pawn1);
-
-    for (int i = 0; i < pawn0->num_moves; i++) {
-        print_board(pawn0->moves[i]);
-    }
+    return NULL;
 }

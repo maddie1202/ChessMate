@@ -6,6 +6,8 @@
 #include "include/test-ai-move-generator.h"
 #include <string.h>
 #include <stdbool.h>
+#include "../include/possible-move-generators.h"
+#include <stdlib.h>
 
 test_result_t test_result(int passed, char message[80])
 {
