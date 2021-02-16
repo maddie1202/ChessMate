@@ -4,19 +4,30 @@
 #include "test/include/test.h"
 #include <stdbool.h>
 
+char wpawns[] = {WPAWN0, WPAWN1, WPAWN2, WPAWN3, WPAWN4, WPAWN5, WPAWN6, WPAWN7};
+char bpawns[] = {BPAWN0, BPAWN1, BPAWN2, BPAWN3, BPAWN4, BPAWN5, BPAWN6, BPAWN7};
+char wrooks[] = {WROOK0, WROOK1, WROOK2, WROOK3, WROOK4, WROOK5, WROOK6, WROOK7, WROOK8, WROOK9};
+char brooks[] = {BROOK0, BROOK1, BROOK2, BROOK3, BROOK4, BROOK5, BROOK6, BROOK7, BROOK8, BROOK9};
+char wknights[] = {WKNIGHT0, WKNIGHT1, WKNIGHT2, WKNIGHT3, WKNIGHT4, WKNIGHT5, WKNIGHT6, WKNIGHT7, WKNIGHT8, WKNIGHT9};
+char bknights[] = {BKNIGHT0, BKNIGHT1, BKNIGHT2, BKNIGHT3, BKNIGHT4, BKNIGHT5, BKNIGHT6, BKNIGHT7, BKNIGHT8, BKNIGHT9};
+char wbishops[] = {WBISHOP0, WBISHOP1, WBISHOP2, WBISHOP3, WBISHOP4, WBISHOP5, WBISHOP6, WBISHOP7, WBISHOP8, WBISHOP9};
+char bbishops[] = {BBISHOP0, BBISHOP1, BBISHOP2, BBISHOP3, BBISHOP4, BBISHOP5, BBISHOP6, BBISHOP7, BBISHOP8, BBISHOP9};
+char wqueens[] = {WQUEEN0, WQUEEN1, WQUEEN2, WQUEEN3, WQUEEN4, WQUEEN5, WQUEEN6, WQUEEN7, WQUEEN8};
+char bqueens[] = {BQUEEN0, BQUEEN1, BQUEEN2, BQUEEN3, BQUEEN4, BQUEEN5, BQUEEN6, BQUEEN7, BQUEEN8};
+
 board_t* init_board()
 {
     board_t* new_game = malloc(sizeof(board_t));
 
     board_t reference = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     for (int i = 0; i < 8; i++) {
@@ -117,12 +128,20 @@ void print_board(board_t *board)
 
 bool is_pawn(char piece)
 {
-    return (WPAWN0 >= 0 && WPAWN7 <= 7) || (BPAWN0 >= 16 && BPAWN7 <= 23);
+    for (int i = 0; i < NUM_PAWNS; i++) {
+        if (piece == wpawns[i] || piece == bpawns[i]) return true;
+    }
+
+    return false;
 }
 
 bool is_knight(char piece)
 {
-    return piece == WKNIGHT0 || piece == WKNIGHT1 || piece == BKNIGHT0 || piece == BKNIGHT1;
+    for (int i = 0; i < NUM_KNIGHTS; i++) {
+        if (piece == wknights[i] || piece == bknights[i]) return true;
+    }
+
+    return false;
 }
 
 bool is_king(char piece)
@@ -132,17 +151,29 @@ bool is_king(char piece)
 
 bool is_bishop(char piece)
 {
-    return piece == WBISHOP0 || piece == WBISHOP1 || piece == BBISHOP0 || piece == BBISHOP1;
+    for (int i = 0; i < NUM_BISHOPS; i++) {
+        if (piece == wbishops[i] || piece == bbishops[i]) return true;
+    }
+
+    return false;
 }
 
 bool is_rook(char piece)
 {
-    return piece == WROOK0 || piece == WROOK1 || piece == BROOK0 || piece == BROOK1;
+    for (int i = 0; i < NUM_ROOKS; i++) {
+        if (piece == wrooks[i] || piece == brooks[i]) return true;
+    }
+
+    return false;
 }
 
 bool is_queen(char piece)
 {
-    return piece == WQUEEN || piece == BQUEEN;
+    for (int i = 0; i < NUM_QUEENS; i++) {
+        if (piece == wqueens[i] || piece == bqueens[i]) return true;
+    }
+
+    return false;
 }
 
 // requires king is a valid king

@@ -3,13 +3,18 @@
 #include <stdio.h>
 #include "include/game.h"
 
-#define WHITE 0
-#define BLACK 1
+#define WHITE 1
+#define BLACK 2
 
 /* Implement extra checks later for pawn upgrades!!! */
 static char get_colour(char piece)
 {
-    return piece < 16 ? WHITE : (piece == 32 ? EMPTY : BLACK);
+    return piece == 0 ? EMPTY : (piece > 0 ? WHITE : BLACK);
+}
+
+static int reverse_colour(int colour)
+{
+    return colour == WHITE ? BLACK : WHITE;
 }
 
 move_list_t *create_move_list(int size)
@@ -76,13 +81,13 @@ move_list_t *generate_pawn_moves(board_t *board, char pawn)
 
     // diagonal capture x + 1
     char dest_piece = get_piece(board, src_x + 1, src_y + forward);
-    if (dest_piece != OUT_OF_BOUNDS && dest_piece != EMPTY && get_colour(dest_piece) == !colour) {
+    if (dest_piece != OUT_OF_BOUNDS && dest_piece != EMPTY && get_colour(dest_piece) == reverse_colour(colour)) {
         add_move_to_list(move_list, board, pawn, src_x + 1, src_y + forward);
     }
 
     // diagonal capture x - 1
     dest_piece = get_piece(board, src_x - 1, src_y + forward);
-    if (dest_piece != OUT_OF_BOUNDS && dest_piece != EMPTY && get_colour(dest_piece) == !colour) {
+    if (dest_piece != OUT_OF_BOUNDS && dest_piece != EMPTY && get_colour(dest_piece) == reverse_colour(colour)) {
         add_move_to_list(move_list, board, pawn, src_x - 1, src_y + forward);
     }
 
@@ -148,7 +153,7 @@ move_list_t *generate_knight_moves(board_t *board, char knight)
         char dest_piece = get_piece(board, dest_x, dest_y);
 
         if (dest_piece != OUT_OF_BOUNDS && 
-            (dest_piece == EMPTY || get_colour(dest_piece) != colour)) {
+            (dest_piece == EMPTY || get_colour(dest_piece) == reverse_colour(colour))) {
             add_move_to_list(move_list, board, knight, dest_x, dest_y); 
         } 
     }
@@ -269,7 +274,7 @@ move_list_t *generate_king_moves(board_t *board, char king)
         char dest_piece = get_piece(board, dest_x, dest_y);
 
         if (dest_piece != OUT_OF_BOUNDS && 
-            (dest_piece == EMPTY || get_colour(dest_piece) != colour)) {
+            (dest_piece == EMPTY || get_colour(dest_piece) == reverse_colour(colour))) {
             add_move_to_list(move_list, board, king, dest_x, dest_y); 
         } 
     }
@@ -279,5 +284,14 @@ move_list_t *generate_king_moves(board_t *board, char king)
 
 move_list_t *generate_castling_moves(game_t *game, char king, char rook)
 {
+    return NULL;
+}
+
+move_list_t *generate_all_moves(game_t *game, int colour)
+{
+    if (game == NULL || game->board == NULL || (colour != WHITE && colour != BLACK)) {
+        return NULL;
+    }
+
     return NULL;
 }

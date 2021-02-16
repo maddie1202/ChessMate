@@ -61,10 +61,10 @@ static void king_test1()
     board_t curr = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY,  WKING,  EMPTY,    EMPTY,    WPAWN7},       
-            {EMPTY,  EMPTY,    WQUEEN,   EMPTY,  EMPTY,  EMPTY,    WPAWN6,   WBISHOP1},
+            {EMPTY,  EMPTY,    WQUEEN0,   EMPTY,  EMPTY,  EMPTY,    WPAWN6,   WBISHOP1},
             {EMPTY,  EMPTY,    EMPTY,    WPAWN3, WPAWN4, WPAWN5,   EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    BPAWN3, BPAWN4, BPAWN5,   EMPTY,    EMPTY},
-            {EMPTY,  BQUEEN,   EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN6,   BBISHOP1},
+            {EMPTY,  BQUEEN0,   EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN6,   BBISHOP1},
             {BPAWN0, BPAWN1,   BPAWN2,   EMPTY,  BKING,  EMPTY,    EMPTY,    BPAWN7},
             {BROOK0, BKNIGHT0, BBISHOP0, EMPTY,  EMPTY,  EMPTY,    BKNIGHT1, BROOK1}
         };
@@ -188,14 +188,14 @@ static void king_test1()
 static void king_test2()
 {
     board_t curr = {
-            {WROOK0, EMPTY,  WBISHOP0, WQUEEN,   EMPTY,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, EMPTY,  WBISHOP0, WQUEEN0,   EMPTY,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1, WPAWN2,   WKNIGHT0, EMPTY,  WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY,  EMPTY,  WKING,    WPAWN3,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,  BPAWN2,   EMPTY,    EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,  EMPTY,    EMPTY,    WPAWN4, EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,  EMPTY,    BPAWN3,   BKING,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1, EMPTY,    BKNIGHT0, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, EMPTY,  BBISHOP0, BQUEEN,   EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
+            {BROOK0, EMPTY,  BBISHOP0, BQUEEN0,   EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     // NOTE: WKING can't move left to (1, 2) IRL, since it would move into check
@@ -274,14 +274,14 @@ static void king_test2()
 static void king_test3()
 {
     board_t curr = {
-            {WROOK0,   WKNIGHT0, EMPTY,  WQUEEN,   EMPTY,    EMPTY,    WKNIGHT1, WROOK1},
+            {WROOK0,   WKNIGHT0, EMPTY,  WQUEEN0,   EMPTY,    EMPTY,    WKNIGHT1, WROOK1},
             {WPAWN0,   EMPTY,    EMPTY,  WPAWN3,   EMPTY,    EMPTY,    WPAWN6,   WPAWN7},       
             {WBISHOP0, WPAWN1,   WPAWN2, WBISHOP1, EMPTY,    WPAWN5,   EMPTY,    EMPTY},
             {EMPTY,    EMPTY,    EMPTY,  EMPTY,    WPAWN4,   WKING,    EMPTY,    EMPTY},
             {EMPTY,    EMPTY,    BKING,  BPAWN3,   EMPTY,    EMPTY,    EMPTY,    EMPTY},
             {EMPTY,    EMPTY,    BPAWN2, EMPTY,    BBISHOP0, BPAWN5,   BPAWN6,   BBISHOP1},
             {BPAWN0,   BPAWN1,   EMPTY,  EMPTY,    BPAWN4,   EMPTY,    EMPTY,    BPAWN7},
-            {BROOK0,   BKNIGHT0, EMPTY,  BQUEEN,   EMPTY,    EMPTY,    BKNIGHT1, BROOK1}
+            {BROOK0,   BKNIGHT0, EMPTY,  BQUEEN0,   EMPTY,    EMPTY,    BKNIGHT1, BROOK1}
         };
 
     // NOTE: WKING can't move to (2, 4), (4, 4), (5, 4), (6, 4), or (6, 3) since it would still be in check    
@@ -334,14 +334,14 @@ static void king_test3()
 static void king_test4()
 {
     board_t curr = {
-            {WROOK0,   WKNIGHT0, EMPTY,  WQUEEN,   EMPTY,    EMPTY,    WKNIGHT1, WROOK1},
+            {WROOK0,   WKNIGHT0, EMPTY,  WQUEEN0,   EMPTY,    EMPTY,    WKNIGHT1, WROOK1},
             {WPAWN0,   EMPTY,    EMPTY,  WPAWN3,   EMPTY,    EMPTY,    EMPTY,    WPAWN7},       
             {WBISHOP0, WPAWN1,   WPAWN2, WBISHOP1, EMPTY,    WPAWN5,   WPAWN6,   EMPTY},
             {EMPTY,    EMPTY,    EMPTY,  EMPTY,    WPAWN4,   WKING,    EMPTY,    EMPTY},
             {EMPTY,    EMPTY,    BKING,  BPAWN3,   EMPTY,    EMPTY,    EMPTY,    EMPTY},
             {EMPTY,    BPAWN1,   BPAWN2, EMPTY,    BBISHOP0, BPAWN5,   BPAWN6,   BBISHOP1},
             {BPAWN0,   EMPTY,    EMPTY,  EMPTY,    BPAWN4,   EMPTY,    EMPTY,    BPAWN7},
-            {BROOK0,   BKNIGHT0, EMPTY,  BQUEEN,   EMPTY,    EMPTY,    BKNIGHT1, BROOK1}
+            {BROOK0,   BKNIGHT0, EMPTY,  BQUEEN0,   EMPTY,    EMPTY,    BKNIGHT1, BROOK1}
         };
 
     move_list_t w_expected;

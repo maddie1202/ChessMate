@@ -19,4 +19,6 @@ move_list_t *generate_queen_moves(board_t *board, char pawn);
 move_list_t *generate_king_moves(board_t *board, char pawn);
 move_list_t *generate_castling_moves(game_t *game, char king, char rook);
 
+move_list_t *generate_all_moves(game_t *game, int colour);
+
 #endif

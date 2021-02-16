@@ -75,14 +75,14 @@ static void knight_test0()
 static void knight_test1()
 {
     board_t curr = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, WPAWN4, EMPTY,    WPAWN6,   EMPTY},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  WPAWN5,   EMPTY,    WPAWN7},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  BPAWN5,   EMPTY,    BPAWN7},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, EMPTY,    BPAWN6,   EMPTY},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     move_list_t w_expected;
@@ -121,14 +121,14 @@ static void knight_test1()
 static void knight_test2()
 {
     board_t curr = {
-            {WROOK0, EMPTY,  WBISHOP0, WQUEEN,   WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, EMPTY,  WBISHOP0, WQUEEN0,   WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, EMPTY,  WPAWN2,   WPAWN3,   WPAWN4, EMPTY,    WPAWN6,   WPAWN7},       
             {EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  WPAWN1, EMPTY,    BKNIGHT0, EMPTY,  WPAWN5,   EMPTY,    EMPTY},
             {EMPTY,  BPAWN1, EMPTY,    WKNIGHT0, EMPTY,  BPAWN5,   EMPTY,    EMPTY},
             {EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, EMPTY,  BPAWN2,   BPAWN3,   BPAWN4, EMPTY,    BPAWN6,   BPAWN7},
-            {BROOK0, EMPTY,  BBISHOP0, BQUEEN,   BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {BROOK0, EMPTY,  BBISHOP0, BQUEEN0,   BKING,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     // move WKNIGHT0 from (3, 4) to (2, 2)

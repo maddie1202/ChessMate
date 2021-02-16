@@ -78,14 +78,14 @@ static void pawn_test0()
 static void pawn_test1()
 {
     board_t curr = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WPAWN4, EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  BPAWN4, EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, EMPTY,  BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     move_list_t w_expected;
@@ -124,14 +124,14 @@ static void pawn_test1()
 static void pawn_test2()
 {
     board_t curr = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY,  WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    WPAWN3, EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  BPAWN4, EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, EMPTY,  BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     // move WPAWN3 from (3, 3) to (3, 4)
@@ -190,14 +190,14 @@ static void pawn_test2()
 static void pawn_test3()
 {
     board_t curr = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {EMPTY,  WPAWN1,   WPAWN2,   WPAWN3, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {WPAWN0, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    BPAWN7},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   EMPTY},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     // move WPAWN0 from (0, 3) to (0, 4)
@@ -246,14 +246,14 @@ static void pawn_test3()
 static void pawn_test4()
 {
     board_t curr = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {EMPTY,  EMPTY,    WPAWN2,   WPAWN3, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {WPAWN0, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN6,   EMPTY},
             {EMPTY,  WPAWN1,   EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    BPAWN7},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   EMPTY,    EMPTY},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
     // move WPAWN0 from (0, 3) to (0, 4)

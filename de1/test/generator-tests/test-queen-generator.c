@@ -12,7 +12,7 @@ static void queen_test0w()
     expected.moves = NULL;
     expected.num_moves = 0;
 
-    move_list_t *actual = generate_queen_moves(board, WQUEEN);
+    move_list_t *actual = generate_queen_moves(board, WQUEEN0);
 
     test_result_t result = board_list_equals(&expected, actual);
     print_test_result(result, __func__);
@@ -29,7 +29,7 @@ static void queen_test0b()
     expected.moves = NULL;
     expected.num_moves = 0;
 
-    move_list_t *actual = generate_queen_moves(board, BQUEEN);
+    move_list_t *actual = generate_queen_moves(board, BQUEEN0);
 
     test_result_t result = board_list_equals(&expected, actual);
     print_test_result(result, __func__);
@@ -44,45 +44,45 @@ static void queen_test1w()
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    WQUEEN,    EMPTY},
+            {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    WQUEEN0,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    WQUEEN},
+            {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    WQUEEN0},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected2 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  WQUEEN,    EMPTY,    EMPTY},
+            {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  WQUEEN0,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     
     board_t expected3 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    WQUEEN,    EMPTY},
+            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    WQUEEN0,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected4 = {
@@ -90,10 +90,10 @@ static void queen_test1w()
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    WQUEEN,    EMPTY},
+            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    WQUEEN0,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected5 = {
@@ -102,9 +102,9 @@ static void queen_test1w()
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    WQUEEN,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    WQUEEN0,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected6 = {
@@ -114,19 +114,19 @@ static void queen_test1w()
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   WQUEEN,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   WQUEEN0,   BPAWN7},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected7 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    WQUEEN},
+            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    WQUEEN0},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected8 = {
@@ -134,10 +134,10 @@ static void queen_test1w()
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    WQUEEN},
+            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    WQUEEN0},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
     
     board_t expected9 = {
@@ -145,10 +145,10 @@ static void queen_test1w()
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  WQUEEN,    EMPTY,    EMPTY},
+            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  WQUEEN0,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected10 = {
@@ -157,9 +157,9 @@ static void queen_test1w()
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WQUEEN,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WQUEEN0,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected11 = {
@@ -169,41 +169,41 @@ static void queen_test1w()
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BPAWN0, BPAWN1,   BPAWN2,   WQUEEN, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BPAWN0, BPAWN1,   BPAWN2,   WQUEEN0, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected12 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  WQUEEN,    EMPTY,    EMPTY},
+            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  WQUEEN0,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected13 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, WQUEEN, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, WQUEEN0, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected14 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     move_list_t expected;
@@ -212,7 +212,7 @@ static void queen_test1w()
     expected.moves = expected_moves;
     expected.num_moves = 14;
 
-    move_list_t *actual = generate_queen_moves(&board, WQUEEN);
+    move_list_t *actual = generate_queen_moves(&board, WQUEEN0);
     test_result_t result = board_list_equals(&expected, actual);
     print_test_result(result, __func__);
 
@@ -222,8 +222,8 @@ static void queen_test1w()
 static void queen_test1b()
 {
     board_t board = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0, WPAWN1,   WPAWN2,   BQUEEN, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0, WPAWN1,   WPAWN2,   BQUEEN0, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -233,8 +233,8 @@ static void queen_test1b()
         };
     
     board_t expected1 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, BQUEEN, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, BQUEEN0, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -244,7 +244,7 @@ static void queen_test1b()
         };
 
     board_t expected2 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, BQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, BQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -255,8 +255,8 @@ static void queen_test1b()
         };
 
     board_t expected3 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0, WPAWN1,   BQUEEN,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0, WPAWN1,   BQUEEN0,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -266,9 +266,9 @@ static void queen_test1b()
         };
 
     board_t expected4 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
-            {EMPTY, EMPTY,    EMPTY,    BQUEEN,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY, EMPTY,    EMPTY,    BQUEEN0,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -277,10 +277,10 @@ static void queen_test1b()
         };
 
     board_t expected5 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    EMPTY,    BQUEEN,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY, EMPTY,    EMPTY,    BQUEEN0,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   EMPTY,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
@@ -288,29 +288,29 @@ static void queen_test1b()
         };
 
     board_t expected6 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    BPAWN2,    BQUEEN,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY, EMPTY,    BPAWN2,    BQUEEN0,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   EMPTY,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
             {BROOK0, BKNIGHT0, BBISHOP0, EMPTY, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected7 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    BQUEEN,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    BQUEEN0,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   EMPTY,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
             {BROOK0, BKNIGHT0, BBISHOP0, EMPTY, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected8 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, BQUEEN,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, BQUEEN0,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -321,7 +321,7 @@ static void queen_test1b()
         };
 
     board_t expected9 = {
-            {WROOK0, WKNIGHT0, BQUEEN, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, BQUEEN0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -332,9 +332,9 @@ static void queen_test1b()
         };
 
     board_t expected10 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
-            {EMPTY, EMPTY,    BQUEEN,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY, EMPTY,    BQUEEN0,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -343,10 +343,10 @@ static void queen_test1b()
         };
 
     board_t expected11 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, BQUEEN,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY, BQUEEN0,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   EMPTY,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
@@ -354,20 +354,20 @@ static void queen_test1b()
         };
 
     board_t expected12 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BQUEEN, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {BQUEEN0, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   EMPTY,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
             {BROOK0, BKNIGHT0, BBISHOP0, EMPTY, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected13 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  BQUEEN,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY, EMPTY,    EMPTY,    EMPTY,  BQUEEN0,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -376,10 +376,10 @@ static void queen_test1b()
         };
 
     board_t expected14 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  BQUEEN,    EMPTY,    EMPTY},
+            {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  BQUEEN0,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   EMPTY,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
@@ -387,23 +387,23 @@ static void queen_test1b()
         };
 
     board_t expected15 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    BQUEEN,    EMPTY},
+            {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    BQUEEN0,    EMPTY},
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {BPAWN0, BPAWN1,   EMPTY,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
             {BROOK0, BKNIGHT0, BBISHOP0, EMPTY, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
 
     board_t expected16 = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
             {WPAWN0, WPAWN1,   WPAWN2,   EMPTY, WPAWN4, WPAWN5,   WPAWN6,   WPAWN7},       
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {EMPTY, EMPTY,    BPAWN2,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    BQUEEN},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    BQUEEN0},
             {BPAWN0, BPAWN1,   EMPTY,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
             {BROOK0, BKNIGHT0, BBISHOP0, EMPTY, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
         };
@@ -416,7 +416,7 @@ static void queen_test1b()
     expected.moves = expected_moves;
     expected.num_moves = 16;
 
-    move_list_t *actual = generate_queen_moves(&board, BQUEEN);
+    move_list_t *actual = generate_queen_moves(&board, BQUEEN0);
     test_result_t result = board_list_equals(&expected, actual);
     print_test_result(result, __func__);
 
