@@ -370,9 +370,9 @@ move_list_t *generate_castling_moves(game_t *game, char king, char rook)
     if (in_check(game->board, colour)) return move_list;
     
     /* 4/5: the king is not castling into or through check */
-    for (int i = 0; i < bound; i++) {
+    for (int i = 0; i < 3; i++) {
         board_t *check_spot = copy_board(game->board);
-        move_piece(check_spot, king, king_x + i, king_y);
+        move_piece(check_spot, king, king_x + kingside * i, king_y);
         bool check = in_check(check_spot, colour);
         free(check_spot);
         if (check) return move_list;

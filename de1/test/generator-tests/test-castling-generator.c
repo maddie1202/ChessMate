@@ -536,10 +536,240 @@ static void castling_test7()
     destroy_move_list(bq_actual);
 }
 
+/* TEST 8:
+ * King cannot castle out of check
+ * Tests both black and white, queenside and kingside
+ */
+static void castling_test8()
+{
+    board_t curr = {
+            {WROOK0,   EMPTY,    EMPTY,  EMPTY,   WKING,   EMPTY,  EMPTY,  WROOK1},
+            {WPAWN0,   WBISHOP0, EMPTY,  EMPTY,   WPAWN4,  EMPTY,  EMPTY,  EMPTY},       
+            {WKNIGHT0, EMPTY,    EMPTY,  WPAWN3,  EMPTY,   WPAWN5, EMPTY,  WKNIGHT1},
+            {EMPTY,    EMPTY,    WPAWN2, EMPTY,   WQUEEN0, EMPTY,  WPAWN6, BBISHOP1},
+            {BQUEEN0,  EMPTY,    EMPTY,  EMPTY,   EMPTY,   EMPTY,  BPAWN6, EMPTY},
+            {BKNIGHT0, EMPTY,    BPAWN2, EMPTY,   EMPTY,   BPAWN5, EMPTY,  BKNIGHT1},
+            {BPAWN0,   EMPTY,    EMPTY,  BPAWN3,  EMPTY,   EMPTY,  EMPTY,  EMPTY},
+            {BROOK0,   EMPTY,    EMPTY,  EMPTY,   BKING,   EMPTY,  EMPTY,  BROOK1}
+        }; 
+
+    game_t game;
+    game.board = &curr;
+    game.bking_has_moved = false;
+    game.brook0_has_moved = false;
+    game.brook1_has_moved = false;
+    game.wking_has_moved = false;
+    game.wrook0_has_moved = false;
+    game.wrook1_has_moved = false;
+
+    // generate white kingside castling moves
+    move_list_t *wk_actual = generate_castling_moves(&game, WKING, WROOK1);
+
+    move_list_t wk_expected;
+    board_t* wk_expected_moves[0] = {};
+    wk_expected.moves = wk_expected_moves;
+    wk_expected.num_moves = 0;
+
+    // generate white queenside castling moves
+    move_list_t *wq_actual = generate_castling_moves(&game, WKING, WROOK0);
+
+    move_list_t wq_expected;
+    board_t* wq_expected_moves[0] = {};
+    wq_expected.moves = wq_expected_moves;
+    wq_expected.num_moves = 0;
+
+    // generate black kingside castling moves
+    move_list_t *bk_actual = generate_castling_moves(&game, BKING, BROOK1);
+
+    move_list_t bk_expected;
+    board_t* bk_expected_moves[0] = {};
+    bk_expected.moves = bk_expected_moves;
+    bk_expected.num_moves = 0;
+
+    // generate black kingside castling moves
+    move_list_t *bq_actual = generate_castling_moves(&game, BKING, BROOK0);
+
+    move_list_t bq_expected;
+    board_t* bq_expected_moves[0] = {};
+    bq_expected.moves = bq_expected_moves;
+    bq_expected.num_moves = 0;
+
+    // CMP boards
+    test_result_t wk_result = board_list_equals(&wk_expected, wk_actual);
+    test_result_t wq_result = board_list_equals(&wq_expected, wq_actual);
+    test_result_t bk_result = board_list_equals(&bk_expected, bk_actual);
+    test_result_t bq_result = board_list_equals(&bq_expected, bq_actual);
+
+    // display results
+    print_test_result(wk_result, __func__);
+    print_test_result(wq_result, __func__);
+    print_test_result(bk_result, __func__);
+    print_test_result(bq_result, __func__);
+
+    // free generated boards
+    destroy_move_list(wk_actual);
+    destroy_move_list(wq_actual);
+    destroy_move_list(bk_actual);
+    destroy_move_list(bq_actual);
+
+}
+
+/* TEST 9:
+ * King cannot castle into check
+ * Tests both black and white, queenside and kingside
+ */
+static void castling_test9()
+{
+    board_t curr = {
+            {WROOK0,   EMPTY,    EMPTY,  EMPTY,  WKING,    EMPTY,  EMPTY,  WROOK1},
+            {WPAWN0,   WBISHOP0, EMPTY,  EMPTY,  WPAWN4,   EMPTY,  EMPTY,  EMPTY},       
+            {WKNIGHT0, EMPTY,    EMPTY,  WPAWN3, BBISHOP1, WPAWN5, EMPTY,  WKNIGHT1},
+            {EMPTY,    EMPTY,    WPAWN2, EMPTY,  WQUEEN0,  EMPTY,  WPAWN6, EMPTY},
+            {EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,  BPAWN6, EMPTY},
+            {BKNIGHT0, EMPTY,    BPAWN2, BPAWN3, WBISHOP1, BPAWN5, EMPTY,  BKNIGHT1},
+            {BPAWN0,   EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,  EMPTY,  EMPTY},
+            {BROOK0,   EMPTY,    EMPTY,  EMPTY,  BKING,    EMPTY,  EMPTY,  BROOK1}
+        }; 
+
+    game_t game;
+    game.board = &curr;
+    game.bking_has_moved = false;
+    game.brook0_has_moved = false;
+    game.brook1_has_moved = false;
+    game.wking_has_moved = false;
+    game.wrook0_has_moved = false;
+    game.wrook1_has_moved = false;
+
+    // generate white kingside castling moves
+    move_list_t *wk_actual = generate_castling_moves(&game, WKING, WROOK1);
+
+    move_list_t wk_expected;
+    board_t* wk_expected_moves[0] = {};
+    wk_expected.moves = wk_expected_moves;
+    wk_expected.num_moves = 0;
+
+    // generate white queenside castling moves
+    move_list_t *wq_actual = generate_castling_moves(&game, WKING, WROOK0);
+
+    move_list_t wq_expected;
+    board_t* wq_expected_moves[0] = {};
+    wq_expected.moves = wq_expected_moves;
+    wq_expected.num_moves = 0;
+
+    // generate black kingside castling moves
+    move_list_t *bk_actual = generate_castling_moves(&game, BKING, BROOK1);
+
+    move_list_t bk_expected;
+    board_t* bk_expected_moves[0] = {};
+    bk_expected.moves = bk_expected_moves;
+    bk_expected.num_moves = 0;
+
+    // generate black kingside castling moves
+    move_list_t *bq_actual = generate_castling_moves(&game, BKING, BROOK0);
+
+    move_list_t bq_expected;
+    board_t* bq_expected_moves[0] = {};
+    bq_expected.moves = bq_expected_moves;
+    bq_expected.num_moves = 0;
+
+    // CMP boards
+    test_result_t wk_result = board_list_equals(&wk_expected, wk_actual);
+    test_result_t wq_result = board_list_equals(&wq_expected, wq_actual);
+    test_result_t bk_result = board_list_equals(&bk_expected, bk_actual);
+    test_result_t bq_result = board_list_equals(&bq_expected, bq_actual);
+
+    // display results
+    print_test_result(wk_result, __func__);
+    print_test_result(wq_result, __func__);
+    print_test_result(bk_result, __func__);
+    print_test_result(bq_result, __func__);
+
+    // free generated boards
+    destroy_move_list(wk_actual);
+    destroy_move_list(wq_actual);
+    destroy_move_list(bk_actual);
+    destroy_move_list(bq_actual);
+}
+
+/* TEST 10:
+ * King cannot castle through check
+ * Tests both black and white, queenside and kingside
+ */
+static void castling_test10()
+{
+    board_t curr = {
+            {WROOK0,   EMPTY,  EMPTY,  EMPTY,  WKING,   EMPTY,   EMPTY,  WROOK1},
+            {WPAWN0,   WPAWN1, EMPTY,  EMPTY,  WPAWN4,  EMPTY,   WPAWN6, WPAWN7},       
+            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3, EMPTY,   BQUEEN0, EMPTY,  WKNIGHT1},
+            {BBISHOP0, EMPTY,  WPAWN2, EMPTY,  EMPTY,   WPAWN5,  EMPTY,  EMPTY},
+            {WBISHOP0, EMPTY,  BPAWN2, EMPTY,  EMPTY,   WQUEEN0, EMPTY,  EMPTY},
+            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3, EMPTY,   EMPTY,   EMPTY,  BKNIGHT1},
+            {BPAWN0,   BPAWN1, EMPTY,  EMPTY,  BPAWN4,  EMPTY,   BPAWN6, BPAWN7},
+            {BROOK0,   EMPTY,  EMPTY,  EMPTY,  BKING,   EMPTY,   EMPTY,  BROOK1}
+        }; 
+
+    game_t game;
+    game.board = &curr;
+    game.bking_has_moved = false;
+    game.brook0_has_moved = false;
+    game.brook1_has_moved = false;
+    game.wking_has_moved = false;
+    game.wrook0_has_moved = false;
+    game.wrook1_has_moved = false;
+
+    // generate white kingside castling moves
+    move_list_t *wk_actual = generate_castling_moves(&game, WKING, WROOK1);
+
+    move_list_t wk_expected;
+    board_t* wk_expected_moves[0] = {};
+    wk_expected.moves = wk_expected_moves;
+    wk_expected.num_moves = 0;
+
+    // generate white queenside castling moves
+    move_list_t *wq_actual = generate_castling_moves(&game, WKING, WROOK0);
+
+    move_list_t wq_expected;
+    board_t* wq_expected_moves[0] = {};
+    wq_expected.moves = wq_expected_moves;
+    wq_expected.num_moves = 0;
+
+    // generate black kingside castling moves
+    move_list_t *bk_actual = generate_castling_moves(&game, BKING, BROOK1);
+
+    move_list_t bk_expected;
+    board_t* bk_expected_moves[0] = {};
+    bk_expected.moves = bk_expected_moves;
+    bk_expected.num_moves = 0;
+
+    // generate black kingside castling moves
+    move_list_t *bq_actual = generate_castling_moves(&game, BKING, BROOK0);
+
+    move_list_t bq_expected;
+    board_t* bq_expected_moves[0] = {};
+    bq_expected.moves = bq_expected_moves;
+    bq_expected.num_moves = 0;
+
+    // CMP boards
+    test_result_t wk_result = board_list_equals(&wk_expected, wk_actual);
+    test_result_t wq_result = board_list_equals(&wq_expected, wq_actual);
+    test_result_t bk_result = board_list_equals(&bk_expected, bk_actual);
+    test_result_t bq_result = board_list_equals(&bq_expected, bq_actual);
+
+    // display results
+    print_test_result(wk_result, __func__);
+    print_test_result(wq_result, __func__);
+    print_test_result(bk_result, __func__);
+    print_test_result(bq_result, __func__);
+
+    // free generated boards
+    destroy_move_list(wk_actual);
+    destroy_move_list(wq_actual);
+    destroy_move_list(bk_actual);
+    destroy_move_list(bq_actual);
+}
+
 void test_castling_generator()
 {
-    // NOTE: need to test in check tester that we can't perform castling to get out of check
-    // also need to check that we can't castle into check or castle through check
     castling_test0();
     castling_test1();
     castling_test2();
@@ -548,4 +778,8 @@ void test_castling_generator()
     castling_test5();
     castling_test6();
     castling_test7();
+    // these will NOT pass until the check checker is implemented!!!
+    castling_test8();
+    castling_test9();
+    castling_test10();
 }
