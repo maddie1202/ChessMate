@@ -4,11 +4,60 @@
 #include "include/test.h"
 #include "../include/ai-move-generator.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 void test_ai_move_generator()
 {
     test_in_check();
     test_in_checkmate();
+    test_generate_ai_move();
+}
+
+static void test_generate_ai_move0()
+{
+    game_t *game = init_game();
+    board_t board = {
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
+        };
+
+    free(game->board);
+    game->board = &board;
+
+    board_t expected = {
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  BKNIGHT1, EMPTY,    EMPTY},
+            {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, EMPTY, BROOK1},
+        };
+
+    board_t *actual = generate_ai_move(game, BLACK, 3);
+
+    double expected_score = eval_board(&expected, BLACK);
+    double actual_score = eval_board(actual, BLACK);
+
+    printf("%f\n", expected_score);
+
+    if (expected_score == actual_score) {
+        print_test_result(test_result(true, ""), __func__);
+    } else {
+        print_test_result(test_result(false, "Unequal scores"), __func__);
+    }
+}
+
+void test_generate_ai_move()
+{
+    test_generate_ai_move0();
 }
 
 static void test_in_check0w()
