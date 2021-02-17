@@ -346,12 +346,12 @@ move_list_t *generate_castling_moves(game_t *game, char king, char rook)
 {
     // make sure we have been given valid pieces to castle with
     if (!is_king(king) || !is_rook(rook) || get_colour(king) != get_colour(rook)) return NULL;
-
+    
     move_list_t *move_list = create_move_list(1);
 
     /* 1. neither king nor rook has moved from its original position */
     if (has_king_moved(game, king) || has_rook_moved(game, rook)) return move_list;
-
+    
     int king_x, king_y, rook_x, rook_y;
     find_piece(game->board, king, &king_x, &king_y);
     find_piece(game->board, rook, &rook_x, &rook_y);
@@ -360,15 +360,17 @@ move_list_t *generate_castling_moves(game_t *game, char king, char rook)
     int kingside = king_x < rook_x ? 1 : -1;
 
     /* 2. there are no pieces between the king and rook */
-    for (int i = 1; i < kingside == 1 ? 3 : 4; i++) {
+    int bound = (kingside == 1) ? 3 : 4;
+    
+    for (int i = 1; i < bound; i++) {
         if (get_piece(game->board, king_x + kingside * i, king_y) != EMPTY) return move_list;
     }
-
+    
     /* 3. the king is not castling out of check */
     if (in_check(game->board, colour)) return move_list;
-
+    
     /* 4/5: the king is not castling into or through check */
-    for (int i = 0; i < kingside == 1 ? 3 : 4; i++) {
+    for (int i = 0; i < bound; i++) {
         board_t *check_spot = copy_board(game->board);
         move_piece(check_spot, king, king_x + i, king_y);
         bool check = in_check(check_spot, colour);
