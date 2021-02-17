@@ -3,17 +3,6 @@
 #include <stdio.h>
 #include "include/game.h"
 
-/* Implement extra checks later for pawn upgrades!!! */
-static char get_colour(char piece)
-{
-    return piece == 0 ? EMPTY : (piece > 0 ? WHITE : BLACK);
-}
-
-static int reverse_colour(int colour)
-{
-    return colour == WHITE ? BLACK : WHITE;
-}
-
 move_list_t *create_move_list(int size)
 {
     move_list_t *move_list = malloc(sizeof(move_list_t));
