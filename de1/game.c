@@ -176,6 +176,16 @@ bool is_queen(char piece)
     return false;
 }
 
+char get_colour(char piece)
+{
+    return piece == 0 ? EMPTY : (piece > 0 ? WHITE : BLACK);
+}
+
+int reverse_colour(int colour)
+{
+    return colour == WHITE ? BLACK : WHITE;
+}
+
 // requires king is a valid king
 bool has_king_moved(game_t *game, char king)
 {

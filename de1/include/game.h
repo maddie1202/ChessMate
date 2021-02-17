@@ -130,6 +130,9 @@ typedef struct game
 #define BISHOP 53
 #define QUEEN 54
 
+#define WHITE 1
+#define BLACK 2
+
 extern char wpawns[NUM_PAWNS];
 extern char bpawns[NUM_PAWNS];
 
@@ -165,6 +168,9 @@ bool is_king(char piece);
 bool is_bishop(char piece);
 bool is_rook(char piece);
 bool is_queen(char piece);
+
+char get_colour(char piece);
+int reverse_colour(int colour);
 
 bool has_king_moved(game_t *game, char king);
 bool has_rook_moved(game_t *game, char rook);

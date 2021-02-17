@@ -4,16 +4,6 @@
 #include <stdio.h>
 #include "include/game.h"
 
-static char get_colour(char piece)
-{
-    return piece == 0 ? EMPTY : (piece > 0 ? WHITE : BLACK);
-}
-
-static int reverse_colour(int colour)
-{
-    return colour == WHITE ? BLACK : WHITE;
-}
-
 move_list_t *create_move_list(int size)
 {
     move_list_t *move_list = malloc(sizeof(move_list_t));
@@ -439,7 +429,7 @@ move_list_t *generate_all_moves(game_t *game, int colour)
 
     // pawns
     for (int i = 0; i < NUM_PAWNS; i++) {
-        move_list_t *pawn_moves = generate_pawn_moves(game->board, pawns[i]);
+        move_list_t *pawn_moves = generate_pawn_moves(game->board, pawns[i], EMPTY);
         add_all(master_list, pawn_moves);
     }
 
