@@ -537,10 +537,51 @@ static void castling_test7()
 }
 
 /* TEST 8:
+ * Try to castle using different pieces
+ */
+static void castling_test8()
+{
+    board_t *curr = init_board();
+    game_t game;
+    game.board = curr;
+    game.bking_has_moved = false;
+    game.brook0_has_moved = false;
+    game.brook1_has_moved = false;
+    game.wking_has_moved = false;
+    game.wrook0_has_moved = false;
+    game.wrook1_has_moved = false;
+
+    // try to generate castling moves for a rook and a bishop
+    move_list_t *w_actual = generate_castling_moves(&game, WBISHOP1, WROOK1);
+
+    // try to generate castling moves for a king and a knight
+    move_list_t *b_actual = generate_castling_moves(&game, BKING, BKNIGHT0);
+
+    test_result_t w_result;
+    if (w_actual != NULL) {
+        w_result = test_result(0, "Should be NULL");
+        free(w_actual);
+    } else w_result = test_result(1, "");
+
+    test_result_t b_result;
+    if (b_actual != NULL) {
+        b_result = test_result(0, "Should be NULL");
+        free(b_actual);
+    } else b_result = test_result(1, "");
+
+    // display results
+    print_test_result(w_result, __func__);
+    print_test_result(b_result, __func__);
+
+    // free generated board
+    free(curr);
+}
+
+/* TEST 9:
  * King cannot castle out of check
  * Tests both black and white, queenside and kingside
  */
-static void castling_test8()
+static void castling_test9()
 {
     board_t curr = {
             {WROOK0,   EMPTY,    EMPTY,  EMPTY,   WKING,   EMPTY,  EMPTY,  WROOK1},
@@ -614,11 +655,11 @@ static void castling_test8()
 
 }
 
-/* TEST 9:
+/* TEST 10:
  * King cannot castle into check
  * Tests both black and white, queenside and kingside
  */
-static void castling_test9()
+static void castling_test10()
 {
     board_t curr = {
             {WROOK0,   EMPTY,    EMPTY,  EMPTY,  WKING,    EMPTY,  EMPTY,  WROOK1},
@@ -695,7 +736,7 @@ static void castling_test9()
  * King cannot castle through check
  * Tests both black and white, queenside and kingside
  */
-static void castling_test10()
+static void castling_test11()
 {
     board_t curr = {
             {WROOK0,   EMPTY,  EMPTY,  EMPTY,  WKING,   EMPTY,   EMPTY,  WROOK1},
@@ -778,8 +819,9 @@ void test_castling_generator()
     castling_test5();
     castling_test6();
     castling_test7();
-    // these will NOT pass until the check checker is implemented!!!
     castling_test8();
+    // these will NOT pass until the check checker is implemented!!!
     castling_test9();
     castling_test10();
+    castling_test11();
 }

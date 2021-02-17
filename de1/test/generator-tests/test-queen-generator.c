@@ -423,10 +423,46 @@ static void queen_test1b()
     destroy_move_list(actual);
 }
 
+static void queen_test2w()
+{
+    board_t *curr = init_board();
+
+    move_list_t *w_actual = generate_queen_moves(curr, WROOK0);
+
+    test_result_t w_result;
+    if (w_actual != NULL) {
+        w_result = test_result(0, "Should be NULL");
+        free(w_actual);
+    } else w_result = test_result(1, "");
+
+    print_test_result(w_result, __func__);
+
+    free(curr);
+}
+
+static void queen_test2b()
+{
+    board_t *curr = init_board();
+
+    move_list_t *b_actual = generate_queen_moves(curr, BKING);
+
+    test_result_t b_result;
+    if (b_actual != NULL) {
+        b_result = test_result(0, "Should be NULL");
+        free(b_actual);
+    } else b_result = test_result(1, "");
+
+    print_test_result(b_result, __func__);
+
+    free(curr);
+}
+
 void test_queen_generator()
 {
     queen_test0w();
     queen_test0b();
     queen_test1w();
     queen_test1b();
+    queen_test2w();
+    queen_test2b();
 }

@@ -257,10 +257,46 @@ static void bishop_test1b()
     destroy_move_list(actual);
 }
 
+static void bishop_test2w()
+{
+    board_t *curr = init_board();
+
+    move_list_t *w_actual = generate_bishop_moves(curr, WROOK0);
+
+    test_result_t w_result;
+    if (w_actual != NULL) {
+        w_result = test_result(0, "Should be NULL");
+        free(w_actual);
+    } else w_result = test_result(1, "");
+
+    print_test_result(w_result, __func__);
+
+    free(curr);
+}
+
+static void bishop_test2b()
+{
+    board_t *curr = init_board();
+
+    move_list_t *b_actual = generate_bishop_moves(curr, BKING);
+
+    test_result_t b_result;
+    if (b_actual != NULL) {
+        b_result = test_result(0, "Should be NULL");
+        free(b_actual);
+    } else b_result = test_result(1, "");
+
+    print_test_result(b_result, __func__);
+
+    free(curr);
+}
+
 void test_bishop_generator()
 {
     bishop_test0w();
     bishop_test0b();
     bishop_test1w();
     bishop_test1b();
+    bishop_test2w();
+    bishop_test2b();
 }

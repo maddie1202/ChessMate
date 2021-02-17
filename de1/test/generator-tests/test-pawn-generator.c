@@ -4,16 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-/* 
- * This file contains 5 tests for the pawn move generator.
- * TEST 0: Pawn's first move (can move ahead by either one or two spaces)
- * TEST 1: No possible moves
- * TEST 2: Take an enemy piece
- * TEST 3: Pawn can only move ahead by one space if it has already moved from its' original spot
- * TEST 4: Pawn cannot take a piece that is the same colour as itself
- * TEST 5: Tests pawn upgrades
- */
-
 /* TEST 0: 
  * Test a pawn straight from initial setup for both black and white 
  * Each pawn should have 2 options: move forward either 1 or 2 squares
@@ -562,6 +552,40 @@ static void pawn_test6()
     destroy_move_list(wp0_actual);
     destroy_move_list(bp4_actual);
 }
+
+/* TEST 7:
+ * Pawn generator shouldn't run when not given a pawn.
+ */
+static void pawn_test7()
+{
+    board_t *curr = init_board();
+
+    // try to generate pawn moves for a rook
+    move_list_t *w_actual = generate_pawn_moves(curr, WROOK1, EMPTY);
+
+    // try to generate pawn moves for a king
+    move_list_t *b_actual = generate_pawn_moves(curr, BKING, EMPTY);
+
+    test_result_t w_result;
+    if (w_actual != NULL) {
+        w_result = test_result(0, "Should be NULL");
+        free(w_actual);
+    } else w_result = test_result(1, "");
+
+    test_result_t b_result;
+    if (b_actual != NULL) {
+        b_result = test_result(0, "Should be NULL");
+        free(b_actual);
+    } else b_result = test_result(1, "");
+
+    // display results
+    print_test_result(w_result, __func__);
+    print_test_result(b_result, __func__);
+
+    // free generated board
+    free(curr);
+}
+
 /*
  * Run the pawn tests
  */
@@ -574,4 +598,5 @@ void test_pawn_generator()
     pawn_test4();
     pawn_test5();
     pawn_test6();
+    pawn_test7();
 }
