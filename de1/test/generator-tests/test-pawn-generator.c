@@ -496,6 +496,72 @@ static void pawn_test5()
     destroy_move_list(bp7_actual);
 }
 
+/* TEST 6:
+ * Test default upgrade to queen, given eithewr EMPTY or an arbitrary board piece.
+ */
+static void pawn_test6()
+{
+    board_t curr = {
+            {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {WKING,  WQUEEN0,   EMPTY,    EMPTY,  BPAWN4, BPAWN5,  BPAWN6,   BPAWN7},       
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN0,  BKING},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
+        };
+
+    board_t wp0_expected1 = {
+            {WROOK0,  WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {WKING,   WQUEEN0,  EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
+            {EMPTY,   EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,   EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,   EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,   EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,   WPAWN1,   WPAWN2,   WPAWN3, EMPTY,  EMPTY,    BQUEEN0,  BKING},
+            {WQUEEN1, EMPTY,    EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
+        };
+
+    move_list_t wp0_expected;
+    board_t* wp0_expected_moves[1] = {&wp0_expected1};
+    wp0_expected.moves = wp0_expected_moves;
+    wp0_expected.num_moves = 1;
+    
+    // generate WPAWN0 moves (default upgrade to queen)
+    move_list_t *wp0_actual = generate_pawn_moves(&curr, WPAWN0, EMPTY);
+
+    board_t bp4_expected1 = {
+            {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  BQUEEN5, EMPTY,    EMPTY,    EMPTY},
+            {WKING,  WQUEEN0,  EMPTY,    EMPTY,  EMPTY,   BPAWN5,   BPAWN6,   BPAWN7},       
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY,   EMPTY,    BQUEEN0,  BKING},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,   BBISHOP1, BKNIGHT1, BROOK1}
+        };
+
+    move_list_t bp4_expected;
+    board_t* bp4_expected_moves[1] = {&bp4_expected1};
+    bp4_expected.moves = bp4_expected_moves;
+    bp4_expected.num_moves = 1;
+
+    // generate BPAWN4 moves (default upgrade to queen given invalid upgrade to king)
+    move_list_t *bp4_actual = generate_pawn_moves(&curr, BPAWN4, BKING);
+
+    // CMP boards
+    test_result_t wp0_result = board_list_equals(&wp0_expected, wp0_actual);
+    test_result_t bp4_result = board_list_equals(&bp4_expected, bp4_actual);
+
+    // display results
+    print_test_result(wp0_result, __func__);
+    print_test_result(bp4_result, __func__);
+
+    // free generated boards
+    destroy_move_list(wp0_actual);
+    destroy_move_list(bp4_actual);
+}
 /*
  * Run the pawn tests
  */
@@ -507,4 +573,5 @@ void test_pawn_generator()
     pawn_test3();
     pawn_test4();
     pawn_test5();
+    pawn_test6();
 }

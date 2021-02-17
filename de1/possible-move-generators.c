@@ -70,7 +70,7 @@ static void upgrade_pawn(board_t *move, int x, int y, char pawn, char upgrade_to
     if (upgrade_to == ROOK) pawn = colour == WHITE ? pawn + 10 : pawn - 10;
     else if (upgrade_to == KNIGHT) pawn = colour == WHITE ? pawn + 20 : pawn - 20;
     else if (upgrade_to == BISHOP) pawn = colour == WHITE ? pawn + 30 : pawn -30;
-    else pawn = colour == WHITE ? pawn + 39 : pawn - 39;
+    else pawn = colour == WHITE ? pawn + 39 : pawn - 39; // default upgrade to queen
 
     // note coordinate swap
     (*move)[y][x] = pawn;

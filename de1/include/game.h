@@ -124,11 +124,11 @@ typedef struct game
 #define NUM_BISHOPS 10 
 #define NUM_QUEENS 9
 
-// for pawn upgrades
-#define ROOK 0
-#define KNIGHT 1
-#define BISHOP 2
-#define QUEEN 3
+// for pawn upgrades: CANNOT overlap other piece numberings
+#define ROOK 51
+#define KNIGHT 52
+#define BISHOP 53
+#define QUEEN 54
 
 extern char wpawns[NUM_PAWNS];
 extern char bpawns[NUM_PAWNS];
