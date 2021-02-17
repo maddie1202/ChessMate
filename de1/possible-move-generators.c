@@ -24,6 +24,8 @@ move_list_t *create_move_list(int size)
 
 void destroy_move_list(move_list_t *move_list)
 {
+    if (move_list == NULL) return;
+    
     for (int i = 0; i < move_list->num_moves; i++) {
         free(move_list->moves[i]);
     }
@@ -287,6 +289,9 @@ move_list_t *generate_castling_moves(game_t *game, char king, char rook)
 // WARNING: FREES src
 void add_all(move_list_t *dest, move_list_t *src)
 {
+    if (dest == NULL || dest->moves == NULL || 
+        src == NULL || src->moves == NULL) return;
+
     int new_num_moves = dest->num_moves + src->num_moves;
     board_t **new_moves = malloc(new_num_moves * sizeof(board_t*));
 
@@ -314,5 +319,56 @@ move_list_t *generate_all_moves(game_t *game, int colour)
         return NULL;
     }
 
-    return NULL;
+    char *pawns = colour == WHITE ? wpawns : bpawns;
+    char *rooks = colour == WHITE ? wrooks : brooks;
+    char *knights = colour == WHITE ? wknights : bknights;
+    char *bishops = colour == WHITE ? wbishops : bbishops;
+    char *queens = colour == WHITE ? wqueens : bqueens;
+    char king = colour == WHITE ? WKING : BKING;
+
+    move_list_t *master_list = create_move_list(0);
+
+    // pawns
+    for (int i = 0; i < NUM_PAWNS; i++) {
+        move_list_t *pawn_moves = generate_pawn_moves(game->board, pawns[i]);
+        add_all(master_list, pawn_moves);
+    }
+
+    // rooks
+    for (int i = 0; i < NUM_ROOKS; i++) {
+        move_list_t *rook_moves = generate_rook_moves(game->board, rooks[i]);
+        add_all(master_list, rook_moves);
+    }
+
+    // knights
+    for (int i = 0; i < NUM_KNIGHTS; i++) {
+        move_list_t *knight_moves = generate_knight_moves(game->board, knights[i]);
+        add_all(master_list, knight_moves);
+    }
+
+    // bishops
+    for (int i = 0; i < NUM_BISHOPS; i++) {
+        move_list_t *bishop_moves = generate_bishop_moves(game->board, bishops[i]);
+        add_all(master_list, bishop_moves);
+    }
+
+    // queens
+    for (int i = 0; i < NUM_QUEENS; i++) {
+        move_list_t *queen_moves = generate_queen_moves(game->board, queens[i]);
+        add_all(master_list, queen_moves);
+    }
+
+    // king
+    move_list_t *king_moves = generate_king_moves(game->board, king);
+    add_all(master_list, king_moves);
+
+    // kingside castle
+    move_list_t *kingside_castle_moves = generate_castling_moves(game, king, rooks[1]);
+    add_all(master_list, kingside_castle_moves);
+
+    // queenside castle
+    move_list_t *queenside_castle_moves = generate_castling_moves(game, king, rooks[0]);
+    add_all(master_list, queenside_castle_moves);
+    
+    return master_list;
 }
