@@ -16,7 +16,6 @@ typedef struct game
     bool brook1_has_moved;
 } game_t;
 
-// for pawn upgrade: use upper #s (tbd)
 #define WPAWN0  1
 #define WPAWN1  2
 #define WPAWN2  3
@@ -124,6 +123,12 @@ typedef struct game
 #define NUM_KNIGHTS 10 
 #define NUM_BISHOPS 10 
 #define NUM_QUEENS 9
+
+// for pawn upgrades: CANNOT overlap other piece numberings
+#define ROOK 51
+#define KNIGHT 52
+#define BISHOP 53
+#define QUEEN 54
 
 extern char wpawns[NUM_PAWNS];
 extern char bpawns[NUM_PAWNS];

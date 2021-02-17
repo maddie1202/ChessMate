@@ -321,11 +321,47 @@ static void rook_test1b()
     destroy_move_list(actual);
 }
 
+static void rook_test2w()
+{
+    board_t *curr = init_board();
+
+    move_list_t *w_actual = generate_rook_moves(curr, WBISHOP0);
+
+    test_result_t w_result;
+    if (w_actual != NULL) {
+        w_result = test_result(0, "Should be NULL");
+        free(w_actual);
+    } else w_result = test_result(1, "");
+
+    print_test_result(w_result, __func__);
+
+    free(curr);
+}
+
+static void rook_test2b()
+{
+    board_t *curr = init_board();
+
+    move_list_t *b_actual = generate_rook_moves(curr, BKING);
+
+    test_result_t b_result;
+    if (b_actual != NULL) {
+        b_result = test_result(0, "Should be NULL");
+        free(b_actual);
+    } else b_result = test_result(1, "");
+
+    print_test_result(b_result, __func__);
+
+    free(curr);
+}
+
 void test_rook_generator()
 {
     rook_test0w();
     rook_test0b();
     rook_test1w();
     rook_test1b();
+    rook_test2w();
+    rook_test2b();
 }
 

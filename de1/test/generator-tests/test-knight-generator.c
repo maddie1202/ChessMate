@@ -220,6 +220,39 @@ static void knight_test2()
     destroy_move_list(b_actual);
 }
 
+/* TEST 3:
+ * Knight generator shouldn't run when not given a knight.
+ */
+static void knight_test3()
+{
+    board_t *curr = init_board();
+
+    // try to generate knight moves for a rook
+    move_list_t *w_actual = generate_knight_moves(curr, WROOK1);
+
+    // try to generate knight moves for a king
+    move_list_t *b_actual = generate_knight_moves(curr, BKING);
+
+    test_result_t w_result;
+    if (w_actual != NULL) {
+        w_result = test_result(0, "Should be NULL");
+        free(w_actual);
+    } else w_result = test_result(1, "");
+
+    test_result_t b_result;
+    if (b_actual != NULL) {
+        b_result = test_result(0, "Should be NULL");
+        free(b_actual);
+    } else b_result = test_result(1, "");
+
+    // display results
+    print_test_result(w_result, __func__);
+    print_test_result(b_result, __func__);
+
+    // free generated board
+    free(curr);
+}
+
 /*
  * Run the knight tests
  */
@@ -228,4 +261,5 @@ void test_knight_generator()
     knight_test0();
     knight_test1();
     knight_test2();
+    knight_test3();
 }

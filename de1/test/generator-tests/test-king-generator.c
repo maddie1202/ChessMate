@@ -373,6 +373,40 @@ static void king_test4()
     destroy_move_list(b_actual);
 }
 
+/* TEST 5: 
+ * Tries to run the king generator on other pieces
+ * Tests both black and white kings
+ */
+static void king_test5()
+{
+    board_t *curr = init_board();
+
+    // generate WKING moves for a rook
+    move_list_t *w_actual = generate_king_moves(curr, WROOK0);
+
+    // generate BKING moves for a knight
+    move_list_t *b_actual = generate_king_moves(curr, BKNIGHT1);
+
+    test_result_t w_result;
+    if (w_actual != NULL) {
+        w_result = test_result(0, "Should be NULL");
+        free(w_actual);
+    } else w_result = test_result(1, "");
+
+    test_result_t b_result;
+    if (b_actual != NULL) {
+        b_result = test_result(0, "Should be NULL");
+        free(b_actual);
+    } else b_result = test_result(1, "");
+
+    // display results
+    print_test_result(w_result, __func__);
+    print_test_result(b_result, __func__);
+
+    // free generated boards
+    free(curr);
+}
+
 /*
  * Run the king tests
  */
@@ -384,4 +418,5 @@ void test_king_generator()
     // NOTE: the tests below deal with check/checkmate, which haven't been implemented yet
 //     king_test3();
 //     king_test4();
+    king_test5();
 }
