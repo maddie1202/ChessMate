@@ -46,8 +46,6 @@ static void test_generate_ai_move0()
     double expected_score = eval_board(&expected, BLACK);
     double actual_score = eval_board(actual, BLACK);
 
-    printf("%f\n", expected_score);
-
     if (expected_score == actual_score) {
         print_test_result(test_result(true, ""), __func__);
     } else {

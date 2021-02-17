@@ -108,7 +108,6 @@ double eval_board(board_t *board, int colour)
             int piece_colour = get_colour(piece);
             double piece_score = eval_piece(piece, piece_colour, x, y);
             piece_score *= piece_colour == colour ? 1.0 : -1.0;
-            printf("(%d, %d) %f\n", x, y, piece_score);
             score += piece_score;
         }
     }
