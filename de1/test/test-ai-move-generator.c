@@ -6,6 +6,30 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define PRINT_BOARDS 0
+#define MAX_MOVES 100
+#define MINIMAX_DEPTH 3
+
+typedef struct move 
+{
+    char piece;
+    int x;
+    int y;
+    bool castle;
+} move_t;
+
+move_t move(char piece, int x, int y, bool castle)
+{
+    move_t move;
+
+    move.piece = piece;
+    move.x = x;
+    move.y = y;
+    move.castle = castle;
+
+    return move;
+}
+
 void test_ai_move_generator()
 {
     test_in_check();
@@ -13,49 +37,127 @@ void test_ai_move_generator()
     test_generate_ai_move();
 }
 
-static void test_generate_ai_move0()
+move_t moves[MAX_MOVES];
+int num_moves = 0;
+
+static void add_move(move_t move)
 {
-    game_t *game = init_game();
-    board_t board = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1},
-        };
+    moves[num_moves++] = move;
+}
 
-    free(game->board);
-    game->board = &board;
+static void initialize_moves()
+{
+    add_move(move(WPAWN4, 4, 3, false));
+    add_move(move(BKNIGHT1, 5, 5, false));
+    add_move(move(WKNIGHT0, 2, 2, false));
+    add_move(move(BKNIGHT0, 2, 5, false));
+    add_move(move(WBISHOP1, 2, 3, false));
+    add_move(move(BKNIGHT0, 4, 4, false));
+    add_move(move(WPAWN1, 1, 2, false));
+    add_move(move(BPAWN4, 4, 5, false));
+    add_move(move(WKNIGHT1, 5, 2, false));
+    add_move(move(BKNIGHT0, 2, 3, false));
+    add_move(move(WPAWN1, 2, 3, false));
+    add_move(move(BBISHOP1, 1, 3, false));
+    add_move(move(WKING, 6, 0, true));
+    add_move(move(BPAWN3, 3, 4, false));
+    add_move(move(WKNIGHT1, 4, 4, false));
+    add_move(move(BPAWN3 , 2, 3, false));
+    add_move(move(WPAWN0 , 0, 1, false));
+    add_move(move(BBISHOP1, 2, 2, false));
+    add_move(move(WPAWN3, 2, 2, false));
+    add_move(move(BKNIGHT1, 4, 3, false));
+    add_move(move(WROOK1, 4, 0, false));
+    add_move(move(BKNIGHT1, 2, 2, false));
+    add_move(move(WQUEEN0, 3, 1, false));
+    add_move(move(BKNIGHT1, 4, 3, false));
+    add_move(move(WROOK1, 4, 3, false));
+    add_move(move(BQUEEN0, 5, 5, false));
+    add_move(move(WQUEEN0, 5, 3, false));
+    add_move(move(BQUEEN0, 5, 4, false));
+    add_move(move(WQUEEN0, 5, 4, false));
+    add_move(move(BPAWN4, 5, 4, false));
+    add_move(move(WBISHOP0, 6, 4, false));
+    add_move(move(BPAWN4, 4, 3, false));
+    add_move(move(WROOK0, 3, 0, false));
+    add_move(move(BPAWN5, 5, 5, false));
+    add_move(move(WBISHOP0, 5, 5, false));
+    add_move(move(BPAWN6, 5, 5, false));
+    add_move(move(WKNIGHT1, 3, 6, false));
+    add_move(move(BBISHOP0, 3, 6, false));
+    add_move(move(WROOK0, 3, 6, false));
+    add_move(move(BKING, 3, 6, false));
+    add_move(move(WPAWN0, 0, 3, false));
+    add_move(move(BROOK1, 6, 7, false));
+    add_move(move(WPAWN0, 0, 4, false));
+    add_move(move(BKING, 2, 7, false));
+    add_move(move(WPAWN0, 0, 5, false));
+    add_move(move(BPAWN1, 0, 5, false));
+    add_move(move(WPAWN2, 2, 2, false));
+    add_move(move(BKING, 1, 7, false));
+    add_move(move(WKING, 7, 0, false));
+    add_move(move(BPAWN6, 5, 4, false));
+    add_move(move(WPAWN5, 5, 2, false));
+    add_move(move(BPAWN4, 4, 2, false));
+    add_move(move(WPAWN5, 5, 3, false));
+    add_move(move(BPAWN4, 4, 1, false));
+    add_move(move(WKING, 6, 0, false));
+    add_move(move(BPAWN4, 4, 0, false)); // pawn promotion not working here
+}
 
-    board_t expected = {
-            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
-            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3, EMPTY, WPAWN5,   WPAWN6,   WPAWN7},       
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  WPAWN4,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  BKNIGHT1, EMPTY,    EMPTY},
-            {BPAWN0, BPAWN1,   BPAWN2,   BPAWN3, BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
-            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, EMPTY, BROOK1},
-        };
+static void move_rook_for_castle(game_t *game, move_t move, int colour)
+{
+    if (!move.castle || !is_king(move.piece)) return;
 
-    board_t *actual = generate_ai_move(game, BLACK, 3);
+    if (colour == WHITE && move.x == 6) {
+        move_piece(game->board, WROOK1, 5, 0);
+    } else if (colour == WHITE && move.x == 2) {
+        move_piece(game->board, WROOK0, 3, 0);
+    } else if (colour == BLACK && move.x == 6) {
+        move_piece(game->board, BROOK1, 5, 7);
+    } else if (colour == BLACK && move.x == 2) {
+        move_piece(game->board, BROOK0, 3, 7);
+    }
+}
 
-    double expected_score = eval_board(&expected, BLACK);
+// requires wmove.piece to be white and bmove.piece to be black
+static bool test_move_and_response(game_t *game, move_t wmove, move_t bmove)
+{
+    move_piece(game->board, wmove.piece, wmove.x, wmove.y);
+    move_rook_for_castle(game, wmove, WHITE);
+
+    if (PRINT_BOARDS) print_board(game->board);
+
+    board_t *actual = generate_ai_move(game, BLACK, MINIMAX_DEPTH);
+
+    move_piece(game->board, bmove.piece, bmove.x, bmove.y);
+    move_rook_for_castle(game, bmove, BLACK);
+    
+    if (PRINT_BOARDS) print_board(game->board);
+
+    double expected_score = eval_board(game->board, BLACK);
     double actual_score = eval_board(actual, BLACK);
+
+    if (actual != NULL) free(actual);
 
     if (expected_score == actual_score) {
         print_test_result(test_result(true, ""), __func__);
+        return true;
     } else {
         print_test_result(test_result(false, "Unequal scores"), __func__);
+        return false;
     }
 }
 
 void test_generate_ai_move()
 {
-    test_generate_ai_move0();
+    game_t *game = init_game();
+    initialize_moves();
+    bool passing = true;
+
+    for (int i = 0; i < num_moves - 1 && passing; i += 2) {
+        test_move_and_response(game, moves[i], moves[i + 1]);
+    }
 }
 
 static void test_in_check0w()
