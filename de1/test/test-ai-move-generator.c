@@ -391,7 +391,7 @@ static void test_in_check6b()
             {BROOK0, BKNIGHT0, BBISHOP0, EMPTY, BKING,  EMPTY, BKNIGHT1, BROOK1},
         };
 
-    bool actual = in_check(&board, WHITE);
+    bool actual = in_check(&board, BLACK);
 
     print_test_result(test_result(actual == false, ""), __func__);
 }
@@ -575,7 +575,7 @@ static void test_in_checkmate4b()
 
     bool actual = in_checkmate(&board, BLACK);
 
-    print_test_result(test_result(actual == false, ""), __func__);
+    print_test_result(test_result(actual == true, ""), __func__);
 }
 
 static void test_in_checkmate5w()
@@ -645,7 +645,7 @@ static void test_in_checkmate6b()
             {BROOK0, BKNIGHT0, BBISHOP0, EMPTY, BKING,  EMPTY, BKNIGHT1, BROOK1},
         };
 
-    bool actual = in_checkmate(&board, WHITE);
+    bool actual = in_checkmate(&board, BLACK);
 
     print_test_result(test_result(actual == false, ""), __func__);
 }

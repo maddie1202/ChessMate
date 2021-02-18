@@ -362,7 +362,7 @@ move_list_t *generate_castling_moves(game_t *game, char king, char rook)
     if (in_check(game->board, colour)) return move_list;
     
     /* 4/5: the king is not castling into or through check */
-    for (int i = 1; i < bound; i++) {
+    for (int i = 1; i < 3; i++) { // king only moves 2 spaces over
         board_t *check_spot = copy_board(game->board);
         move_piece(check_spot, king, king_x + kingside * i, king_y);
         bool check = in_check(check_spot, colour);
@@ -468,6 +468,61 @@ move_list_t *generate_all_moves(game_t *game, int colour)
     // queenside castle
     move_list_t *queenside_castle_moves = generate_castling_moves(game, king, rooks[0]);
     add_all(master_list, queenside_castle_moves);
+    
+    return master_list;
+}
+
+/*
+ * Generate all moves EXCEPT for castling for a given player.
+ */
+move_list_t *generate_all_moves_but_castling(board_t *board, int colour)
+{
+    if (board == NULL || (colour != WHITE && colour != BLACK)) {
+        return NULL;
+    }
+
+    char *pawns = colour == WHITE ? wpawns : bpawns;
+    char *rooks = colour == WHITE ? wrooks : brooks;
+    char *knights = colour == WHITE ? wknights : bknights;
+    char *bishops = colour == WHITE ? wbishops : bbishops;
+    char *queens = colour == WHITE ? wqueens : bqueens;
+    char king = colour == WHITE ? WKING : BKING;
+
+    move_list_t *master_list = create_move_list(0);
+
+    // pawns
+    for (int i = 0; i < NUM_PAWNS; i++) {
+        move_list_t *pawn_moves = generate_pawn_moves(board, pawns[i], EMPTY);
+        add_all(master_list, pawn_moves);
+    }
+
+    // rooks
+    for (int i = 0; i < NUM_ROOKS; i++) {
+        move_list_t *rook_moves = generate_rook_moves(board, rooks[i]);
+        add_all(master_list, rook_moves);
+    }
+
+    // knights
+    for (int i = 0; i < NUM_KNIGHTS; i++) {
+        move_list_t *knight_moves = generate_knight_moves(board, knights[i]);
+        add_all(master_list, knight_moves);
+    }
+
+    // bishops
+    for (int i = 0; i < NUM_BISHOPS; i++) {
+        move_list_t *bishop_moves = generate_bishop_moves(board, bishops[i]);
+        add_all(master_list, bishop_moves);
+    }
+
+    // queens
+    for (int i = 0; i < NUM_QUEENS; i++) {
+        move_list_t *queen_moves = generate_queen_moves(board, queens[i]);
+        add_all(master_list, queen_moves);
+    }
+
+    // king
+    move_list_t *king_moves = generate_king_moves(board, king);
+    add_all(master_list, king_moves);
     
     return master_list;
 }

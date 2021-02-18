@@ -1,4 +1,5 @@
 #include "include/game.h"
+#include "include/possible-move-generators.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -122,10 +123,38 @@ board_t *generate_ai_move(game_t *game, int colour, int depth)
 
 bool in_check(board_t *board, int colour)
 {
+    if (colour != BLACK && colour != WHITE) return false;
+
+    char king = colour == WHITE ? WKING : BKING;
+    int other_colour = colour == WHITE ? BLACK : WHITE;
+
+    // get all moves opponent can make given the current board
+    move_list_t *opponent_moves = generate_all_moves_but_castling(board, other_colour);
+    
+    for (int i = 0; i < opponent_moves->num_moves; i++) {
+        // if the king is no longer on the board, we are in check
+        int x, y;
+        if (!find_piece(opponent_moves->moves[i], king, &x, &y)) return true;
+    }
     return false;
 }
 
 bool in_checkmate(board_t *board, int colour)
 {
-    return false;
+    if (colour != BLACK && colour != WHITE) return false;
+
+    char king = colour == WHITE ? WKING : BKING;
+
+    // if the current position, as well as any possible moves the king can make are in check, we are in checkmate
+
+    // check current position
+    if (!in_check(board, colour)) return false;
+
+    // get all of the king's moves: if these are also in check, then we have checkmate
+    move_list_t *king_moves = generate_king_moves(board, king);
+
+    for (int i = 0; i < king_moves->num_moves; i++) {
+        if (!in_check(king_moves->moves[i], colour)) return false;
+    }
+    return true;
 }
