@@ -3,6 +3,10 @@
 #include "include/game.h"
 #include "test/include/test.h"
 #include <stdbool.h>
+#include <math.h>
+
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
 
 char wpawns[] = {WPAWN0, WPAWN1, WPAWN2, WPAWN3, WPAWN4, WPAWN5, WPAWN6, WPAWN7};
 char bpawns[] = {BPAWN0, BPAWN1, BPAWN2, BPAWN3, BPAWN4, BPAWN5, BPAWN6, BPAWN7};
@@ -115,15 +119,49 @@ char get_piece(board_t *board, int x, int y)
 
 void print_board(board_t *board)
 {
-    for (int i = 0; i < 8; i++) {
+    printf("\n");
+
+    for (int i = 7; i >= 0; i--) {
         for (int j = 0; j < 8; j++) {
-            printf("%2d ", (*board)[i][j]);
+            char display[3];
+            char piece = (*board)[i][j];
+
+            display[0] = get_colour(piece) == WHITE ? 'w' : 'b';
+            if (is_pawn(piece)) {
+                display[1] = 'P';
+                display[2] = abs(piece) - WPAWN0 + '0';
+            } else if (is_knight(piece)) {
+                display[1] = 'N';
+                display[2] = abs(piece) - WKNIGHT0 + '0';
+            } else if (is_bishop(piece)) {
+                display[1] = 'B';
+                display[2] = abs(piece) - WBISHOP0 + '0';
+            } else if (is_rook(piece)) {
+                display[1] = 'R';
+                display[2] = abs(piece) - WROOK0 + '0';
+            } else if (is_queen(piece)) {
+                display[1] = 'Q';
+                display[2] = abs(piece) - WQUEEN0 + '0';
+            } else if (is_king(piece)) {
+                display[1] = 'K';
+                display[2] = ' ';
+            } else {
+                display[0] = ' ';
+                display[1] = ' ';
+                display[2] = ' ';
+            }
+
+            if (display[0] == 'b') {
+                printf(ANSI_COLOR_CYAN "%s " ANSI_COLOR_RESET, display);
+            } else {
+                printf("%s ", display);
+            }
         }
 
         printf("\n");
     }
 
-    printf("\n");
+    printf("\n\n");
 }
 
 bool is_pawn(char piece)
