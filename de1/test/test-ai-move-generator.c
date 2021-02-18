@@ -158,6 +158,8 @@ void test_generate_ai_move()
     for (int i = 0; i < num_moves - 1 && passing; i += 2) {
         test_move_and_response(game, moves[i], moves[i + 1]);
     }
+
+    destroy_game(game);
 }
 
 static void test_in_check0w()

@@ -134,8 +134,14 @@ bool in_check(board_t *board, int colour)
     for (int i = 0; i < opponent_moves->num_moves; i++) {
         // if the king is no longer on the board, we are in check
         int x, y;
-        if (!find_piece(opponent_moves->moves[i], king, &x, &y)) return true;
+        if (!find_piece(opponent_moves->moves[i], king, &x, &y)) {
+            destroy_move_list(opponent_moves);
+            return true;
+        }
     }
+
+    destroy_move_list(opponent_moves);
+
     return false;
 }
 
@@ -154,7 +160,13 @@ bool in_checkmate(board_t *board, int colour)
     move_list_t *king_moves = generate_king_moves(board, king);
 
     for (int i = 0; i < king_moves->num_moves; i++) {
-        if (!in_check(king_moves->moves[i], colour)) return false;
+        if (!in_check(king_moves->moves[i], colour)) {
+            destroy_move_list(king_moves);
+            return false;
+        }
     }
+
+    destroy_move_list(king_moves);
+
     return true;
 }

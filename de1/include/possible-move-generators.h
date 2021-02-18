@@ -20,6 +20,7 @@ move_list_t *generate_king_moves(board_t *board, char king);
 move_list_t *generate_castling_moves(game_t *game, char king, char rook);
 
 move_list_t *generate_all_moves(game_t *game, int colour);
+move_list_t *filter_move_list(move_list_t *move_list, int colour);
 move_list_t *generate_all_moves_but_castling(board_t *board, int colour);
 
 #endif

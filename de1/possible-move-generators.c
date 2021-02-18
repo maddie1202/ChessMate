@@ -418,58 +418,61 @@ move_list_t *generate_all_moves(game_t *game, int colour)
         return NULL;
     }
 
-    char *pawns = colour == WHITE ? wpawns : bpawns;
     char *rooks = colour == WHITE ? wrooks : brooks;
-    char *knights = colour == WHITE ? wknights : bknights;
-    char *bishops = colour == WHITE ? wbishops : bbishops;
-    char *queens = colour == WHITE ? wqueens : bqueens;
     char king = colour == WHITE ? WKING : BKING;
 
-    move_list_t *master_list = create_move_list(0);
+    move_list_t *all_moves = generate_all_moves_but_castling(game->board, colour);
 
-    // pawns
-    for (int i = 0; i < NUM_PAWNS; i++) {
-        move_list_t *pawn_moves = generate_pawn_moves(game->board, pawns[i], EMPTY);
-        add_all(master_list, pawn_moves);
-    }
-
-    // rooks
-    for (int i = 0; i < NUM_ROOKS; i++) {
-        move_list_t *rook_moves = generate_rook_moves(game->board, rooks[i]);
-        add_all(master_list, rook_moves);
-    }
-
-    // knights
-    for (int i = 0; i < NUM_KNIGHTS; i++) {
-        move_list_t *knight_moves = generate_knight_moves(game->board, knights[i]);
-        add_all(master_list, knight_moves);
-    }
-
-    // bishops
-    for (int i = 0; i < NUM_BISHOPS; i++) {
-        move_list_t *bishop_moves = generate_bishop_moves(game->board, bishops[i]);
-        add_all(master_list, bishop_moves);
-    }
-
-    // queens
-    for (int i = 0; i < NUM_QUEENS; i++) {
-        move_list_t *queen_moves = generate_queen_moves(game->board, queens[i]);
-        add_all(master_list, queen_moves);
-    }
-
-    // king
-    move_list_t *king_moves = generate_king_moves(game->board, king);
-    add_all(master_list, king_moves);
+    // filter out any moves where the player puts themselves into check
+    move_list_t *filtered_moves = filter_move_list(all_moves, colour);
 
     // kingside castle
     move_list_t *kingside_castle_moves = generate_castling_moves(game, king, rooks[1]);
-    add_all(master_list, kingside_castle_moves);
+    add_all(filtered_moves, kingside_castle_moves);
 
     // queenside castle
     move_list_t *queenside_castle_moves = generate_castling_moves(game, king, rooks[0]);
-    add_all(master_list, queenside_castle_moves);
+    add_all(filtered_moves, queenside_castle_moves);
     
-    return master_list;
+    return filtered_moves;
+}
+
+/*
+ * Filters out any potential moves that put the player into check.
+ * Frees move_list.
+ */
+move_list_t *filter_move_list(move_list_t *move_list, int colour)
+{
+    int check_count = 0;
+    bool *check = malloc(move_list->num_moves);
+
+    // find and flag all moves that put the player into check
+    for (int i = 0; i < move_list->num_moves; i++) {
+        if (in_check(move_list->moves[i], colour)) {
+            check[i] = true;
+            check_count++;
+        } else {
+            check[i] = false;
+        }
+    }
+    
+    // copy over moves that do not put the player in check into a new move list
+    move_list_t *filtered_list = create_move_list(move_list->num_moves - check_count);
+    for (int i = 0; i < move_list->num_moves; i++) {
+        if (!check[i]) {
+            filtered_list->moves[filtered_list->num_moves] = move_list->moves[i];
+            filtered_list->num_moves++;
+        } else {
+            free(move_list->moves[i]);
+        }
+    }
+
+    // free move_list
+    free(move_list->moves);
+    free(move_list);
+    free(check);
+    
+    return filtered_list;
 }
 
 /*
