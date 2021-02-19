@@ -80,8 +80,8 @@ move_list_t *generate_pawn_moves(board_t *board, char pawn, char upgrade_to)
     if (board == NULL || !is_pawn(pawn)) return NULL;
 
     char colour = get_colour(pawn);
-    int src_x, src_y;
-    find_piece(board, pawn, &src_x, &src_y);
+    int src_x = -1, src_y = -1;
+    if (!find_piece(board, pawn, &src_x, &src_y)) return NULL;
 
     int home_row = colour == WHITE ? 1 : 6;
 
@@ -137,7 +137,7 @@ move_list_t *generate_rook_moves(board_t *board, char rook)
     if (board == NULL || !is_rook(rook)) return NULL;
     
     // find board position on board and colour of piece
-    int rook_x, rook_y;
+    int rook_x = -1, rook_y = -1;
     if (!find_piece(board, rook, &rook_x, &rook_y)) return NULL;
     
     move_list_t *move_list = create_move_list(14); // max 14 moves for a rook
@@ -173,8 +173,8 @@ move_list_t *generate_knight_moves(board_t *board, char knight)
     if (board == NULL || !is_knight(knight)) return NULL;
 
     char colour = get_colour(knight);
-    int src_x, src_y;
-    find_piece(board, knight, &src_x, &src_y);
+    int src_x = -1, src_y = -1;
+    if (!find_piece(board, knight, &src_x, &src_y)) return NULL;
 
     move_list_t *move_list = create_move_list(8); // max 8 moves for a knight
 
@@ -204,7 +204,7 @@ move_list_t *generate_bishop_moves(board_t *board, char bishop)
     if (board == NULL || !is_bishop(bishop)) return NULL;
     
     // find board position on board and colour of piece
-    int bishop_x, bishop_y;
+    int bishop_x = -1, bishop_y = -1;
     if (!find_piece(board, bishop, &bishop_x, &bishop_y)) return NULL;
     
     move_list_t *move_list = create_move_list(14); // max 14 moves for a bishop
@@ -244,7 +244,7 @@ move_list_t *generate_queen_moves(board_t *board, char queen)
     if (board == NULL || !is_queen(queen)) return NULL;
     
     // find board position on board and colour of piece
-    int queen_x, queen_y;
+    int queen_x = -1, queen_y = -1;
     if (!find_piece(board, queen, &queen_x, &queen_y)) return NULL;
     
     move_list_t *move_list = create_move_list(28); // max 28 moves for a queen
@@ -306,8 +306,8 @@ move_list_t *generate_king_moves(board_t *board, char king)
     if (board == NULL || !is_king(king)) return NULL;
 
     char colour = get_colour(king);
-    int src_x, src_y;
-    find_piece(board, king, &src_x, &src_y);
+    int src_x = -1, src_y = -1;
+    if (!find_piece(board, king, &src_x, &src_y)) return NULL;
 
     move_list_t *move_list = create_move_list(8); // max 8 moves for a king
 
@@ -346,12 +346,12 @@ move_list_t *generate_castling_moves(game_t *game, char king, char rook)
     /* 1. neither king nor rook has moved from its original position */
     if (has_king_moved(game, king) || has_rook_moved(game, rook)) return move_list;
     
-    int king_x, king_y, rook_x, rook_y;
-    find_piece(game->board, king, &king_x, &king_y);
-    find_piece(game->board, rook, &rook_x, &rook_y);
+    int king_x = -1, king_y = -1, rook_x = -1, rook_y = -1;
+    if (!find_piece(game->board, king, &king_x, &king_y)) return move_list;
+    if (!find_piece(game->board, rook, &rook_x, &rook_y)) return move_list;
     int colour = get_colour(king);
 
-    int kingside = king_x < rook_x ? 1 : -1;
+    int kingside = (king_x < rook_x) ? 1 : -1;
 
     /* 2. there are no pieces between the king and rook */
     int bound = (kingside == 1) ? 3 : 4;
@@ -429,12 +429,12 @@ move_list_t *generate_all_moves(game_t *game, int colour)
     move_list_t *filtered_moves = filter_move_list(all_moves, colour);
 
     // // kingside castle
-    // move_list_t *kingside_castle_moves = generate_castling_moves(game, king, rooks[1]);
-    // add_all(filtered_moves, kingside_castle_moves);
+    move_list_t *kingside_castle_moves = generate_castling_moves(game, king, rooks[1]);
+    add_all(filtered_moves, kingside_castle_moves);
 
     // // queenside castle
-    // move_list_t *queenside_castle_moves = generate_castling_moves(game, king, rooks[0]);
-    // add_all(filtered_moves, queenside_castle_moves);
+    move_list_t *queenside_castle_moves = generate_castling_moves(game, king, rooks[0]);
+    add_all(filtered_moves, queenside_castle_moves);
     
     return filtered_moves;
 }

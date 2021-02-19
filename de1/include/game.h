@@ -177,6 +177,8 @@ int reverse_colour(int colour);
 bool has_king_moved(game_t *game, char king);
 bool has_rook_moved(game_t *game, char rook);
 
+void panic(char *msg);
+
 #endif
 
 

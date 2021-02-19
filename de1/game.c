@@ -99,7 +99,10 @@ void destroy_board()
 void destroy_game(game_t *game)
 {
     if (game == NULL) return;
-    if (game->board != NULL) free(game->board);
+    if (game->board != NULL) {
+        // print_board(game->board);
+        free(game->board);
+    }
     free(game);
 }
 
@@ -114,14 +117,15 @@ int find_piece(board_t *board, char piece, int *x, int *y)
             }
         }
     }
-    
+    *x = -1;
+    *y = -1;
     return 0;
 }
 
 void move_piece(board_t *board, char piece, int dest_x, int dest_y) 
 {
-    int src_x, src_y;
-    find_piece(board, piece, &src_x, &src_y);
+    int src_x = -1, src_y = -1;
+    if (!find_piece(board, piece, &src_x, &src_y)) panic("Couldn't find piece");
 
     (*board)[src_y][src_x] = EMPTY;
     (*board)[dest_y][dest_x] = piece;
@@ -131,6 +135,12 @@ char get_piece(board_t *board, int x, int y)
 {
     if (x < 0 || x > 7 || y < 0 || y > 7) return OUT_OF_BOUNDS;
     return (*board)[y][x];
+}
+
+void panic(char *msg)
+{
+    printf("PANIC: %s\n", msg);
+    exit(EXIT_FAILURE);
 }
 
 void print_board(board_t *board)
