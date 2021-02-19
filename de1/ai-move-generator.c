@@ -136,13 +136,14 @@ static double generate_ai_move_helper(game_t *game, int original_colour, int col
 
         if (maximize && score > min_or_max_score) {
             min_or_max_score = score;
-            alpha = fmax(alpha, min_or_max_score);
         } else if (!maximize && score < min_or_max_score){ 
             min_or_max_score = score;
-            beta = fmin(beta, min_or_max_score);
         }
+        
+        alpha = fmax(alpha, min_or_max_score);
+        beta = fmin(beta, min_or_max_score);
 
-        destroy_game(tmp_game);
+        free(tmp_game);
 
         if (beta <= alpha) {
             destroy_move_list(possible_moves);

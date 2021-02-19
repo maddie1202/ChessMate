@@ -426,13 +426,13 @@ move_list_t *generate_all_moves(game_t *game, int colour)
     // filter out any moves where the player puts themselves into check
     move_list_t *filtered_moves = filter_move_list(all_moves, colour);
 
-    // kingside castle
-    move_list_t *kingside_castle_moves = generate_castling_moves(game, king, rooks[1]);
-    add_all(filtered_moves, kingside_castle_moves);
+    // // kingside castle
+    // move_list_t *kingside_castle_moves = generate_castling_moves(game, king, rooks[1]);
+    // add_all(filtered_moves, kingside_castle_moves);
 
-    // queenside castle
-    move_list_t *queenside_castle_moves = generate_castling_moves(game, king, rooks[0]);
-    add_all(filtered_moves, queenside_castle_moves);
+    // // queenside castle
+    // move_list_t *queenside_castle_moves = generate_castling_moves(game, king, rooks[0]);
+    // add_all(filtered_moves, queenside_castle_moves);
     
     return filtered_moves;
 }
