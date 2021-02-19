@@ -10,6 +10,13 @@
 #define MAX_MOVES 100
 #define MINIMAX_DEPTH 3
 
+void test_ai_move_generator()
+{
+    // test_in_check();
+    // test_in_checkmate();
+    test_generate_ai_move();
+}
+
 typedef struct move 
 {
     char piece;
@@ -28,13 +35,6 @@ move_t move(char piece, int x, int y, bool castle)
     move.castle = castle;
 
     return move;
-}
-
-void test_ai_move_generator()
-{
-    test_in_check();
-    test_in_checkmate();
-    test_generate_ai_move();
 }
 
 move_t moves[MAX_MOVES];
@@ -69,7 +69,7 @@ static void initialize_moves()
     add_move(move(BKNIGHT1, 4, 3, false));
     add_move(move(WROOK1, 4, 0, false));
     add_move(move(BKNIGHT1, 2, 2, false));
-    add_move(move(WQUEEN0, 3, 1, false));
+    add_move(move(WQUEEN0, 3, 1, false)); // out of mem here???
     add_move(move(BKNIGHT1, 4, 3, false));
     add_move(move(WROOK1, 4, 3, false));
     add_move(move(BQUEEN0, 5, 5, false));
@@ -126,25 +126,34 @@ static bool test_move_and_response(game_t *game, move_t wmove, move_t bmove)
     move_piece(game->board, wmove.piece, wmove.x, wmove.y);
     move_rook_for_castle(game, wmove, WHITE);
 
-    if (PRINT_BOARDS) print_board(game->board);
+    if (PRINT_BOARDS) {
+        printf("White's move\n");
+        print_board(game->board);
+    }
 
     board_t *actual = generate_ai_move(game, BLACK, MINIMAX_DEPTH);
 
     move_piece(game->board, bmove.piece, bmove.x, bmove.y);
     move_rook_for_castle(game, bmove, BLACK);
     
-    if (PRINT_BOARDS) print_board(game->board);
+    if (PRINT_BOARDS) {
+        printf("Black's expected move\n");
+        print_board(game->board);
+        printf("Black's actual move\n");
+        print_board(actual);
+    }
 
     double expected_score = eval_board(game->board, BLACK);
     double actual_score = eval_board(actual, BLACK);
 
     if (actual != NULL) free(actual);
 
-    if (expected_score == actual_score) {
+    if (expected_score <= actual_score) {
         print_test_result(test_result(true, ""), __func__);
         return true;
     } else {
         print_test_result(test_result(false, "Unequal scores"), __func__);
+        printf("Expected score: %.2f  actual score: %.2f\n", expected_score, actual_score);
         return false;
     }
 }
@@ -156,7 +165,8 @@ void test_generate_ai_move()
     bool passing = true;
 
     for (int i = 0; i < num_moves - 1 && passing; i += 2) {
-        test_move_and_response(game, moves[i], moves[i + 1]);
+        // a test is only valid if the previous test has passed
+        passing = test_move_and_response(game, moves[i], moves[i + 1]);
     }
 
     destroy_game(game);

@@ -2,6 +2,8 @@
 #include "include/possible-move-generators.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <float.h>
+#include <math.h>
 
 double pawn_eval[8][8] = {
         { 0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0 },
@@ -116,9 +118,73 @@ double eval_board(board_t *board, int colour)
     return score;
 }
 
+// recursive helper
+static double generate_ai_move_helper(game_t *game, int original_colour, int colour, int depth, double alpha, double beta)
+{
+    if (depth == 0) return eval_board(game->board, colour);
+
+    move_list_t *possible_moves = generate_all_moves(game, colour);
+
+    bool maximize = colour == original_colour;
+
+    double min_or_max_score = maximize ? -DBL_MAX : DBL_MAX;
+
+    for (int i = 0; i < possible_moves->num_moves; i++) {
+        game_t *tmp_game = copy_game_replace_board(game, possible_moves->moves[i]);
+
+        double score = generate_ai_move_helper(tmp_game, original_colour, reverse_colour(colour), depth - 1, alpha, beta);
+
+        if (maximize && score > min_or_max_score) {
+            min_or_max_score = score;
+            alpha = fmax(alpha, min_or_max_score);
+        } else if (!maximize && score < min_or_max_score){ 
+            min_or_max_score = score;
+            beta = fmin(beta, min_or_max_score);
+        }
+
+        destroy_game(tmp_game);
+
+        if (beta <= alpha) {
+            destroy_move_list(possible_moves);
+            return min_or_max_score;
+        }
+    }
+
+    destroy_move_list(possible_moves);
+
+    return min_or_max_score;
+}
+
+// ignore alpha-beta pruning for now
 board_t *generate_ai_move(game_t *game, int colour, int depth)
 {
-    return NULL;
+    if (game == NULL || game->board == NULL || 
+        (colour != BLACK && colour != WHITE) || depth < 1) return NULL;
+
+    move_list_t *possible_moves = generate_all_moves(game, colour);
+
+    if (possible_moves->num_moves == 0) return NULL;
+
+    double max_score = -DBL_MAX;
+    int max_score_idx = 0;
+
+    for (int i = 0; i < possible_moves->num_moves; i++) {
+        game_t *tmp_game = copy_game_replace_board(game, possible_moves->moves[i]);
+
+        double score = generate_ai_move_helper(tmp_game, colour, reverse_colour(colour), depth, -DBL_MAX, DBL_MAX);
+
+        if (score > max_score) {
+            max_score = score;
+            max_score_idx = i;
+        }
+
+        destroy_game(tmp_game);
+    }
+
+    board_t *chosen_move = copy_board(possible_moves->moves[max_score_idx]);
+    destroy_move_list(possible_moves);
+
+    return chosen_move;
 }
 
 bool in_check(board_t *board, int colour)
@@ -126,7 +192,7 @@ bool in_check(board_t *board, int colour)
     if (colour != BLACK && colour != WHITE) return false;
 
     char king = colour == WHITE ? WKING : BKING;
-    int other_colour = colour == WHITE ? BLACK : WHITE;
+    int other_colour = reverse_colour(colour);
 
     // get all moves opponent can make given the current board
     move_list_t *opponent_moves = generate_all_moves_but_castling(board, other_colour);

@@ -16,4 +16,5 @@ ai-move-generator.c
 	$(wildcard test/generator-tests/*.c) \
 	game.c \
 	possible-move-generators.c \
-	ai-move-generator.c
+	ai-move-generator.c \
+	-lm

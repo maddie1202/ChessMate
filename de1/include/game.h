@@ -155,6 +155,7 @@ void init_and_set_board();
 board_t* copy_board(board_t* original);
 void destroy_board();
 game_t *init_game();
+game_t *copy_game_replace_board(game_t *old_game, board_t *new_board);
 void destroy_game(game_t *game);
 
 int find_piece(board_t *board, char piece, int *x, int *y);

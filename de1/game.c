@@ -76,6 +76,21 @@ void init_and_set_game()
     current_game = init_game();
 }
 
+game_t *copy_game_replace_board(game_t *old_game, board_t *new_board)
+{
+    game_t *game = malloc(sizeof(game_t));
+
+    game->board = copy_board(new_board);
+    game->wking_has_moved = old_game->wking_has_moved;
+    game->wrook0_has_moved = old_game->wrook0_has_moved;
+    game->wrook1_has_moved = old_game->wrook1_has_moved;
+    game->bking_has_moved = old_game->bking_has_moved;
+    game->brook0_has_moved = old_game->brook0_has_moved;
+    game->brook1_has_moved = old_game->brook1_has_moved;
+
+    return game;
+}
+
 void destroy_board()
 {
     free(current_game);
