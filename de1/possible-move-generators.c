@@ -16,11 +16,13 @@ void destroy_move_list(move_list_t *move_list)
 {
     if (move_list == NULL) return;
     
-    for (int i = 0; i < move_list->num_moves; i++) {
-        free(move_list->moves[i]);
+    if (move_list->moves != NULL) {
+        for (int i = 0; i < move_list->num_moves; i++) {
+            if (move_list->moves[i] != NULL) free(move_list->moves[i]);
+        }
+        free(move_list->moves);
     }
-
-    free(move_list->moves);
+    
     free(move_list);
 }
 

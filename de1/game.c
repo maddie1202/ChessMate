@@ -93,12 +93,13 @@ game_t *copy_game_replace_board(game_t *old_game, board_t *new_board)
 
 void destroy_board()
 {
-    free(current_game);
+    if (current_game != NULL) free(current_game);
 }
 
 void destroy_game(game_t *game)
 {
-    free(game->board);
+    if (game == NULL) return;
+    if (game->board != NULL) free(game->board);
     free(game);
 }
 
