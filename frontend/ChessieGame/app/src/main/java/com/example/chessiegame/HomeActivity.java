@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
+import android.widget.Button;
 import android.widget.Toast;
 import android.widget.Toolbar;
 import android.widget.ImageView;
@@ -36,6 +37,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         navView.bringToFront();
         setupDrawerContent(navView);
+
+        Button start = (Button) findViewById(R.id.start_new_game);
+
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeActivity.this, PopDifficulty.class));
+            }
+        });
 
         menu.setOnClickListener(new View.OnClickListener() {
             @Override

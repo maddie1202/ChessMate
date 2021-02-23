@@ -46,7 +46,6 @@
         <include
             layout="@layout/fragment_home_screen" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

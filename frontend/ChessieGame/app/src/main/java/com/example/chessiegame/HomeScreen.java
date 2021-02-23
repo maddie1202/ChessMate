@@ -63,4 +63,5 @@ public class HomeScreen extends Fragment {
         id = container.getId();
         return inflater.inflate(R.layout.fragment_home_screen, container, false);
     }
+
 }
