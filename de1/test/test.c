@@ -48,7 +48,9 @@ test_result_t board_list_equals(move_list_t* expected, move_list_t* actual)
                 break;
             }
         }
-        if (matches == 0) return test_result(false, "Incorrect move(s)");
+        if (matches == 0) {
+            return test_result(false, "Incorrect move(s)");
+        }
     }
 
     return test_result(true, "");
