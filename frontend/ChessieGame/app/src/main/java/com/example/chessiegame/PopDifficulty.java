@@ -29,7 +29,7 @@ public class PopDifficulty extends Activity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(PopDifficulty.this, HomeScreen.class));
+                startActivity(new Intent(PopDifficulty.this, HomeActivity.class));
             }
         });
     }
