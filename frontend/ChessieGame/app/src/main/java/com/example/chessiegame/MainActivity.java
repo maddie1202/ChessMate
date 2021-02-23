@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         googleLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent( v.getContext(), HomeScreen.class);
+                Intent intent = new Intent( v.getContext(), HomeActivity.class);
                 startActivity( intent );
             }
         });
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         facebookLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent( v.getContext(), HomeScreen.class);
+                Intent intent = new Intent( v.getContext(), HomeActivity.class);
                 startActivity( intent );
             }
         });

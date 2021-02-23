@@ -23,6 +23,7 @@ public class PastGamesScreen extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    public int id;
 
     public PastGamesScreen() {
         // Required empty public constructor
@@ -59,6 +60,7 @@ public class PastGamesScreen extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        id = container.getId();
         return inflater.inflate(R.layout.fragment_past_games_screen, container, false);
     }
 }

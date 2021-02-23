@@ -1,98 +1,66 @@
 package com.example.chessiegame;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
-import android.content.Intent;
-import android.widget.Toolbar;
-import android.widget.ImageView;
-import android.view.MenuItem;
-import com.google.android.material.navigation.NavigationView;
-
 import android.os.Bundle;
 
-public class HomeScreen extends AppCompatActivity {
-    private DrawerLayout drawerLayout;
-    private Toolbar toolbar;
-    private NavigationView navView;
-    private ImageView menu;
+import androidx.fragment.app.Fragment;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link HomeScreen#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class HomeScreen extends Fragment {
+
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+    public int id;
+
+    public HomeScreen() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment HomeScreen.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static HomeScreen newInstance(String param1, String param2) {
+        HomeScreen fragment = new HomeScreen();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_screen);
-
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navView = findViewById(R.id.nav_view);
-        menu = findViewById(R.id.menu_icon);
-
-        setupDrawerContent(navView);
-    }
-
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        selectDrawerItem(menuItem);
-                        return true;
-                    }
-                });
-    }
-
-    public void selectDrawerItem(MenuItem menuItem) {
-        // Create a new fragment and specify the fragment to show based on nav item clicked
-        Fragment fragment = null;
-        Class fragmentClass;
-
-        if (menuItem.getItemId() == R.id.nav_home) {
-            Intent intent = new Intent( this, HomeScreen.class);
-            startActivity( intent );
-            menuItem.setChecked(true);
-            drawerLayout.closeDrawers();
-            return;
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        /*switch(menuItem.getItemId()) {
-            case R.id.nav_account:
-                fragmentClass = SecondFragment.class;
-                break;
-            case R.id.nav_achievements:
-                fragmentClass = ThirdFragment.class;
-                break;
-            default:
-                fragmentClass = FirstFragment.class;
-        }
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-        // Highlight the selected item has been done by NavigationView
-        menuItem.setChecked(true);
-        // Set action bar title
-        setTitle(menuItem.getTitle());*/
-        // Close the navigation drawer
-        drawerLayout.closeDrawers();
     }
 
     @Override
-    public void onBackPressed(){
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        id = container.getId();
+        return inflater.inflate(R.layout.fragment_home_screen, container, false);
     }
-
-
 }
