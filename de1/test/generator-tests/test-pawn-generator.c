@@ -26,7 +26,7 @@ static void pawn_test0()
     w_expected.num_moves = 2;
 
     // generate WPAWN2 moves
-    move_list_t *w_actual = generate_pawn_moves(curr, WPAWN2, EMPTY);
+    move_list_t *w_actual = generate_pawn_moves(curr, WPAWN2);
 
     // move BPAWN2 from (2, 6) to (2, 5)
     board_t* b_expected1 = copy_board(curr);
@@ -42,7 +42,7 @@ static void pawn_test0()
     b_expected.num_moves = 2;
 
     // generate BPAWN2 moves
-    move_list_t *b_actual = generate_pawn_moves(curr, BPAWN2, EMPTY);
+    move_list_t *b_actual = generate_pawn_moves(curr, BPAWN2);
     
     // CMP boards
     test_result_t w_result = board_list_equals(&w_expected, w_actual);
@@ -85,7 +85,7 @@ static void pawn_test1()
     w_expected.num_moves = 0;
 
     // generate WPAWN4 moves
-    move_list_t *w_actual = generate_pawn_moves(&curr, WPAWN4, EMPTY);
+    move_list_t *w_actual = generate_pawn_moves(&curr, WPAWN4);
 
     move_list_t b_expected;
     board_t* b_expected_moves[0];
@@ -93,7 +93,7 @@ static void pawn_test1()
     b_expected.num_moves = 0;
 
     // generate BPAWN4 moves
-    move_list_t *b_actual = generate_pawn_moves(&curr, BPAWN4, EMPTY);
+    move_list_t *b_actual = generate_pawn_moves(&curr, BPAWN4);
 
     // CMP boards
     test_result_t w_result = board_list_equals(&w_expected, w_actual);
@@ -134,7 +134,7 @@ static void pawn_test2()
     move_piece(w_expected2, WPAWN3, 4, 4);
 
     // generate WPAWN3 moves
-    move_list_t *w_actual = generate_pawn_moves(&curr, WPAWN3, EMPTY);
+    move_list_t *w_actual = generate_pawn_moves(&curr, WPAWN3);
 
     move_list_t w_expected;
     board_t* w_expected_moves[2] = {w_expected1, w_expected2};
@@ -155,7 +155,7 @@ static void pawn_test2()
     b_expected.num_moves = 2;
 
     // generate BPAWN4 moves
-    move_list_t *b_actual = generate_pawn_moves(&curr, BPAWN4, EMPTY);
+    move_list_t *b_actual = generate_pawn_moves(&curr, BPAWN4);
     
     // CMP boards
     test_result_t w_result = board_list_equals(&w_expected, w_actual);
@@ -201,7 +201,7 @@ static void pawn_test3()
     w_expected.num_moves = 1;
 
     // generate WPAWN0 moves
-    move_list_t *w_actual = generate_pawn_moves(&curr, WPAWN0, EMPTY);
+    move_list_t *w_actual = generate_pawn_moves(&curr, WPAWN0);
 
     // move BPAWN7 from (7, 4) to (7, 3)
     board_t* b_expected1 = copy_board(&curr);
@@ -213,7 +213,7 @@ static void pawn_test3()
     b_expected.num_moves = 1;
 
     // generate BPAWN7 moves
-    move_list_t *b_actual = generate_pawn_moves(&curr, BPAWN7, EMPTY);
+    move_list_t *b_actual = generate_pawn_moves(&curr, BPAWN7);
     
     // CMP boards
     test_result_t w_result = board_list_equals(&w_expected, w_actual);
@@ -257,7 +257,7 @@ static void pawn_test4()
     w_expected.num_moves = 1;
 
     // generate WPAWN0 moves
-    move_list_t *w_actual = generate_pawn_moves(&curr, WPAWN0, EMPTY);
+    move_list_t *w_actual = generate_pawn_moves(&curr, WPAWN0);
 
     // move BPAWN7 from (7, 4) to (7, 3)
     board_t* b_expected1 = copy_board(&curr);
@@ -269,7 +269,7 @@ static void pawn_test4()
     b_expected.num_moves = 1;
 
     // generate BPAWN7 moves
-    move_list_t *b_actual = generate_pawn_moves(&curr, BPAWN7, EMPTY);
+    move_list_t *b_actual = generate_pawn_moves(&curr, BPAWN7);
     
     // CMP boards
     test_result_t w_result = board_list_equals(&w_expected, w_actual);
@@ -320,7 +320,7 @@ static void pawn_test5()
     wp0_expected.num_moves = 1;
     
     // generate WPAWN0 moves (upgrade to rook)
-    move_list_t *wp0_actual = generate_pawn_moves(&curr, WPAWN0, ROOK);
+    move_list_t *wp0_actual = generate_pawn_moves(&curr, WPAWN0);
 
     board_t wp1_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -339,7 +339,7 @@ static void pawn_test5()
     wp1_expected.num_moves = 1;
 
     // generate WPAWN1 moves (upgrade to knight)
-    move_list_t *wp1_actual = generate_pawn_moves(&curr, WPAWN1, KNIGHT);
+    move_list_t *wp1_actual = generate_pawn_moves(&curr, WPAWN1);
 
     board_t wp2_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -358,7 +358,7 @@ static void pawn_test5()
     wp2_expected.num_moves = 1;
 
     // generate WPAWN2 moves (upgrade to bishop)
-    move_list_t *wp2_actual = generate_pawn_moves(&curr, WPAWN2, BISHOP);
+    move_list_t *wp2_actual = generate_pawn_moves(&curr, WPAWN2);
 
     board_t wp3_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
@@ -377,7 +377,7 @@ static void pawn_test5()
     wp3_expected.num_moves = 1;
 
     // generate WPAWN3 moves (upgrade to queen)
-    move_list_t *wp3_actual = generate_pawn_moves(&curr, WPAWN3, QUEEN);
+    move_list_t *wp3_actual = generate_pawn_moves(&curr, WPAWN3);
 
     board_t bp4_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  BQUEEN5, EMPTY,    EMPTY,    EMPTY},
@@ -396,7 +396,7 @@ static void pawn_test5()
     bp4_expected.num_moves = 1;
 
     // generate BPAWN4 moves (upgrade to queen)
-    move_list_t *bp4_actual = generate_pawn_moves(&curr, BPAWN4, QUEEN);
+    move_list_t *bp4_actual = generate_pawn_moves(&curr, BPAWN4);
 
     board_t bp5_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  BBISHOP7, EMPTY,    EMPTY},
@@ -415,7 +415,7 @@ static void pawn_test5()
     bp5_expected.num_moves = 1;
 
     // generate BPAWN5 moves (upgrade to bishop)
-    move_list_t *bp5_actual = generate_pawn_moves(&curr, BPAWN5, BISHOP);
+    move_list_t *bp5_actual = generate_pawn_moves(&curr, BPAWN5);
 
     board_t bp6_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    BKNIGHT8, EMPTY},
@@ -434,7 +434,7 @@ static void pawn_test5()
     bp6_expected.num_moves = 1;
 
     // generate BPAWN4 moves (upgrade to knight)
-    move_list_t *bp6_actual = generate_pawn_moves(&curr, BPAWN6, KNIGHT);
+    move_list_t *bp6_actual = generate_pawn_moves(&curr, BPAWN6);
 
     board_t bp7_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    BROOK9},
@@ -453,7 +453,7 @@ static void pawn_test5()
     bp7_expected.num_moves = 1;
 
     // generate BPAWN7 moves (upgrade to rook)
-    move_list_t *bp7_actual = generate_pawn_moves(&curr, BPAWN7, ROOK);
+    move_list_t *bp7_actual = generate_pawn_moves(&curr, BPAWN7);
 
     // CMP boards
     test_result_t wp0_result = board_list_equals(&wp0_expected, wp0_actual);
@@ -519,7 +519,7 @@ static void pawn_test6()
     wp0_expected.num_moves = 1;
     
     // generate WPAWN0 moves (default upgrade to queen)
-    move_list_t *wp0_actual = generate_pawn_moves(&curr, WPAWN0, EMPTY);
+    move_list_t *wp0_actual = generate_pawn_moves(&curr, WPAWN0);
 
     board_t bp4_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  BQUEEN5, EMPTY,    EMPTY,    EMPTY},
@@ -538,7 +538,7 @@ static void pawn_test6()
     bp4_expected.num_moves = 1;
 
     // generate BPAWN4 moves (default upgrade to queen given invalid upgrade to king)
-    move_list_t *bp4_actual = generate_pawn_moves(&curr, BPAWN4, BKING);
+    move_list_t *bp4_actual = generate_pawn_moves(&curr, BPAWN4);
 
     // CMP boards
     test_result_t wp0_result = board_list_equals(&wp0_expected, wp0_actual);
@@ -561,10 +561,10 @@ static void pawn_test7()
     board_t *curr = init_board();
 
     // try to generate pawn moves for a rook
-    move_list_t *w_actual = generate_pawn_moves(curr, WROOK1, EMPTY);
+    move_list_t *w_actual = generate_pawn_moves(curr, WROOK1);
 
     // try to generate pawn moves for a king
-    move_list_t *b_actual = generate_pawn_moves(curr, BKING, EMPTY);
+    move_list_t *b_actual = generate_pawn_moves(curr, BKING);
 
     test_result_t w_result;
     if (w_actual != NULL) {
