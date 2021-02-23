@@ -7,6 +7,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toolbar;
 import android.widget.ImageView;
 import android.view.MenuItem;
@@ -20,6 +27,7 @@ public class HomeScreen extends AppCompatActivity {
     private NavigationView navView;
     private ImageView menu;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +37,20 @@ public class HomeScreen extends AppCompatActivity {
         navView = findViewById(R.id.nav_view);
         menu = findViewById(R.id.menu_icon);
 
+        Button start = (Button) findViewById(R.id.start_new_game);
+
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeScreen.this, PopDifficulty.class));
+            }
+        });
+
+
         setupDrawerContent(navView);
+
+
+
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -93,6 +114,9 @@ public class HomeScreen extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+
+
 
 
 }
