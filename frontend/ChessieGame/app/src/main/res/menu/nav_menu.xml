@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      android:checkableBehavior="single" >
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/home_icon"
+        android:title="Home" />
+
+    <item
+        android:id="@+id/nav_account"
+        android:icon="@drawable/account_icon"
+        android:title="Account" />
+
+    <item
+        android:id="@+id/nav_achievements"
+        android:icon="@drawable/star_icon"
+        android:title="Achievements" />
+
+    <item
+        android:id="@+id/nav_games"
+        android:icon="@drawable/games_icon"
+        android:title="Past Games" />
+</menu>
