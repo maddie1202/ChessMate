@@ -12,8 +12,8 @@
 
 void test_ai_move_generator()
 {
-    // test_in_check();
-    // test_in_checkmate();
+    test_in_check();
+    test_in_checkmate();
     test_generate_ai_move();
 }
 
