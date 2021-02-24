@@ -72,7 +72,9 @@ public class HomeScreen extends Fragment {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), PopDifficulty.class));
+                Intent intent = new Intent(getActivity(), PopDifficulty.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
             }
         });
 
