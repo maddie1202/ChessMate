@@ -7,6 +7,7 @@
  - update a user by userId
  - remove a user by userId
 */
+// test push from server
 
 const sql = require("./db.js");
 
