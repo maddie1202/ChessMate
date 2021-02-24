@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChessieGame">
-        <activity android:name=".HomeActivity"></activity>
+        <activity android:name=".ChessScreen"></activity>
+        <activity android:name=".HomeActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,10 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".PopDifficulty"
-            android:theme="@style/AppTheme.CustomTheme"
-            ></activity>
+        <activity
+            android:name=".PopDifficulty"
+            android:theme="@style/AppTheme.CustomTheme" />
     </application>
 
 </manifest>

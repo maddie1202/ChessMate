@@ -24,12 +24,34 @@ public class PopDifficulty extends Activity {
 
         getWindow().setLayout((int) (width*.95), (int) (height*.9));
 
-        ImageButton close = (ImageButton)findViewById(R.id.close_button);
+        ImageButton closeButton = (ImageButton) findViewById(R.id.close_button);
+        Button startGame = (Button) findViewById(R.id.start_button);
+        Button easyGame = (Button) findViewById(R.id.easy_button);
 
-        close.setOnClickListener(new View.OnClickListener() {
+        closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PopDifficulty.this, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                overridePendingTransition(0,0);
+            }
+        });
+
+        startGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PopDifficulty.this, ChessScreen.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                overridePendingTransition(0,0);
+            }
+        });
+
+        easyGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PopDifficulty.this, ChessScreen.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 overridePendingTransition(0,0);
