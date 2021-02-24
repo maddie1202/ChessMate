@@ -53,21 +53,29 @@ static int check_move(board_t *board, int x, int y, char piece, move_list_t *mov
 }
 
 /*
- * Upgrades the pawn on the board to a rook, knight, bishop or queen.
+ * Upgrades the pawn on the board to a rook, knight, bishop and queen.
  * If a specific upgrade wasn't selected, defaults to queen.
- * Alters move directly.
+ * Alters move_list directly.
  */
-static void upgrade_pawn(board_t *move, int x, int y, char pawn, char upgrade_to)
+static void upgrade_pawn(board_t *board, move_list_t *move_list, int dest_x, int dest_y, char pawn)
 {
     char colour = get_colour(pawn);
 
-    if (upgrade_to == ROOK) pawn = colour == WHITE ? pawn + 10 : pawn - 10;
-    else if (upgrade_to == KNIGHT) pawn = colour == WHITE ? pawn + 20 : pawn - 20;
-    else if (upgrade_to == BISHOP) pawn = colour == WHITE ? pawn + 30 : pawn -30;
-    else pawn = colour == WHITE ? pawn + 39 : pawn - 39; // default upgrade to queen
+    char rook = colour == WHITE ? pawn + 10 : pawn - 10;
+    add_move_to_list(move_list, board, pawn, dest_x, dest_y);
+    (*move_list->moves[move_list->num_moves - 1])[dest_y][dest_x] = rook;
 
-    // note coordinate swap
-    (*move)[y][x] = pawn;
+    char knight = colour == WHITE ? pawn + 20 : pawn - 20;
+    add_move_to_list(move_list, board, pawn, dest_x, dest_y);
+    (*move_list->moves[move_list->num_moves - 1])[dest_y][dest_x] = knight;
+
+    char bishop = colour == WHITE ? pawn + 30 : pawn -30;
+    add_move_to_list(move_list, board, pawn, dest_x, dest_y);
+    (*move_list->moves[move_list->num_moves - 1])[dest_y][dest_x] = bishop;
+
+    char queen = colour == WHITE ? pawn + 39 : pawn - 39;
+    add_move_to_list(move_list, board, pawn, dest_x, dest_y);
+    (*move_list->moves[move_list->num_moves - 1])[dest_y][dest_x] = queen;
 }
 
 /*
@@ -75,7 +83,7 @@ static void upgrade_pawn(board_t *move, int x, int y, char pawn, char upgrade_to
  * If the pawn reaches the other side of the board, it is upgraded
  * to a rook, bishop, knight, or queen.
  */
-move_list_t *generate_pawn_moves(board_t *board, char pawn, char upgrade_to)
+move_list_t *generate_pawn_moves(board_t *board, char pawn)
 {
     if (board == NULL || !is_pawn(pawn)) return NULL;
 
@@ -85,38 +93,38 @@ move_list_t *generate_pawn_moves(board_t *board, char pawn, char upgrade_to)
 
     int home_row = colour == WHITE ? 1 : 6;
 
-    move_list_t *move_list = create_move_list(4); // max 4 moves for a pawn
+    move_list_t *move_list = create_move_list(12); // max 12 moves for a pawn
 
     // move forward by 1
     int forward = colour == WHITE ? 1 : -1;
     if (get_piece(board, src_x, src_y + forward) == EMPTY) {
-        add_move_to_list(move_list, board, pawn, src_x, src_y + forward);
         // pawn upgrade
         if ((colour == WHITE && (src_y + forward == 7)) || (colour == BLACK && (src_y + forward == 0))) {
-            board_t *move = move_list->moves[move_list->num_moves - 1];
-            upgrade_pawn(move, src_x, src_y + forward, pawn, upgrade_to);
+            upgrade_pawn(board, move_list, src_x, src_y + forward, pawn);
+        } else {
+            add_move_to_list(move_list, board, pawn, src_x, src_y + forward);
         }
     }
 
     // diagonal capture x + 1
     char dest_piece = get_piece(board, src_x + 1, src_y + forward);
     if (dest_piece != OUT_OF_BOUNDS && dest_piece != EMPTY && get_colour(dest_piece) == reverse_colour(colour)) {
-        add_move_to_list(move_list, board, pawn, src_x + 1, src_y + forward);
         // pawn upgrade
         if ((colour == WHITE && (src_y + forward == 7)) || (colour == BLACK && (src_y + forward == 0))) {
-            board_t *move = move_list->moves[move_list->num_moves - 1];
-            upgrade_pawn(move, src_x, src_y + forward, pawn, upgrade_to);
+            upgrade_pawn(board, move_list, src_x + 1, src_y + forward, pawn);
+        } else {
+            add_move_to_list(move_list, board, pawn, src_x + 1, src_y + forward);
         }
     }
 
     // diagonal capture x - 1
     dest_piece = get_piece(board, src_x - 1, src_y + forward);
     if (dest_piece != OUT_OF_BOUNDS && dest_piece != EMPTY && get_colour(dest_piece) == reverse_colour(colour)) {
-        add_move_to_list(move_list, board, pawn, src_x - 1, src_y + forward);
         // pawn upgrade
         if ((colour == WHITE && (src_y + forward == 7)) || (colour == BLACK && (src_y + forward == 0))) {
-            board_t *move = move_list->moves[move_list->num_moves - 1];
-            upgrade_pawn(move, src_x, src_y + forward, pawn, upgrade_to);
+            upgrade_pawn(board, move_list, src_x - 1, src_y + forward, pawn);
+        } else {
+            add_move_to_list(move_list, board, pawn, src_x - 1, src_y + forward);
         }
     }
 
@@ -497,7 +505,7 @@ move_list_t *generate_all_moves_but_castling(board_t *board, int colour)
 
     // pawns
     for (int i = 0; i < NUM_PAWNS; i++) {
-        move_list_t *pawn_moves = generate_pawn_moves(board, pawns[i], EMPTY);
+        move_list_t *pawn_moves = generate_pawn_moves(board, pawns[i]);
         add_all(master_list, pawn_moves);
     }
 
