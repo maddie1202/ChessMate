@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 public class ChessScreen extends AppCompatActivity {
 
-    TextView piece;
+    TextView piece, place;
     GridLayout gir;
 
 
@@ -28,10 +28,13 @@ public class ChessScreen extends AppCompatActivity {
         piece = (TextView) findViewById(R.id.pawn_queen);
         gir = (GridLayout) findViewById(R.id.grid);
 
+        //Test piece , delete later
+        place = (TextView) findViewById(R.id.P00);
 
-        gir.setOnDragListener(dragListener);
 
         piece.setOnLongClickListener(longClickListener);
+        gir.setOnDragListener(dragListener);
+        place.setOnDragListener(dragListener);
 
     }
 
@@ -48,17 +51,19 @@ public class ChessScreen extends AppCompatActivity {
     View.OnDragListener dragListener = new View.OnDragListener() {
         @Override
         public boolean onDrag(View view, DragEvent event) {
-
+            View v = (View) event.getLocalState();
             int dragEvent = event.getAction();
             switch (dragEvent){
                 case DragEvent.ACTION_DRAG_ENTERED:
-
-                    final View v = (View) event.getLocalState();
-
                    break;
                 case DragEvent.ACTION_DRAG_EXITED:
                     break;
                 case DragEvent.ACTION_DROP:
+                    view.animate()
+                            .x(gir.getX())
+                            .y(gir.getY())
+                            .setDuration(700)
+                            .start();
                     break;
             }
 
