@@ -4,333 +4,390 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/view_root"
     tools:context=".ChessScreen">
 
 
-    <GridLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:rowCount="8"
-        android:columnCount="8"
-        android:id="@+id/grid"
-        app:layout_constraintRight_toRightOf="parent"
+    <FrameLayout
+
+        android:id="@+id/pawn_chioces"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#dcf18d6d"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        //Change order
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        //Chessboard
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        //Change order
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        //Change order
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        //Change order
-
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-        <TextView
-            android:background="@color/white"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
-
-        <TextView
-            android:background="@color/black"
-            android:layout_width="43dp"
-            android:layout_height="43dp" />
+        <!--android:drawableLeft="@drawable/bbishop"-->
 
 
+        <TextView
+            android:id="@+id/pawn_queen"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5sp"
+            android:background="#642C9C"
+            android:drawableLeft="@drawable/wqueen"
+            android:drawableRight="@drawable/bqueen"
+            android:elevation="6dp"
+            android:gravity="center_horizontal"
+            android:padding="5sp"
+            android:text="Queen"
+            android:textAlignment="center"
+            android:textColor="#e60f0f"
+            android:textSize="40sp" />
+
+        <GridLayout
+            android:id="@+id/grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="8"
+            android:rowCount="8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            //Change order
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            //Chessboard
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            //Change order
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            //Change order
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            //Change order
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+        </GridLayout>
+
+    </FrameLayout>
 
 
-    </GridLayout>
+
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
