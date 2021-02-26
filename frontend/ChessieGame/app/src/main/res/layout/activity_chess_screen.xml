@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/view_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChessScreen">
+
+
+    <LinearLayout
+
+        android:id="@+id/pawn_chioces"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#dcf18d6d"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!--android:drawableLeft="@drawable/bbishop"-->
+
+
+        <TextView
+            android:id="@+id/pawn_queen"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5sp"
+            android:background="#642C9C"
+            android:baselineAligned="false"
+            android:elevation="6dp"
+            android:gravity="center_horizontal"
+            android:padding="5sp"
+            android:text="Queen"
+            android:textAlignment="center"
+            android:textColor="#e60f0f"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+
+        <GridLayout
+            android:id="@+id/grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="8"
+            android:rowCount="8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="43dp"
+                android:id="@+id/P00"
+                android:layout_height="43dp"
+                android:layout_row="0"
+                android:layout_column="0"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            //Change order
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            //Chessboard
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            //Change order
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            //Change order
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            //Change order
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@color/black" />
+
+        </GridLayout>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@
  - update a user by userId
  - remove a user by userId
 */
+// test push from server
 
 const sql = require("./db.js");
 
@@ -16,6 +17,9 @@ const sql = require("./db.js");
  */
 const User = function(user) {
   this.user_id = user.user_id;
+  this.games = user.games; // collection of game ids - could be its own thing
+  this.doneAchievements = user.doneAchievements; // initialize to []
+  this.currAchievements = user.currAchievements; // in progress/not started
 }
 
 User.create = (userId, result) => {
@@ -26,7 +30,7 @@ User.findById = (userId, result) => {
 
 }
 
-User.updateById = (userId, result) => {
+User.updateById = (userId, result) => { // will deal with achievements here
 
 }
 
