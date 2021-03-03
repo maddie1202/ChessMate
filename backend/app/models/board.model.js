@@ -26,7 +26,6 @@ const Board = function(board){
     this.board_id = board.board_id;
     this.placements = board.placements;
     this.game_id = board.game_id; // unique
-    this.user_id = board.user_id; // user_id associated with the board
 };
 
 Board.create = (newBoard, result) => {

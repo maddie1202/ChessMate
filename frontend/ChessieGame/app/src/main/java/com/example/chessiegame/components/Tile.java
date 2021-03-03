@@ -8,7 +8,7 @@ public class Tile {
 
     public Tile(int x, int y, char piece) {
         this.piece = piece;
-        // rest of contructor depends on starting state
+        // rest of constructor depends on starting state
     }
 
     // TODO: write more class functions

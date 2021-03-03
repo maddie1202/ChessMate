@@ -6,4 +6,7 @@ import java.util.List;
 public class Board {
     public List<List<Tile>> board;
 
+    public Board() { // initialize a new chessboard
+
+    }
 }
