@@ -25,9 +25,12 @@ public class HomeScreen extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private FirebaseUser user;
+   /* private FirebaseUser user;
     private FirebaseAuth mAuth;
-    private String uid;
+    private String uid;*/
+
+    //RequestQueue queue = Volley.newRequestQueue(this);
+    String url ="https://www.google.com";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -75,12 +78,12 @@ public class HomeScreen extends Fragment {
         View v = inflater.inflate(R.layout.fragment_home_screen, container, false);
 
         start = v.findViewById(R.id.start_new_game);
-        mAuth = FirebaseAuth.getInstance();
+        /*mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         uid = user.getUid();
 
         TextView userUID = v.findViewById(R.id.user_uid);
-        userUID.setText(uid);
+        userUID.setText(uid);*/
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
