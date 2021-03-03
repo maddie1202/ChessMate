@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.bumptech.glide.Glide;
 
 import android.content.Intent;
 import android.widget.Button;

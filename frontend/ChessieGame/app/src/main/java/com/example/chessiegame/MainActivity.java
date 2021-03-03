@@ -17,10 +17,10 @@ import com.google.android.gms.tasks.Task;
 import android.util.Log;
 import com.google.android.gms.common.api.ApiException;
 import com.google.firebase.auth.GoogleAuthProvider;
-import androidx.annotation.NonNull;
 
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 import android.view.View;
 import android.content.Intent;
 
@@ -47,11 +47,12 @@ public class MainActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
 
         googleLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn();
+                signIn(user);
             }
         });
 
@@ -82,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (ApiException e) {
                     // Google Sign In failed, update UI appropriately
                     Log.w("Signin failed", "Google sign in failed", e);
-                    // ...
                 }
             } else {
                 Log.w("Signin failed", ex.toString());
@@ -107,12 +107,22 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+    private void signIn(FirebaseUser user) {
+        if (user != null) {
+            Intent intent = new Intent( this, HomeActivity.class);
+            startActivity( intent );
+            finish();
+        } else {
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        }
     }
 
-
-
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
+        Toast.makeText(MainActivity.this,"There is no back action",Toast.LENGTH_LONG).show();
+        return;
+    }
 
 }

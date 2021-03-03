@@ -1,5 +1,6 @@
 package com.example.chessiegame;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +8,14 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Button;
+import com.bumptech.glide.Glide;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +28,10 @@ public class AccountScreen extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private Button signOutBtn;
+    private FirebaseUser user;
+    private FirebaseAuth mAuth;
+    private ImageView profile;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -61,6 +74,27 @@ public class AccountScreen extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         id = container.getId();
-        return inflater.inflate(R.layout.fragment_account_screen, container, false);
+        View v = inflater.inflate(R.layout.fragment_account_screen, container, false);
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        profile = v.findViewById(R.id.accountPic);
+        signOutBtn = v.findViewById(R.id.signOutBtn);
+
+        Glide.with(this).load(user.getPhotoUrl()).into(profile);
+        signOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.signOut();
+                GoogleSignIn.getClient(
+                        getContext(),
+                        new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+                ).signOut();
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        return v;
     }
 }
