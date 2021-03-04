@@ -25,10 +25,13 @@ public class ChessScreen extends AppCompatActivity {
 
     Board board_view;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         board_view = new Board(this);
+
         setContentView(board_view);
 
         /*
@@ -44,6 +47,7 @@ public class ChessScreen extends AppCompatActivity {
         place.setOnDragListener(dragListener);
         */
     }
+
 
 
 

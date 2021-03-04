@@ -52,6 +52,12 @@ public class Tile {
     }
 
 
+    //public int setImage() {
+
+        //square.
+   // }
+
+
         // TODO: write more class functions
 
 }
