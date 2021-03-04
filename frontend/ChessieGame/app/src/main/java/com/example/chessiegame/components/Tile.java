@@ -44,11 +44,11 @@ public class Tile {
     }
 
     public int getRow(){
-        return col;
+        return row;
     }
 
     public int getCol(){
-        return row;
+        return col;
     }
 
 
