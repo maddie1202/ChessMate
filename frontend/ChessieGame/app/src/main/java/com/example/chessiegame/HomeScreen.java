@@ -10,9 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,8 +36,8 @@ public class HomeScreen extends Fragment {
     private FirebaseAuth mAuth;
     private String uid;*/
 
-    //RequestQueue queue = Volley.newRequestQueue(this);
-    String url ="https://www.google.com";
+    //RequestQueue queue = Volley.newRequestQueue(getActivity());
+    String url ="https://localhost:3000/";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -94,7 +101,28 @@ public class HomeScreen extends Fragment {
             }
         });
 
+        //tryGetRequest();
+
         return v;
+    }
+
+    public void tryGetRequest() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        Toast.makeText(getActivity(),response,Toast.LENGTH_LONG).show();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity(),"Error with GET Request",Toast.LENGTH_LONG).show();
+            }
+        });
+
+        // Add the request to the RequestQueue.
+        //queue.add(stringRequest);
     }
 
 }
