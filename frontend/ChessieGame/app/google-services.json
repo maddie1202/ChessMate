@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "687858811033",
+    "project_id": "chessiegame",
+    "storage_bucket": "chessiegame.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687858811033:android:e76f4e83be4075a4acb808",
+        "android_client_info": {
+          "package_name": "com.example.chessiegame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "687858811033-bnu1iink9mre00vd4ku4ds0avir67ig2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF6DpJXZH2whLW7lRqQCRIpLVsHbiXDJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "687858811033-bnu1iink9mre00vd4ku4ds0avir67ig2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

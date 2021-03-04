@@ -5,13 +5,13 @@ module.exports = app => {
   // Create a new user
   app.post("/users", users.create);
 
-  // Retrieve a single Board with boardId
+  // Retrieve a single user with userId
   app.get("/users/:userId", users.findOne);
 
-  // Update a Board with boardId
+  // Update a user with userId
   app.put("/users/:userId", users.update);
 
-  // Delete a Board by boardId
-  app.delete("/boards/:userId", users.delete);
+  // Delete a user by userId
+  app.delete("/users/:userId", users.delete);
 
 }

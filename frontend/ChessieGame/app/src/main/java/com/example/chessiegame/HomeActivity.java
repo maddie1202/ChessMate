@@ -9,6 +9,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.bumptech.glide.Glide;
+
 import android.content.Intent;
 import android.widget.Button;
 import android.widget.Toast;
@@ -25,11 +29,18 @@ public class HomeActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private Toolbar tb;
     private NavigationView navView;
+    private FirebaseUser user;
+    private FirebaseAuth mAuth;
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
+
+        /*mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        uid = user.getUid();*/
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navView = findViewById(R.id.nav_view);

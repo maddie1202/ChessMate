@@ -9,6 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +32,9 @@ public class HomeScreen extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+   /* private FirebaseUser user;
+    private FirebaseAuth mAuth;
+    private String uid;*/
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -68,6 +82,12 @@ public class HomeScreen extends Fragment {
         View v = inflater.inflate(R.layout.fragment_home_screen, container, false);
 
         start = v.findViewById(R.id.start_new_game);
+        /*mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        uid = user.getUid();
+
+        TextView userUID = v.findViewById(R.id.user_uid);
+        userUID.setText(uid);*/
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +98,31 @@ public class HomeScreen extends Fragment {
             }
         });
 
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        String url ="http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000";
+
+        tryGetRequest(queue, url);
+
         return v;
+    }
+
+    public void tryGetRequest(RequestQueue queue, String url) {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        Toast.makeText(getActivity(),response,Toast.LENGTH_LONG).show();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity(),error.getMessage(),Toast.LENGTH_LONG).show();
+            }
+        });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
 }

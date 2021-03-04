@@ -8,7 +8,7 @@ game.c \
 possible-move-generators.c \
 ai-move-generator.c
 
-	gcc -g -o bin/runtest \
+	gcc -std=c99 -Wall -fsigned-char -g -o bin/runtest \
 	test/test.c \
 	test/test-game.c \
 	test/test-possible-move-generators.c \
