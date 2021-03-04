@@ -21,8 +21,8 @@ app.listen(3000, () => {
 
 /*
 What we do are:
-– import express and body-parser modules. 
-- Express is for building the Rest apis, and 
+– import express and body-parser modules.
+- Express is for building the Rest apis, and
 - body-parser helps to parse the request and create the req.body object that we will need to access in our routes.
 – create an Express app, then add body-parser middlewares using app.use() method.
 – define a GET route which is simple for test.
