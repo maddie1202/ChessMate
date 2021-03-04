@@ -14,17 +14,24 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.chessiegame.components.Board;
+
 public class ChessScreen extends AppCompatActivity {
 
+    /*
     TextView piece, place;
     GridLayout gir;
+    */
 
+    Board board_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chess_screen);
+        board_view = new Board(this);
+        setContentView(board_view);
 
+        /*
         piece = (TextView) findViewById(R.id.pawn_queen);
         gir = (GridLayout) findViewById(R.id.grid);
 
@@ -35,9 +42,12 @@ public class ChessScreen extends AppCompatActivity {
         piece.setOnLongClickListener(longClickListener);
         gir.setOnDragListener(dragListener);
         place.setOnDragListener(dragListener);
-
+        */
     }
 
+
+
+        /*
     View.OnLongClickListener longClickListener = new View.OnLongClickListener(){
         @Override
         public boolean onLongClick(View view) {
@@ -71,6 +81,8 @@ public class ChessScreen extends AppCompatActivity {
         }
     };
 
+`
+     */
 
 
 }
