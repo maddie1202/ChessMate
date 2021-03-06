@@ -12,10 +12,11 @@ const sql = require("./db.js");
 
 //In MySQL, we have a table
 //
-//CREATE TABLE IF NOT EXISTS 'boards' (
-//  board_id int(40) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-//  placements varchar(255) NOT NULL, /////////NEED TO CREATE A DIFFERENT TABLE HERE
-//  game_id int(20) NOT NULL
+//CREATE TABLE IF NOT EXISTS 'Board' (
+//  boardID int(40) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+//  placements varchar(1300) NOT NULL,
+//  gameID int(20) NOT NULL
+//  sequenceNum int(20)
 //) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 //
 
@@ -23,25 +24,26 @@ const sql = require("./db.js");
 
 //constructor
 const Board = function(board){
-    this.board_id = board.board_id;
+    this.boardID = board.boardID;
     this.placements = board.placements;
-    this.game_id = board.game_id; // unique
+    this.gameID = board.gameID;
+    this.sequenceNum = board.sequenceNum;
 };
 
 Board.create = (newBoard, result) => {
-    sql.query("INSERT INTO boards SET ?", newBoard, (err,res) => {
+    sql.query("INSERT INTO Board SET ?", newBoard, (err,res) => {
         if(err){
             console.log("error: ", err);
             result(err, null);
             return;
         }
         console.log("created board: ", {id: res.insertId, ...newBoard });
-        result(null, { id: res.insertId, ...newCustomer});
+        result(null, { id: res.insertId, ...newBoard});
     });
 };
 
-Board.findById = (boardId, result) => {
-    sql.query('SELECT * FROM Customers WHERE id = ${boardId}', (err, res) => {
+Board.findById = (boardID, result) => {
+    sql.query('SELECT * FROM Board WHERE boardID = ${boardID}', (err, res) => {
         if(err){
             console.log("error: ", err);
             result(err, null);
@@ -49,18 +51,18 @@ Board.findById = (boardId, result) => {
         }
 
         if(res.length) {
-            console.log("found board: ", res[0]); // print boardId
+            console.log("found board: ", res[0]); // print boardID
             result(null, res[1]);       //provide placements
             return;
         }
 
-        //not found Board with the boardId
+        //not found Board with the boardID
         result({ kind: "not_found" }, null);
     });
 };
 
-Board.getAll = (gameId, result) => {
-    sql.query("SELECT * FROM boards", (err, res) => {
+Board.getAll = (gameID, result) => {
+    sql.query("SELECT * FROM Board WHERE gameID = ${gameID}", (err, res) => {
         if(err) {
             console.log("error: ", err);
             result(null, err);
@@ -72,10 +74,10 @@ Board.getAll = (gameId, result) => {
     });
 };
 
-Board.updateById = (boardId, board, result) => {
+Board.updateById = (boardID, board, result) => {
     sql.query(
-        "UPDATE boards SET placements = ?, game_id = ? WHERE board_id = ?",
-        [boardId, board.placements, board.game_id],
+        "UPDATE Board SET placements = ?, gameID = ?, sequenceNum = ? WHERE boardID = ?",
+        [boardID, board.placements, board.gameID, sequenceNum],
         (err, res) => {
             if(err) {
                 console.log("error: ", err);
@@ -89,16 +91,16 @@ Board.updateById = (boardId, board, result) => {
                 return;
             }
 
-            console.log("updated board: ", { id: boardId, ...board });
-            result(null, { id: boardId, ...board });
+            console.log("updated board: ", { id: boardID, ...board });
+            result(null, { id: boardID, ...board });
         }
     );
 };
 
 
-Board.remove = (boardId, result) => {
+Board.remove = (boardID, result) => {
     sql.query(
-        "DELETE FROM boards WHERE board_id = ?", boardId,
+        "DELETE FROM Board WHERE boardID = ?", boardID,
         (err, res) => {
             if(err) {
                 console.log("error: ", err);
@@ -112,15 +114,15 @@ Board.remove = (boardId, result) => {
                 return;
             }
 
-            console.log("deleted board with board_id: ", boardId);
+            console.log("deleted board with boardID: ", boardID);
             result(null, res);
         }
     );
 };
 
-Board.removeAll = (gameId, result) => {
+Board.removeAll = (gameID, result) => {
     sql.query(
-        "DELETE FROM boards WHERE game_id = ?", gameId,
+        "DELETE FROM Board WHERE gameID = ?", gameID,
         (err, res) => {
             if(err){
                 console.log("error: ", err);

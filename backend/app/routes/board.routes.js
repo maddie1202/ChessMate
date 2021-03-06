@@ -1,24 +1,24 @@
 
 module.exports = app => {
 
-    const boards = require("../controllers/board.controller.js");
+    const board = require("../controllers/board.controller.js");
 
     //Create a new board
-    app.post("/boards", boards.create);
+    app.post("/board", board.create);
 
     //Retrieve all boards with gameId
-    app.get("/games/:gameId", boards.findAll);
+    app.get("/game/:gameId", board.findAll);
 
     //Retrieve a single Board with boardId
-    app.get("/boards/:boardId", boards.findOne);
+    app.get("/board/:boardId", board.findOne);
 
     //Update a Board with boardId
-    app.put("/boards/:boardId", boards.update);
+    app.put("/board/:boardId", board.update);
 
     //Delete a Board by boardId
-    app.delete("/boards/:boardId", boards.delete);
+    app.delete("/board/:boardId", board.delete);
 
     //Delete all Boards with gameId
-    app.delete("/games/:gameId", boards.deleteAll);
+    app.delete("/game/:gameId", board.deleteAll);
 
 }

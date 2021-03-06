@@ -36,9 +36,6 @@ public class HomeScreen extends Fragment {
     private FirebaseAuth mAuth;
     private String uid;*/
 
-    //RequestQueue queue = Volley.newRequestQueue(getActivity());
-    String url ="https://localhost:3000/";
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -101,12 +98,15 @@ public class HomeScreen extends Fragment {
             }
         });
 
-        //tryGetRequest();
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        String url ="http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000";
+
+        tryGetRequest(queue, url);
 
         return v;
     }
 
-    public void tryGetRequest() {
+    public void tryGetRequest(RequestQueue queue, String url) {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -117,12 +117,12 @@ public class HomeScreen extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(),"Error with GET Request",Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),error.getMessage(),Toast.LENGTH_LONG).show();
             }
         });
 
         // Add the request to the RequestQueue.
-        //queue.add(stringRequest);
+        queue.add(stringRequest);
     }
 
 }
