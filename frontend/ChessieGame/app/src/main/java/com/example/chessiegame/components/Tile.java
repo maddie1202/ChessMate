@@ -21,10 +21,10 @@ public class Tile {
         this.tileColor = new Paint();
         //Determining the color of the tile
         if ((x + y) %2 == 0){
-            tileColor.setColor(Color.BLACK);
+            tileColor.setColor(Color.WHITE);
         }
         else {
-            tileColor.setColor(Color.WHITE);
+            tileColor.setColor(Color.argb(100, 151, 182, 181 ));
         }
 
     }
