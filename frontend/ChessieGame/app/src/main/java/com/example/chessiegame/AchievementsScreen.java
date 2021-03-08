@@ -3,10 +3,15 @@ package com.example.chessiegame;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +29,9 @@ public class AchievementsScreen extends Fragment {
     private String mParam1;
     private String mParam2;
     public int id;
+
+    private RecyclerView list;
+    private ArrayList<String> listElems;
 
     public AchievementsScreen() {
         // Required empty public constructor
@@ -61,6 +69,11 @@ public class AchievementsScreen extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         id = container.getId();
-        return inflater.inflate(R.layout.fragment_achievements_screen, container, false);
+        View v = inflater.inflate(R.layout.fragment_achievements_screen, container, false);
+
+        list = v.findViewById(R.id.achievements_list);
+        listElems = new ArrayList<String>();
+
+        return v;
     }
 }
