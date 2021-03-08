@@ -30,6 +30,7 @@ const Board = function(board){
     this.sequenceNum = board.sequenceNum;
 };
 
+//create a new board in table 
 Board.create = (newBoard, result) => {
     sql.query("INSERT INTO Board SET ?", newBoard, (err,res) => {
         if(err){

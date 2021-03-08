@@ -14,7 +14,7 @@ exports.create = (req,res) => {
       const Board = new Board({
         boardID: req.body.boardID,
         placements: req.body.placements,
-        gameID: req.body.gameID
+        gameID: req.body.gameID,
         sequenceNum : req.body.sequenceNum
       });
 
@@ -31,7 +31,7 @@ exports.create = (req,res) => {
 
 exports.findOne = (req,res) => {
 
-    const boardID = req.params.gameID;
+    const boardID = req.params.boardID;
 
     Board.findById(boardID, (err, data) => {
         if (err) {
