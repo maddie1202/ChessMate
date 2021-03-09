@@ -44,26 +44,26 @@ Board.create = (newBoard, result) => {
 };
 
 Board.findById = (boardID, result) => {
-    sql.query('SELECT * FROM Board WHERE boardID = ${boardID}', (err, res) => {
+    sql.query('SELECT * FROM Board WHERE boardID='+ boardID, (err, res) => {
         if(err){
-            console.log("error: ", err);
+            console.log("error from db: ", err);
             result(err, null);
             return;
         }
 
         if(res.length) {
             console.log("found board: ", res[0]); // print boardID
-            result(null, res[1]);       //provide placements
+            result(null, res);       //provide json
             return;
         }
 
         //not found Board with the boardID
-        result({ kind: "not_found" }, null);
+        result({ kind: "not_found in db" }, null);
     });
 };
 
 Board.getAll = (gameID, result) => {
-    sql.query("SELECT * FROM Board WHERE gameID = ${gameID}", (err, res) => {
+    sql.query("SELECT * FROM Board WHERE gameID=" + gameID, (err, res) => {
         if(err) {
             console.log("error: ", err);
             result(null, err);

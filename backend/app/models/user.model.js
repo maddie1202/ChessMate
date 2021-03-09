@@ -17,9 +17,7 @@ const sql = require("./db.js");
  */
 const User = function(user) {
   this.user_id = user.user_id;
-  //this.games = user.games; // collection of game ids - could be its own thing
-  //this.doneAchievements = user.doneAchievements; // initialize to []
-  //this.currAchievements = user.currAchievements; // in progress/not started
+    
 }
 
 User.create = (userId, result) => {
