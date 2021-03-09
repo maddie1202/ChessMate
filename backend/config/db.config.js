@@ -3,6 +3,6 @@
 module.exports = {
   HOST: "localhost",
   USER: "**********",
-  PASSWORD: "*********",
+  PASSWORD: "*********abc",
   DB: "ChessMateDB"
 };
