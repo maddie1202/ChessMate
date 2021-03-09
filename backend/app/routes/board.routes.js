@@ -1,4 +1,3 @@
-
 module.exports = app => {
 
     const board = require("../controllers/board.controller.js");
@@ -7,18 +6,18 @@ module.exports = app => {
     app.post("/makeboard", board.create);
 
     //Retrieve all boards with gameId
-    app.get("/getgame/:gameId", board.findAll);
+    app.get("/getgame/:gameID", board.findAll);
 
     //Retrieve a single Board with boardId
     app.get("/getboard/:boardID", board.findOne);
 
     //Update a Board with boardId
-    app.put("/updateboard/:boardId", board.update);
+    app.put("/updateboard/:boardID", board.update);
 
     //Delete a Board by boardId
-    app.delete("/deleteboard/:boardId", board.delete);
+    app.delete("/deleteboard/:boardID", board.delete);
 
     //Delete all Boards with gameId
-    app.delete("/deletegame/:gameId", board.deleteAll);
+    app.delete("/deletegame/:gameID", board.deleteAll);
 
 }

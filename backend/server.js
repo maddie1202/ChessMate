@@ -3,6 +3,10 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
+require("./app/routes/board.routes.js")(app);
+require("./app/routes/user.routes.js")(app);
+require("./app/routes/Game.routes.js")(app);
+
 // parse requests of content-type: application/json
 app.use(bodyParser.json());
 
@@ -18,6 +22,7 @@ app.get("/", (req, res) => {
 app.listen(3000, () => {
   console.log("Server is running on port 3000.");
 });
+
 
 /*
 What we do are:

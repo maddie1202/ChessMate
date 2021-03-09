@@ -32,7 +32,7 @@ exports.create = (req,res) => {
 exports.findOne = (req,res) => {
 
     const boardID = req.params.boardID;
-
+    console.log("boardID = " + boardID + "in controller");
     Board.findById(boardID, (err, data) => {
         if (err) {
               if (err.kind === "not_found") {
