@@ -1,7 +1,10 @@
 package com.example.chessiegame;
 
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +15,8 @@ import android.view.ViewGroup;
 import androidx.cardview.widget.CardView;
 import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.Button;
+import android.content.res.ColorStateList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +39,10 @@ public class AchievementsScreen extends Fragment {
     public int id;
 
     private RecyclerView rv;
-    private ArrayList<Achievement> items;
+    private ArrayList<Achievement> items = new ArrayList<Achievement>();
+    private Button progressBtn;
+    private Button doneBtn;
+    private boolean progressPressed; // 1 if progress pressed, 0 otherwise
 
     public AchievementsScreen() {
         // Required empty public constructor
@@ -67,6 +75,7 @@ public class AchievementsScreen extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -78,19 +87,65 @@ public class AchievementsScreen extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
 
-        getAchievements();
+        progressBtn = v.findViewById(R.id.progress_button);
+        doneBtn = v.findViewById(R.id.completed_button);
+        progressBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E5E5E5")));
+        progressBtn.setElevation((float) -2.0);
+
+        getAchievements(true);
 
         RVAdapter adapter = new RVAdapter(items);
         rv.setAdapter(adapter);
 
+        progressBtn.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                getAchievements(true);
+
+                // select progress btn, unselect completed btn
+                progressBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E5E5E5")));
+                progressBtn.setElevation((float) -2.0);
+
+                doneBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+                //doneBtn.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                doneBtn.setElevation((float) 5.0);
+
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        doneBtn.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                getAchievements(false);
+
+                // select completed btn, unselect progress btn
+                doneBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E5E5E5")));
+                doneBtn.setElevation((float) -2.0);
+
+                progressBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+                progressBtn.setElevation((float) 5.0);
+
+                adapter.notifyDataSetChanged();
+            }
+        });
+
         return v;
     }
 
-    public void getAchievements() {
-        items = new ArrayList<Achievement>();
-        items.add(new Achievement("Win 3 easy games", false));
-        items.add(new Achievement("Win 3 medium games", false));
-        items.add(new Achievement("Win 3 hard games", false));
+    public void getAchievements(boolean progressSelected) {
+        items.clear();
+        if (progressSelected) {
+            items.add(new Achievement("Win 3 easy games", false));
+            items.add(new Achievement("Win 3 medium games", false));
+            items.add(new Achievement("Win 3 hard games", false));
+        } else {
+            items.add(new Achievement("Win 1 easy game", true));
+            items.add(new Achievement("Win 1 medium game", true));
+            items.add(new Achievement("Win 1 hard game", true));
+        }
     }
 
     public class Achievement {
