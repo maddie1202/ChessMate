@@ -13,13 +13,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#97B6A7">
+        android:background="#FFFFFF"
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="74dp"
+            android:layout_height="wrap_content"
             android:background="#97B6A7"
             android:layout="@layout/toolbar" />
 
@@ -27,8 +27,7 @@
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent">
-        </FrameLayout>
+            app:layout_constraintTop_toTopOf="parent"></FrameLayout>
 
     </LinearLayout>
 

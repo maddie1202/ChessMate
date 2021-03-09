@@ -14,7 +14,7 @@ exports.create = (req,res) => {
       const Board = new Board({
         boardID: req.body.boardID,
         placements: req.body.placements,
-        gameID: req.body.gameID
+        gameID: req.body.gameID,
         sequenceNum : req.body.sequenceNum
       });
 
@@ -31,8 +31,8 @@ exports.create = (req,res) => {
 
 exports.findOne = (req,res) => {
 
-    const boardID = req.params.gameID;
-
+    const boardID = req.params.boardID;
+    console.log("boardID = " + boardID + "in controller");
     Board.findById(boardID, (err, data) => {
         if (err) {
               if (err.kind === "not_found") {
