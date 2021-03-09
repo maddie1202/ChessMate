@@ -29,8 +29,8 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="675dp"
-            android:layout_marginTop="50dp"
+            android:layout_height="680dp"
+            android:layout_marginTop="45dp"
             app:cardBackgroundColor="#556971"
             app:cardCornerRadius="40dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -62,7 +62,8 @@
                         android:background="@drawable/achieve_button"
                         android:text="IN PROGRESS"
                         android:textColor="#000000"
-                        app:backgroundTint="#FFFFFF" />
+                        app:backgroundTint="#FFFFFF"
+                        app:elevation="30dp" />
 
                     <Button
                         android:id="@+id/completed_button"
@@ -71,7 +72,9 @@
                         android:background="@drawable/achieve_button"
                         android:text="COMPLETED"
                         android:textColor="#000000"
-                        app:backgroundTint="#FFFFFF" />
+                        app:backgroundTint="#FFFFFF"
+                        app:elevation="30dp"
+                        app:strokeColor="#FFFFFF" />
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView

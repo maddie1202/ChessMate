@@ -1,7 +1,7 @@
 //not connected to a MySQL server yet
 
 const mysql = require("mysql");
-const dbConfig = require("../../config/db_config.js");
+const dbConfig = require("../../config/db_config_file.js");
 
 // Create a connection to the database
 const connection = mysql.createConnection({
