@@ -51,6 +51,8 @@ public class ChessScreen extends AppCompatActivity {
 
     }
 
+    /*
+
 
     public class MyTouch implements View.OnTouchListener{
         @Override
@@ -91,6 +93,8 @@ public class ChessScreen extends AppCompatActivity {
             return true;
         }
     }
+
+     */
 
 
     /*
