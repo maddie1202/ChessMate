@@ -43,7 +43,6 @@ public class ChessScreen extends AppCompatActivity {
             }
         }
 
-
          */
         //piece.setOnLongClickListener(longClickListener);
         //gir.setOnDragListener(dragListener);

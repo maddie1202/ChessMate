@@ -303,11 +303,14 @@ public class Board extends View{
                     //Validate Player Move
                     //isMoveValid()
                     //Move Piece
+                    /*
                     view.animate()
                             .x(event.getX())
                             .y(event.getY())
                             .setDuration(700)
                             .start();
+
+                     */
 
                     break;
                 default:
