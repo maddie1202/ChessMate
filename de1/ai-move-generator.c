@@ -156,7 +156,6 @@ static double generate_ai_move_helper(game_t *game, int original_colour, int col
     return min_or_max_score;
 }
 
-// ignore alpha-beta pruning for now
 board_t *generate_ai_move(game_t *game, int colour, int depth)
 {
     if (game == NULL || game->board == NULL || 

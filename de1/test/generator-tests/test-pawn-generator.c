@@ -303,6 +303,7 @@ static void pawn_test5()
             {EMPTY,  EMPTY,    EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
+    // upgrade to WROOK2
     board_t wp0_expected1 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {WKING,  WQUEEN0,  EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
@@ -314,6 +315,7 @@ static void pawn_test5()
             {WROOK2, EMPTY,    EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
+    // upgrade to WBISHOP2
     board_t wp0_expected2 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {WKING,  WQUEEN0,  EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
@@ -325,6 +327,7 @@ static void pawn_test5()
             {WBISHOP2, EMPTY,    EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
+    // upgrade to WKNIGHT2
     board_t wp0_expected3 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {WKING,  WQUEEN0,  EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
@@ -336,6 +339,7 @@ static void pawn_test5()
             {WKNIGHT2, EMPTY,    EMPTY,    EMPTY,  EMPTY,  BBISHOP1, BKNIGHT1, BROOK1}
         };
 
+    // upgrade to WQUEEN1
     board_t wp0_expected4 = {
             {WROOK0, WKNIGHT0, WBISHOP0, EMPTY,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
             {WKING,  WQUEEN0,  EMPTY,    EMPTY,  BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},       
