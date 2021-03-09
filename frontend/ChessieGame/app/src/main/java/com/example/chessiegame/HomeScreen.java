@@ -41,6 +41,7 @@ public class HomeScreen extends Fragment {
     private String mParam2;
     public int id;
     private Button start;
+    private Button resume;
 
     public HomeScreen() {
         // Required empty public constructor
@@ -82,12 +83,16 @@ public class HomeScreen extends Fragment {
         View v = inflater.inflate(R.layout.fragment_home_screen, container, false);
 
         start = v.findViewById(R.id.start_new_game);
+        resume = v.findViewById(R.id.resume_previous);
         /*mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         uid = user.getUid();
 
         TextView userUID = v.findViewById(R.id.user_uid);
         userUID.setText(uid);*/
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        String url = "http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/";
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,8 +103,12 @@ public class HomeScreen extends Fragment {
             }
         });
 
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        String url ="http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000";
+        resume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tryGetRequest(queue, "http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getboard/1");
+            }
+        });
 
         tryGetRequest(queue, url);
 

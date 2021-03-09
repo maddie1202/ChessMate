@@ -3,15 +3,18 @@ package com.example.chessiegame;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import androidx.cardview.widget.CardView;
+import android.widget.TextView;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,8 +33,8 @@ public class AchievementsScreen extends Fragment {
     private String mParam2;
     public int id;
 
-    private RecyclerView list;
-    private ArrayList<String> listElems;
+    private RecyclerView rv;
+    private ArrayList<Achievement> items;
 
     public AchievementsScreen() {
         // Required empty public constructor
@@ -71,9 +74,82 @@ public class AchievementsScreen extends Fragment {
         id = container.getId();
         View v = inflater.inflate(R.layout.fragment_achievements_screen, container, false);
 
-        list = v.findViewById(R.id.achievements_list);
-        listElems = new ArrayList<String>();
+        rv = v.findViewById(R.id.achievements_list);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(llm);
+
+        getAchievements();
+
+        RVAdapter adapter = new RVAdapter(items);
+        rv.setAdapter(adapter);
 
         return v;
     }
+
+    public void getAchievements() {
+        items = new ArrayList<Achievement>();
+        items.add(new Achievement("Win 3 easy games", false));
+        items.add(new Achievement("Win 3 medium games", false));
+        items.add(new Achievement("Win 3 hard games", false));
+    }
+
+    public class Achievement {
+        String achievement;
+        boolean done;
+        int iconId;
+
+        public Achievement(String achievement, boolean done) {
+            this.achievement = achievement;
+            this.done = done;
+            this.iconId = done ? R.drawable.trophy_filled : R.drawable.trophy_outlined;
+        }
+    }
+
+    public class RVAdapter extends RecyclerView.Adapter<RVAdapter.AchievementViewHolder> {
+
+        public class AchievementViewHolder extends RecyclerView.ViewHolder {
+            CardView cv;
+            TextView task;
+            TextView completed;
+            ImageView trophy;
+
+            AchievementViewHolder(View itemView) {
+                super(itemView);
+                cv = (CardView) itemView.findViewById(R.id.cv);
+                task = (TextView) itemView.findViewById(R.id.task);
+                trophy = (ImageView) itemView.findViewById(R.id.trophy);
+            }
+
+        }
+
+        List<Achievement> achs;
+
+        RVAdapter(List<Achievement> achievements){
+            this.achs = achievements;
+        }
+
+        @Override
+        public int getItemCount() {
+            return achs.size();
+        }
+
+        @Override
+        public AchievementViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.achievement_item, viewGroup, false);
+            AchievementViewHolder avh = new AchievementViewHolder(v);
+            return avh;
+        }
+
+        @Override
+        public void onBindViewHolder(AchievementViewHolder avh, int i) {
+            avh.task.setText(achs.get(i).achievement);
+            avh.trophy.setImageResource(achs.get(i).iconId);
+        }
+
+        @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+        }
+    }
+
 }

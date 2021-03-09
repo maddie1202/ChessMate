@@ -9,7 +9,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="0dp">
+        android:layout_marginTop="0dp"
+        android:background="#97B6A7">
 
         <TextView
             android:id="@+id/achievements"
@@ -17,19 +18,20 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:text="Achievements"
-            android:textColor="#000000"
+            android:textColor="#FFFFFF"
             android:textSize="32sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.075" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="640dp"
-            android:layout_marginTop="44dp"
-            app:cardBackgroundColor="#97B6A7"
+            android:layout_height="675dp"
+            android:layout_marginTop="50dp"
+            app:cardBackgroundColor="#556971"
             app:cardCornerRadius="40dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
