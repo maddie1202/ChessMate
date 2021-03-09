@@ -2,7 +2,7 @@
 
 module.exports = {
   HOST: "localhost",
-  USER: "harmeeta",
-  PASSWORD: "chessmate@year3",
+  USER: "**********",
+  PASSWORD: "*********",
   DB: "ChessMateDB"
 };
