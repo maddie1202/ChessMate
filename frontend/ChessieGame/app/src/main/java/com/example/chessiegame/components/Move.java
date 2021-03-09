@@ -8,12 +8,12 @@ public class Move {
     int init_row;
 
 
-    public Move (Piece piece, int col, int row){
+    public Move (Piece piece, int icol, int irow, int dcol, int drow){
         this.piece = piece;
-        this.dest_col = col;
-        this.dest_row = row;
-        this.init_col = piece.col;
-        this.init_row = piece.row;
+        this.dest_col = dcol;
+        this.dest_row = drow;
+        this.init_col = icol;
+        this.init_row = irow;
     }
 
 

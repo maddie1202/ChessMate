@@ -296,6 +296,10 @@ public class Board extends View{
                     break;
                 case DragEvent.ACTION_DROP:
 
+                    //Create Move
+
+                    //Move pmove = new Move()
+
                     //Validate Player Move
                     //isMoveValid()
                     //Move Piece
