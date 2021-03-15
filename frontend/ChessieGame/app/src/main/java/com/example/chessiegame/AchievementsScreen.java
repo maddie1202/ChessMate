@@ -1,17 +1,25 @@
 package com.example.chessiegame;
 
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import androidx.cardview.widget.CardView;
+import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.Button;
+import android.content.res.ColorStateList;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,8 +38,11 @@ public class AchievementsScreen extends Fragment {
     private String mParam2;
     public int id;
 
-    private RecyclerView list;
-    private ArrayList<String> listElems;
+    private RecyclerView rv;
+    private ArrayList<Achievement> items = new ArrayList<Achievement>();
+    private Button progressBtn;
+    private Button doneBtn;
+    private boolean progressPressed; // 1 if progress pressed, 0 otherwise
 
     public AchievementsScreen() {
         // Required empty public constructor
@@ -64,6 +75,7 @@ public class AchievementsScreen extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,9 +83,128 @@ public class AchievementsScreen extends Fragment {
         id = container.getId();
         View v = inflater.inflate(R.layout.fragment_achievements_screen, container, false);
 
-        list = v.findViewById(R.id.achievements_list);
-        listElems = new ArrayList<String>();
+        rv = v.findViewById(R.id.achievements_list);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(llm);
+
+        progressBtn = v.findViewById(R.id.progress_button);
+        doneBtn = v.findViewById(R.id.completed_button);
+        progressBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E5E5E5")));
+        progressBtn.setElevation((float) -2.0);
+
+        getAchievements(true);
+
+        RVAdapter adapter = new RVAdapter(items);
+        rv.setAdapter(adapter);
+
+        progressBtn.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                getAchievements(true);
+
+                // select progress btn, unselect completed btn
+                progressBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E5E5E5")));
+                progressBtn.setElevation((float) -2.0);
+
+                doneBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+                //doneBtn.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                doneBtn.setElevation((float) 5.0);
+
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        doneBtn.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                getAchievements(false);
+
+                // select completed btn, unselect progress btn
+                doneBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E5E5E5")));
+                doneBtn.setElevation((float) -2.0);
+
+                progressBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+                progressBtn.setElevation((float) 5.0);
+
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         return v;
     }
+
+    public void getAchievements(boolean progressSelected) {
+        items.clear();
+        if (progressSelected) {
+            items.add(new Achievement("Win 3 easy games", false));
+            items.add(new Achievement("Win 3 medium games", false));
+            items.add(new Achievement("Win 3 hard games", false));
+        } else {
+            items.add(new Achievement("Win 1 easy game", true));
+            items.add(new Achievement("Win 1 medium game", true));
+            items.add(new Achievement("Win 1 hard game", true));
+        }
+    }
+
+    public class Achievement {
+        String achievement;
+        boolean done;
+        int iconId;
+
+        public Achievement(String achievement, boolean done) {
+            this.achievement = achievement;
+            this.done = done;
+            this.iconId = done ? R.drawable.trophy_filled : R.drawable.trophy_outlined;
+        }
+    }
+
+    public class RVAdapter extends RecyclerView.Adapter<RVAdapter.AchievementViewHolder> {
+
+        public class AchievementViewHolder extends RecyclerView.ViewHolder {
+            CardView cv;
+            TextView task;
+            TextView completed;
+            ImageView trophy;
+
+            AchievementViewHolder(View itemView) {
+                super(itemView);
+                cv = (CardView) itemView.findViewById(R.id.cv);
+                task = (TextView) itemView.findViewById(R.id.task);
+                trophy = (ImageView) itemView.findViewById(R.id.trophy);
+            }
+
+        }
+
+        List<Achievement> achs;
+
+        RVAdapter(List<Achievement> achievements){
+            this.achs = achievements;
+        }
+
+        @Override
+        public int getItemCount() {
+            return achs.size();
+        }
+
+        @Override
+        public AchievementViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.achievement_item, viewGroup, false);
+            AchievementViewHolder avh = new AchievementViewHolder(v);
+            return avh;
+        }
+
+        @Override
+        public void onBindViewHolder(AchievementViewHolder avh, int i) {
+            avh.task.setText(achs.get(i).achievement);
+            avh.trophy.setImageResource(achs.get(i).iconId);
+        }
+
+        @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+        }
+    }
+
 }

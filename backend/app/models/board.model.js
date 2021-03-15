@@ -18,9 +18,23 @@ const sql = require("./db.js");
 //  gameID int(20) NOT NULL
 //  sequenceNum int(20)
 //) ENGINE = InnoDB DEFAULT CHARSET = utf8;
-//
 
+// Test boards
+const initialLayout = ['-9', '-19', '-29', '-48', '-39', '-30', '-20', '-10',
+                        '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0',
+                        '1', '2', '3', '4', '5', '6', '7', '8',
+                        '9', '19', '29', '48', '39', '30', '20', '10'];
 
+const firstMove = ['-9', '-19', '-29', '-48', '-39', '-30', '-20', '-10',
+                          '0', '0', '0', '0', '0', '0', '0', '0',
+                          '0', '0', '0', '0', '0', '0', '0', '0',
+                          '0', '0', '0', '0', '5', '0', '0', '0',
+                          '0', '0', '0', '0', '0', '0', '0', '0',
+                          '1', '2', '3', '4', '0', '6', '7', '8',
+                          '9', '19', '29', '48', '39', '30', '20', '10'];
 
 //constructor
 const Board = function(board){
@@ -30,7 +44,7 @@ const Board = function(board){
     this.sequenceNum = board.sequenceNum;
 };
 
-//create a new board in table 
+//create a new board in table
 Board.create = (newBoard, result) => {
 
     const attributes = "boardID, placements, gameID, sequenceNumber";
