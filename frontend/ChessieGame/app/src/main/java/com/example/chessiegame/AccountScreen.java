@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.gridlayout.widget.GridLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.Toast;
-import android.widget.GridLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -100,11 +100,11 @@ public class AccountScreen extends Fragment {
 
         Glide.with(this).load(user.getPhotoUrl()).into(profile);
 
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        getPastGames(queue, "http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/1");
-
         grid = v.findViewById(R.id.account_grid);
         gridArray = new ArrayList<String>();
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        getPastGames(queue, "http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/1");
 
         if (!gridArray.isEmpty()) {
             TextView titleText;
