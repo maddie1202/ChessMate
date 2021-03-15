@@ -2,16 +2,18 @@
 
 const Board = require("../models/board.model.js");
 
+//create a new board in table
 exports.create = (req,res) => {
     //validate request
-    if (!req.body) {
+    if (!req.body.boardID) {
         res.status(400).send({
           message: "Content can not be empty!"
         });
+
       }
 
       // Create a Board
-      const Board = new Board({
+      const newBoard = new Board({
         boardID: req.body.boardID,
         placements: req.body.placements,
         gameID: req.body.gameID,
@@ -29,6 +31,7 @@ exports.create = (req,res) => {
       });
 };
 
+//find board by boardID
 exports.findOne = (req,res) => {
 
     const boardID = req.params.boardID;
@@ -48,6 +51,7 @@ exports.findOne = (req,res) => {
     });
 };
 
+//find all boards with gameID
 exports.findAll = (req,res) => {
 
     const gameID = req.params.gameID;
@@ -62,7 +66,7 @@ exports.findAll = (req,res) => {
     });
 };
 
-
+//update board with boardID and board details
 exports.update = (req,res) => {
       // Validate Request
       if (!req.body) {
@@ -95,8 +99,10 @@ exports.update = (req,res) => {
       });
 };
 
+//remove a board using boardID
 exports.delete = (req,res) => {
     const boardID = req.params.boardID;
+
     Board.remove(boardID, (err, data) => {
         if (err) {
               if (err.kind === "not_found") {
@@ -112,13 +118,14 @@ exports.delete = (req,res) => {
     });
 };
 
+//remove all boards with gameID
 exports.deleteAll = (req,res) => {
     const gameID = req.params.gameID;
     Board.removeAll(gameID, (err, data) => {
         if (err)
               res.status(500).send({
                 message:
-                  err.message || "Some error occurred while removing all customers."
+                  err.message || "Some error occurred while removing all boards for the game."
               });
             else res.send({ message: `All Boards with gameID ${gameID} were deleted successfully!` });
     });

@@ -2,14 +2,14 @@ module.exports = app => {
 
     const board = require("../controllers/board.controller.js");
 
-    //Create a new board
-    app.post("/makeboard", board.create);
-
     //Retrieve all boards with gameId
     app.get("/getgame/:gameID", board.findAll);
 
     //Retrieve a single Board with boardId
     app.get("/getboard/:boardID", board.findOne);
+
+    //insert a new board
+    app.post("/makeboard/:boardID", board.create);
 
     //Update a Board with boardId
     app.put("/updateboard/:boardID", board.update);
