@@ -1,6 +1,7 @@
+
 module.exports = {
     HOST: "localhost",
-    USER: " * ",
-    PASSWORD: " * ",
+    USER: "*",
+    PASSWORD: "*",
     DB: "ChessMateDB"
   };

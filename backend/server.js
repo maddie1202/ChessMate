@@ -3,15 +3,15 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
-require("./app/routes/board.routes.js")(app);
-require("./app/routes/user.routes.js")(app);
-require("./app/routes/Game.routes.js")(app);
-
 // parse requests of content-type: application/json
 app.use(bodyParser.json());
 
 // parse requests of content-type: application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
+
+require("./app/routes/board.routes.js")(app);
+require("./app/routes/user.routes.js")(app);
+require("./app/routes/Game.routes.js")(app);
 
 // simple route
 app.get("/", (req, res) => {

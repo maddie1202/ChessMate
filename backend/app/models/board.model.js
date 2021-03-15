@@ -28,7 +28,7 @@ const initialLayout = ['-9', '-19', '-29', '-48', '-39', '-30', '-20', '-10',
                         '1', '2', '3', '4', '5', '6', '7', '8',
                         '9', '19', '29', '48', '39', '30', '20', '10'];
 
-  const firstMove = ['-9', '-19', '-29', '-48', '-39', '-30', '-20', '-10',
+const firstMove = ['-9', '-19', '-29', '-48', '-39', '-30', '-20', '-10',
                           '0', '0', '0', '0', '0', '0', '0', '0',
                           '0', '0', '0', '0', '0', '0', '0', '0',
                           '0', '0', '0', '0', '5', '0', '0', '0',
@@ -46,7 +46,11 @@ const Board = function(board){
 
 //create a new board in table
 Board.create = (newBoard, result) => {
-    sql.query("INSERT INTO Board SET ?", newBoard, (err,res) => {
+
+    const attributes = "boardID, placements, gameID, sequenceNumber";
+    const values = "" + newBoard.boardID + ", \"" + newBoard.placements + "\", " + newBoard.gameID + ", " + newBoard.sequenceNum + "";
+
+    sql.query("INSERT INTO Board(" + attributes + ") VALUES(" + values + ")", (err,res) => {
         if(err){
             console.log("error: ", err);
             result(err, null);
@@ -57,6 +61,7 @@ Board.create = (newBoard, result) => {
     });
 };
 
+//find board by boardID
 Board.findById = (boardID, result) => {
     sql.query('SELECT * FROM Board WHERE boardID='+ boardID, (err, res) => {
         if(err){
@@ -76,6 +81,7 @@ Board.findById = (boardID, result) => {
     });
 };
 
+//find all boards with gameID
 Board.getAll = (gameID, result) => {
     sql.query("SELECT * FROM Board WHERE gameID=" + gameID, (err, res) => {
         if(err) {
@@ -89,10 +95,11 @@ Board.getAll = (gameID, result) => {
     });
 };
 
+//update board with boardID and board details
 Board.updateById = (boardID, board, result) => {
     sql.query(
-        "UPDATE Board SET placements = ?, gameID = ?, sequenceNum = ? WHERE boardID = ?",
-        [boardID, board.placements, board.gameID, sequenceNum],
+        "UPDATE Board SET placements = ?, gameID = ?, sequenceNumber = ? WHERE boardID = ?",
+        [board.placements, board.gameID, board.sequenceNum, boardID],
         (err, res) => {
             if(err) {
                 console.log("error: ", err);
@@ -112,10 +119,10 @@ Board.updateById = (boardID, board, result) => {
     );
 };
 
-
+//remove a board using boardID
 Board.remove = (boardID, result) => {
     sql.query(
-        "DELETE FROM Board WHERE boardID = ?", boardID,
+        "DELETE FROM Board WHERE boardID = " + boardID,
         (err, res) => {
             if(err) {
                 console.log("error: ", err);
@@ -135,9 +142,10 @@ Board.remove = (boardID, result) => {
     );
 };
 
+//remove all boards with gameID
 Board.removeAll = (gameID, result) => {
     sql.query(
-        "DELETE FROM Board WHERE gameID = ?", gameID,
+        "DELETE FROM Board WHERE gameID = " + gameID,
         (err, res) => {
             if(err){
                 console.log("error: ", err);
@@ -145,7 +153,7 @@ Board.removeAll = (gameID, result) => {
                 return;
             }
 
-            console.log('deleted ${res.affectedRows} boards');
+            console.log('deleted ' + res.affectedRows + 'boards');
             result(null, res);
         }
     );
