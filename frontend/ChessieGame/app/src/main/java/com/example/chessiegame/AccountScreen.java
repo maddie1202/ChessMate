@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.GridLayout;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,6 +26,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,6 +47,8 @@ public class AccountScreen extends Fragment {
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private ImageView profile;
+    private GridLayout grid;
+    private ArrayList<String> gridArray;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -94,6 +103,13 @@ public class AccountScreen extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         getPastGames(queue, "http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/1");
 
+        grid = v.findViewById(R.id.account_grid);
+        gridArray = new ArrayList<String>();
+
+        if (!gridArray.isEmpty()) {
+            TextView titleText;
+        }
+
         signOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,6 +133,16 @@ public class AccountScreen extends Fragment {
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
                         Toast.makeText(getActivity(),response,Toast.LENGTH_LONG).show();
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            gridArray.clear();
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                gridArray.add(jsonArray.getString(i));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }, new Response.ErrorListener() {
             @Override

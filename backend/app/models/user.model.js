@@ -17,12 +17,21 @@ const sql = require("./db.js");
  */
 const User = function(user) {
   this.user_id = user.user_id;
-    
+  this.name = user.name;
 }
 
-User.create = (userId, result) => {
+User.create = (newUser, result) => {
   // add a new user to User db
   // initialize goals in Goal db
+  sql.query("INSERT INTO User SET ?", newUser, (err,res) => {
+      if(err) {
+          console.log("error: ", err);
+          result(err, null);
+          return;
+      }
+      console.log("created user: ", {id: newUser.user_id, name: newUser.name });
+      result(null, {id: newUser.user_id, name: newUser.name }));
+  });
 }
 
 User.findById = (userId, result) => {
