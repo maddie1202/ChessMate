@@ -24,44 +24,52 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.bluetooth.BluetoothAdapter;
 import android.widget.Toast;
 
 import com.example.chessiegame.components.Board;
+import com.example.chessiegame.components.Tile;
 
 import java.util.Set;
 
 public class ChessScreen extends AppCompatActivity implements View.OnDragListener, View.OnTouchListener {
 
-    /*
-    TextView piece, place;
-    GridLayout gir;
-    */
     private static final int REQUEST_ENABLE_BT = 0;
     private static final int REQUEST_DISCOVER_BT = 1;
-
-    Board board_view;
     BluetoothAdapter mBlueAdapter;
     TextView paired_devices;
-    boolean err;
-    boolean dragging = false;
-    ImageView bbishop;
 
-    private RelativeLayout.LayoutParams rLayout;
+    boolean err;
+    public Board board_view;
+    public TableLayout chessboard;
+    public Tile[][] tiles;
+    private final int rows = 8;
+    private final int cols = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         board_view = new Board(this);
-        //setContentView(board_view);
-        setContentView(R.layout.activity_chess_screen);
-        bbishop = findViewById(R.id.bbishop);
+        setContentView(board_view);
+        //bbishop = findViewById(R.id.bbishop);
+        //bbishop.setOnTouchListener(this);
+        //findViewById(R.id.tile00).setOnDragListener(this);
 
-        bbishop.setOnTouchListener(this);
-        findViewById(R.id.tile00).setOnDragListener(this);
-        findViewById(R.id.tile01).setOnDragListener(this);
-        findViewById(R.id.tile02).setOnDragListener(this);
+        /*chessboard = findViewById(R.id.chessboard);
+        for (int i = 0; i < rows; i++) {
+            TableRow row = new TableRow(this);
+            TableRow.LayoutParams lp = new TableRow.LayoutParams();
+            lp.height = 48;
+            lp.width = 384;
+            row.setLayoutParams(lp);
+
+            for (int j = 0; j < cols; j++) {
+                tiles[i][j] = new Tile(this, i, j);
+            }
+        }*/
 
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         paired_devices = (TextView) findViewById(R.id.paired_devices);
@@ -196,56 +204,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 break;
         }
         return false;
-    }
-
-    public boolean onTouchPiece(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            ClipData data = ClipData.newPlainText("", "");
-            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
-                    v);
-            v.startDrag(data, shadowBuilder, v, 0);
-            v.setVisibility(View.INVISIBLE);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean onDragPiece(View v, DragEvent event) {
-        switch (event.getAction()) {
-            case DragEvent.ACTION_DRAG_STARTED:
-                rLayout = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                return true;
-            case DragEvent.ACTION_DRAG_ENTERED:
-                int x_cord = (int) event.getX();
-                int y_cord = (int) event.getY();
-                return true;
-            case DragEvent.ACTION_DRAG_EXITED:
-                x_cord = (int) event.getX();
-                y_cord = (int) event.getY();
-                rLayout.leftMargin = x_cord;
-                rLayout.topMargin = y_cord;
-                v.setLayoutParams(rLayout);
-                v.setVisibility(View.VISIBLE);
-                return true;
-            /*case DragEvent.ACTION_DRAG_LOCATION:
-                break;*/
-            case DragEvent.ACTION_DRAG_ENDED:
-                View view = (View) event.getLocalState();
-                view.setVisibility(View.VISIBLE);
-                return true;
-            case DragEvent.ACTION_DROP:
-                view = (View) event.getLocalState();
-                ViewGroup owner = (ViewGroup) view.getParent();
-                owner.removeView(view);
-                RelativeLayout container = (RelativeLayout) v;
-                container.addView(view);
-                view.setVisibility(View.VISIBLE);
-                return true;
-            default:
-                return true;
-        }
-        //return false;
     }
 
     @Override

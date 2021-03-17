@@ -35,6 +35,7 @@ public class Tile extends CardView {
 
     }
 
+    @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
         canvas.drawRect(square, tileColor);

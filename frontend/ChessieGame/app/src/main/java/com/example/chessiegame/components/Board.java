@@ -1,33 +1,29 @@
 package com.example.chessiegame.components;
 
-import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Build;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.chessiegame.ChessScreen;
 import com.example.chessiegame.R;
-import com.example.chessiegame.components.Tile;
+
 import java.util.List;
-import android.content.Context;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
@@ -53,10 +49,18 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
         this.board = new Tile[cols][rows];
         this.piece_board = new Piece[cols][rows];
         this.context = context;
-        this.table = findViewById(R.id.board);
+        this.table = new TableLayout(context);
+        TableLayout.LayoutParams lp = new TableLayout.LayoutParams();
+        lp.height = 360;
+        lp.width = 360;
         rect = new Rect();
+    }
 
-        fillBoard();
+    @Override
+    public void onDraw(Canvas canvas) {
+
+        canvas.drawColor(Color.argb(100, 151, 182, 167));
+        fillBoard(canvas);
     }
 
     /*
@@ -67,7 +71,12 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
      - for tiles that initially contain pieces, create the appropriate Piece
      - add that Piece (ImageView) to the Tile (CardView)
     */
-    public void fillBoard() {
+    public void fillBoard(Canvas canvas) {
+        int width = getWidth();
+        int height = getHeight();
+        size = width / 8;
+        this.y0 = (height - width) / 2;
+
         for (int i = 0; i < rows; i++) {
             TableRow row = new TableRow(this.context);
             TableRow.LayoutParams lp = new TableRow.LayoutParams();
@@ -75,9 +84,13 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
             lp.width = 360;
             row.setLayoutParams(lp);
 
-            for (int j = 0; i < cols; j++) {
+            for (int j = 0; j < cols; j++) {
+                int xcoord = size * i;
+                int ycoord = y0 + size * j;
+
                 // Tile extends CardView
                 board[i][j] = new Tile(this.context, i, j);
+                Tile.LayoutParams tLayout = new Tile.LayoutParams(Tile.LayoutParams.WRAP_CONTENT, Tile.LayoutParams.WRAP_CONTENT);
                 if ((i + j) % 2 == 0) {
                     board[i][j].setBackgroundColor(Color.WHITE);
                 }
@@ -85,98 +98,121 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
                     board[i][j].setBackgroundColor(Color.argb(100, 151, 182, 181 ));
                 }
 
+                board[i][j].setSquare(rect);
+                rect.left = xcoord;
+                rect.top = ycoord;
+                rect.right = xcoord + size;
+                rect.bottom = ycoord + size;
+                board[i][j].draw(canvas);
+                board[i][j].setOnDragListener(this);
+
                 // Set up initial layout
+                Piece p = null;
+
                 //Pawn placement
                 if (i == 1) {
                     Drawable wpawn = getResources().getDrawable(R.drawable.wpawn);
-                    Piece p = new Piece (getContext(), i, j, "wpawn");
+                    wpawn.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wpawn");
                     p.setImageDrawable(wpawn);
-                    board[i][j].setPiece(p);
-                } else if(i == 6) {
+                }
+                else if(i == 6) {
                     Drawable bpawn = getResources().getDrawable(R.drawable.bpawn);
-                    Piece p = new Piece (getContext(), i, j, "bpawn");
+                    bpawn.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "bpawn");
                     p.setImageDrawable(bpawn);
-                    board[i][j].setPiece(p);
                 }
                 //Rook
-                else if(i == 7 && j == 7 || i == 0 && j == 7){
+                else if(j == 7 && i == 7 || j == 0 && i == 7){
                     Drawable brook =  getResources().getDrawable(R.drawable.brook);
-                    Piece p = new Piece (getContext(), i, j, "brook");
+                    brook.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "brook");
                     p.setImageDrawable(brook);
-                    board[i][j].setPiece(p);
                 }
-                else if(i == 7 && j == 0 || i == 0 && j == 0){
+                else if(j == 7 && i == 0 || j == 0 && i == 0){
                     Drawable wrook =  getResources().getDrawable(R.drawable.wrook);
-                    Piece p = new Piece (getContext(), i, j, "wrook");
+                    wrook.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wrook");
                     p.setImageDrawable(wrook);
-                    board[i][j].setPiece(p);
                 }
                 //Knights
-                else if(i == 6 && j == 7 || i == 1 && j == 7){
+                else if(j == 6 && i == 7 || j == 1 && i == 7){
                     Drawable bknight =  getResources().getDrawable(R.drawable.bknight);
-                    Piece p = new Piece (getContext(), i, j, "bknight");
+                    bknight.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "bknight");
                     p.setImageDrawable(bknight);
-                    board[i][j].setPiece(p);
                 }
-                else if(i == 6 && j == 0 || i == 1 && j == 0){
+                else if(j == 6 && i == 0 || j == 1 && i == 0){
                     Drawable wknight =  getResources().getDrawable(R.drawable.wknight);
-                    Piece p = new Piece (getContext(), i, j, "wknight");
+                    wknight.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wknight");
                     p.setImageDrawable(wknight);
-                    board[i][j].setPiece(p);
                 }
                 //Bishops
-                else if(i == 5 && j == 7 || i == 2 && j == 7){
+                else if(j == 5 && i == 7 || j == 2 && i == 7){
                     Drawable bbishop =  getResources().getDrawable(R.drawable.bbishop);
-                    Piece p = new Piece (getContext(), i, j, "bbishop");
+                    bbishop.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "bbishop");
                     p.setImageDrawable(bbishop);
-                    board[i][j].setPiece(p);
                 }
-                else if(i == 5 && j == 0 || i == 2 && j == 0){
+                else if(j == 5 && i == 0 || j == 2 && i == 0){
                     Drawable wbishop =  getResources().getDrawable(R.drawable.wbishop);
-                    Piece p = new Piece (getContext(), i, j, "wbishop");
+                    wbishop.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wbishop");
                     p.setImageDrawable(wbishop);
-                    board[i][j].setPiece(p);
                 }
                 //Queen
-                else if(i == 4 && j == 7){
+                else if(j == 4 && i == 7){
                     Drawable bqueen =  getResources().getDrawable(R.drawable.bqueen);
-                    Piece p = new Piece (getContext(), i, j, "bqueen");
+                    bqueen.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "bqueen");
                     p.setImageDrawable(bqueen);
-                    board[i][j].setPiece(p);
                 }
-                else if(i == 4 && j == 0 ){
+                else if(j == 4 && i == 0 ){
                     Drawable wqueen =  getResources().getDrawable(R.drawable.wqueen);
-                    Piece p = new Piece (getContext(), i, j, "wqueen");
+                    wqueen.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wqueen");
                     p.setImageDrawable(wqueen);
-                    board[i][j].setPiece(p);
                 }
                 //Queen
-                else if(i == 3 && j == 7){
+                else if(j == 3 && i == 7){
                     Drawable bking =  getResources().getDrawable(R.drawable.bking);
-                    Piece p = new Piece (getContext(), i, j, "bking");
+                    bking.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "bking");
                     p.setImageDrawable(bking);
-                    board[i][j].setPiece(p);
                 }
-                else if(i == 3 && j == 0 ){
+                else if(j == 3 && i == 0 ){
                     Drawable wking =  getResources().getDrawable(R.drawable.wking);
-                    Piece p = new Piece (getContext(), i, j, "wking");
-                    piece_board[i][j].setImageDrawable(wking);
-                    board[i][j].setPiece(p);
+                    wking.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wking");
+                    p.setImageDrawable(wking);
                 }
+
+                if (p != null) {
+                    p.getDrawable().draw(canvas);
+                    board[i][j].setPiece(p);
+                    p.setOnTouchListener(this);
+                }
+                row.addView(board[i][j], j);
             }
 
-            this.table.addView(row, i);
+            table.addView(row, i);
         }
+
+        table.layout(0, 0, width, width);
+        canvas.save();
+
+        table.draw(canvas);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    /*@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onDraw(Canvas canvas) {
 
         canvas.drawColor(Color.argb(100, 151, 182, 167));
         drawBoard(canvas);
         drawPiece(canvas);
-    }
+    }*/
 
     //
     public void drawBoard(Canvas canvas) {
