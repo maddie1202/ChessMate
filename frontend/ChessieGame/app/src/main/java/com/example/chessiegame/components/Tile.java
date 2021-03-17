@@ -22,8 +22,8 @@ public class Tile extends CardView {
 
     public Tile(Context context, int x, int y) {
         super(context);
-        this.col = y;
         this.row = x;
+        this.col = y;
         this.tileColor = new Paint();
         //Determining the color of the tile
         if ((x + y) %2 == 0){
@@ -34,7 +34,6 @@ public class Tile extends CardView {
         }
 
     }
-
 
     public void draw(Canvas canvas) {
         super.draw(canvas);
@@ -62,7 +61,15 @@ public class Tile extends CardView {
 
     public Piece getPiece() {return piece;}
 
-    public void setPiece(Piece p) {this.piece = p;}
+    public void setPiece(Piece p) {
+        this.piece = p;
+        this.addView(p);
+    }
+
+    public void removePiece(Piece p) {
+        this.piece = null;
+        this.removeView(p);
+    }
 
 
     //public int setImage() {

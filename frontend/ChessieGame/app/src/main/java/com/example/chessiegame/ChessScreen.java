@@ -2,6 +2,7 @@ package com.example.chessiegame;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
@@ -52,16 +53,15 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //board_view = new Board(this);
+        board_view = new Board(this);
         //setContentView(board_view);
         setContentView(R.layout.activity_chess_screen);
         bbishop = findViewById(R.id.bbishop);
 
         bbishop.setOnTouchListener(this);
-       // bbishop.setOnDragListener(this);
-        //findViewById(R.id.view_root).setOnDragListener(this);
-        findViewById(R.id.layout2).setOnDragListener(this);
-        findViewById(R.id.layout3).setOnDragListener(this);
+        findViewById(R.id.tile00).setOnDragListener(this);
+        findViewById(R.id.tile01).setOnDragListener(this);
+        findViewById(R.id.tile02).setOnDragListener(this);
 
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         paired_devices = (TextView) findViewById(R.id.paired_devices);
@@ -172,7 +172,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 ViewGroup owner = (ViewGroup) vw.getParent();
                 owner.removeView(vw); //remove the dragged view
                 //caste the view into LinearLayout as our drag acceptable layout is LinearLayout
-                LinearLayout container = (LinearLayout) v;
+                CardView container = (CardView) v;
                 container.addView(vw);//Add the dragged view
                 vw.setVisibility(View.VISIBLE);//finally set Visibility to VISIBLE
                 // Returns true. DragEvent.getResult() will return true.
