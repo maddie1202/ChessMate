@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,6 +33,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.widget.Toast;
 
 import com.example.chessiegame.components.Board;
+import com.example.chessiegame.components.Piece;
 import com.example.chessiegame.components.Tile;
 
 import java.util.Set;
@@ -52,28 +55,19 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        board_view = new Board(this);
-        setContentView(board_view);
+        //board_view = new Board(this);
+        setContentView(R.layout.activity_chess_screen);
         //bbishop = findViewById(R.id.bbishop);
         //bbishop.setOnTouchListener(this);
         //findViewById(R.id.tile00).setOnDragListener(this);
 
-        /*chessboard = findViewById(R.id.chessboard);
-        for (int i = 0; i < rows; i++) {
-            TableRow row = new TableRow(this);
-            TableRow.LayoutParams lp = new TableRow.LayoutParams();
-            lp.height = 48;
-            lp.width = 384;
-            row.setLayoutParams(lp);
-
-            for (int j = 0; j < cols; j++) {
-                tiles[i][j] = new Tile(this, i, j);
-            }
-        }*/
-
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         paired_devices = (TextView) findViewById(R.id.paired_devices);
         err = false;
+
+        tiles = new Tile[rows][cols];
+        chessboard = findViewById(R.id.chessboard);
+        initChessboard();
 
         if (mBlueAdapter == null) {
             showToast("Bluetooth is not available");
@@ -106,6 +100,98 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             }
         }
 
+    }
+
+    public void initChessboard() {
+        for (int i = 0; i < rows; i++) {
+            TableRow row = new TableRow(this);
+            //TableLayout.LayoutParams tLayout = TableLayout.LayoutParams();
+            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+            lp.height = 48;
+            lp.width = 384;
+            row.setLayoutParams(lp);
+            chessboard.addView(row, i);
+
+            for (int j = 0; j < cols; j++) {
+                tiles[i][j] = new Tile(this, i, j);
+                Tile.LayoutParams tLayout = new Tile.LayoutParams(Tile.LayoutParams.MATCH_PARENT, Tile.LayoutParams.MATCH_PARENT);
+                tLayout.width = 48;
+                tLayout.height = 48;
+                if ((i + j) % 2 == 0) {
+                    tiles[i][j].setBackgroundColor(Color.WHITE);
+                }
+                else {
+                    tiles[i][j].setBackgroundColor(Color.argb(100, 151, 182, 181 ));
+                }
+                tiles[i][j].setLayoutParams(tLayout);
+                tiles[i][j].setOnDragListener(this);
+
+                Piece p = null;
+
+                //Pawn placement
+                if (i == 1) {
+                    Drawable wpawn = getResources().getDrawable(R.drawable.wpawn);
+                    p = new Piece (this, i, j, "wpawn");
+                    p.setImageResource(R.drawable.wpawn);
+                }
+                else if(i == 6) {
+                    p = new Piece (this, i, j, "bpawn");
+                    p.setImageResource(R.drawable.bpawn);
+                }
+                //Rook
+                else if(j == 7 && i == 7 || j == 0 && i == 7) {
+                    p = new Piece (this, i, j, "brook");
+                    p.setImageResource(R.drawable.brook);
+                }
+                else if(j == 7 && i == 0 || j == 0 && i == 0) {
+                    p = new Piece (this, i, j, "wrook");
+                    p.setImageResource(R.drawable.wrook);
+                }
+                //Knights
+                else if(j == 6 && i == 7 || j == 1 && i == 7) {
+                    p = new Piece (this, i, j, "bknight");
+                    p.setImageResource(R.drawable.bknight);
+                }
+                else if(j == 6 && i == 0 || j == 1 && i == 0) {
+                    p = new Piece (this, i, j, "wknight");
+                    p.setImageResource(R.drawable.wknight);
+                }
+                //Bishops
+                else if(j == 5 && i == 7 || j == 2 && i == 7) {
+                    p = new Piece (this, i, j, "bbishop");
+                    p.setImageResource(R.drawable.bbishop);
+                }
+                else if(j == 5 && i == 0 || j == 2 && i == 0) {
+                    p = new Piece (this, i, j, "wbishop");
+                    p.setImageResource(R.drawable.wbishop);
+                }
+                //Queen
+                else if(j == 4 && i == 7) {
+                    p = new Piece (this, i, j, "bqueen");
+                    p.setImageResource(R.drawable.bqueen);
+                }
+                else if(j == 4 && i == 0 ) {
+                    p = new Piece (this, i, j, "wqueen");
+                    p.setImageResource(R.drawable.wqueen);
+                }
+                //Queen
+                else if(j == 3 && i == 7) {
+                    p = new Piece (this, i, j, "bking");
+                    p.setImageResource(R.drawable.bking);
+                }
+                else if(j == 3 && i == 0 ) {
+                    p = new Piece (this, i, j, "wking");
+                    p.setImageResource(R.drawable.wking);
+                }
+
+                if (p != null) {
+                    tiles[i][j].setPiece(p);
+                    p.setOnTouchListener(this);
+                }
+
+                row.addView(tiles[i][j], j);
+            }
+        }
     }
 
     @Override
