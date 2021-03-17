@@ -281,8 +281,6 @@ public class Board extends View{
     }
 
 };
-
-
     View.OnDragListener dragListener = new View.OnDragListener(){
         @Override
         public boolean onDrag(View v, DragEvent event) {
@@ -295,11 +293,8 @@ public class Board extends View{
                 case DragEvent.ACTION_DRAG_EXITED:
                     break;
                 case DragEvent.ACTION_DROP:
-
                     //Create Move
-
                     //Move pmove = new Move()
-
                     //Validate Player Move
                     //isMoveValid()
                     //Move Piece
@@ -309,7 +304,6 @@ public class Board extends View{
                             .y(event.getY())
                             .setDuration(700)
                             .start();
-
                      */
 
                     break;
