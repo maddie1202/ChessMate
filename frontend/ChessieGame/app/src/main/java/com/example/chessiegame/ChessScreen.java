@@ -10,6 +10,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -103,12 +104,18 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     }
 
     public void initChessboard() {
+        int width = getScreenWidth();
+        int tileSize = width / 8;
+
         for (int i = 0; i < rows; i++) {
             TableRow row = new TableRow(this);
             ConstraintLayout.LayoutParams tbl = (ConstraintLayout.LayoutParams) chessBoard.getLayoutParams();
+            tbl.width = width;
+            tbl.height = width;
+
             TableRow.LayoutParams rp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            rp.height = 60;
-            rp.width = 60;
+            rp.height = tileSize;
+            rp.width = tileSize;
             row.setLayoutParams(tbl);
             chessBoard.addView(row, i);
 
@@ -189,6 +196,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 row.addView(tiles[i][j], j);
             }
         }
+    }
+
+    public static int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
     }
 
     @Override
