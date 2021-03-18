@@ -34,9 +34,11 @@ import android.bluetooth.BluetoothAdapter;
 import android.widget.Toast;
 
 import com.example.chessiegame.components.Board;
+import com.example.chessiegame.components.Move;
 import com.example.chessiegame.components.Piece;
 import com.example.chessiegame.components.Tile;
 
+import java.util.List;
 import java.util.Set;
 
 public class ChessScreen extends AppCompatActivity implements View.OnDragListener, View.OnTouchListener {
@@ -270,6 +272,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 // Invalidates the view to force a redraw
                 v.invalidate();
 
+
+                //Make move
+
+                //Validate it
+
                 View vw = (View) event.getLocalState();
                 ViewGroup owner = (ViewGroup) vw.getParent();
                 owner.removeView(vw); //remove the dragged view
@@ -317,98 +324,55 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    /*
+    //Takes a list with all possible moves that a player can make, the move that player wants to make
+    //Returns if the move is valid or not
+    boolean isMoveValid(List<String> move_list, Move pmove){
 
-
-    public class MyTouch implements View.OnTouchListener{
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                ClipData data = ClipData.newPlainText("", "");
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
-                        view);
-                view.startDrag(data, shadowBuilder, view, 0);
-                view.setVisibility(View.INVISIBLE);
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    public class MyDragListener implements View.OnDragListener {
-        @Override
-        public boolean onDrag(View v, DragEvent event) {
-            int action = event.getAction();
-            switch (action) {
-                case DragEvent.ACTION_DRAG_STARTED:
-                    // do nothing
-                    break;
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    break;
-                case DragEvent.ACTION_DROP:
-                    // Dropped, reassign View to ViewGroup
-                    View dragview = (View) event.getLocalState();
-                    dragview.setVisibility(View.VISIBLE);
-                    break;
-                default:
-                    break;
-            }
+        Piece p = mockMove(pmove);
+        String presentBoard = boardToString();
+        if (move_list.contains(presentBoard)){
             return true;
         }
+
+        undoMove(pmove, p);
+        return false;
     }
 
-     */
+    //Get our present board and make it as a string
+    String boardToString(){
+        String boardMoves = "";
 
-
-    /*
-    View.OnTouchListener ClickListener = new View.OnTouchListener(){
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            //if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                view.startDrag(null, shadowBuilder, view, 0);
-                view.setVisibility(View.VISIBLE);
-                return true;
-           // } else {
-           //     return false;
-          //  }
-
-        }
-    };
-
-
-    View.OnDragListener dragListener = new View.OnDragListener() {
-        @Override
-        public boolean onDrag(View view, DragEvent event) {
-            View v = (View) event.getLocalState();
-            int dragEvent = event.getAction();
-            switch (dragEvent){
-                case DragEvent.ACTION_DRAG_ENTERED:
-                   break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    break;
-                case DragEvent.ACTION_DROP:
-                    ViewGroup owner = (ViewGroup) v.getParent();
-                    owner.removeView(v);
-                    LinearLayout container = (LinearLayout) v;
-                    container.addView(view);
-                    view.setVisibility(View.VISIBLE);
-                   // view.animate()
-                    //        .x(gir.getX())
-                   //         .y(gir.getY())
-                    //        .setDuration(700)
-                    //        .start();
-                    break;
+        for (int i = 0; i < cols ; i ++) {
+            for (int j = 0; j < rows; j++) {
+                boardMoves += tiles[i][j].getPiece().getName();
             }
-
-            return true;
         }
-    };
+        return boardMoves;
+    }
 
+    //Apply a move to our board
+    void applyMoveToBoard(Move move){
+        Piece empty = new Piece (this, move.getInit_col(), move.getInit_row(), "empty");
+        tiles[move.getInit_col()][move.getInit_row()].setPiece(empty);
+        tiles[move.getDest_col()][move.getDest_row()].setPiece(move.getPiece());
+    }
 
-     */
+    //Mock how the board would be if we applied the move
+    //Returns the piece that was on the tile that we put our piece
+    Piece mockMove(Move move){
+        Piece empty = new Piece (this, move.getInit_col(), move.getInit_row(), "empty");
+        tiles[move.getInit_col()][move.getInit_row()].setPiece(empty);
+        Piece ret = tiles[move.getDest_col()][move.getDest_row()].getPiece();
+        tiles[move.getDest_col()][move.getDest_row()].setPiece(move.getPiece());
+        return ret;
+    }
+
+    void undoMove(Move move, Piece p){
+        //Set the intial piece back to its intial positions
+        tiles[move.getInit_col()][move.getInit_row()].setPiece(move.getPiece());
+        //Set the piece that used to be in the board back to its positions
+        tiles[move.getDest_col()][move.getDest_row()].setPiece(p);
+    }
+
 }
 
