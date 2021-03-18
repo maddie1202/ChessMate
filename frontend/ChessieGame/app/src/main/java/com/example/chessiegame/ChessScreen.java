@@ -33,10 +33,27 @@ import android.widget.TextView;
 import android.bluetooth.BluetoothAdapter;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.chessiegame.components.Board;
 import com.example.chessiegame.components.Piece;
 import com.example.chessiegame.components.Tile;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.sql.Timestamp;
 import java.util.Set;
 
 public class ChessScreen extends AppCompatActivity implements View.OnDragListener, View.OnTouchListener {
@@ -46,29 +63,40 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     BluetoothAdapter mBlueAdapter;
     TextView paired_devices;
 
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    RequestQueue queue;
+
     boolean err;
-    public Board board_view;
     public TableLayout chessBoard;
     public Tile[][] tiles;
+    public char[] prevGame;
     private final int rows = 8;
     private final int cols = 8;
+    private boolean startNewGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //board_view = new Board(this);
         setContentView(R.layout.activity_chess_screen);
-        //bbishop = findViewById(R.id.bbishop);
-        //bbishop.setOnTouchListener(this);
-        //findViewById(R.id.tile00).setOnDragListener(this);
 
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         paired_devices = (TextView) findViewById(R.id.paired_devices);
         err = false;
 
+        queue = Volley.newRequestQueue(this);
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+
+        startNewGame = getIntent().getBooleanExtra("newGame", true);
+        startNewGame = true; // always reinitialize board for now
+        if (!startNewGame) { // get the most recent game and its gamestate
+            getLatestGame(user.getUid());
+        }
+
         tiles = new Tile[rows][cols];
         chessBoard = findViewById(R.id.chess);
-        initChessboard();
+        initChessboard(startNewGame);
 
         if (mBlueAdapter == null) {
             showToast("Bluetooth is not available");
@@ -103,7 +131,32 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
-    public void initChessboard() {
+    public void getLatestGame(String uid) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + uid;
+        Date today = new Date();
+        Long now = today.getTime();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    Long minDiff = today.getTime();
+                    Object game = null;
+                    ArrayList<Object> objArray = new Gson().fromJson(response, new TypeToken<ArrayList<Object>>(){}.getType());
+                    for (Object o : objArray) {
+                        /*if (o.startDate.getTime() - now < minDiff) {
+                            minDiff = o.startDateTime.getTime();
+                            game = o;
+                        }*/
+                    }
+                },
+                error -> {
+                    Log.d("ChessScreen", "Error fetching most recent board");
+                });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    public void initChessboard(boolean newGame) {
         int width = getScreenWidth();
         int tileSize = width / 8;
 
@@ -132,60 +185,58 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
                 Piece p = null;
 
-                //Pawn placement
-                if (i == 1) {
-                    Drawable wpawn = getResources().getDrawable(R.drawable.wpawn);
-                    p = new Piece (this, i, j, "wpawn");
-                    p.setImageResource(R.drawable.wpawn);
-                }
-                else if(i == 6) {
-                    p = new Piece (this, i, j, "bpawn");
-                    p.setImageResource(R.drawable.bpawn);
-                }
-                //Rook
-                else if(j == 7 && i == 7 || j == 0 && i == 7) {
-                    p = new Piece (this, i, j, "brook");
-                    p.setImageResource(R.drawable.brook);
-                }
-                else if(j == 7 && i == 0 || j == 0 && i == 0) {
-                    p = new Piece (this, i, j, "wrook");
-                    p.setImageResource(R.drawable.wrook);
-                }
-                //Knights
-                else if(j == 6 && i == 7 || j == 1 && i == 7) {
-                    p = new Piece (this, i, j, "bknight");
-                    p.setImageResource(R.drawable.bknight);
-                }
-                else if(j == 6 && i == 0 || j == 1 && i == 0) {
-                    p = new Piece (this, i, j, "wknight");
-                    p.setImageResource(R.drawable.wknight);
-                }
-                //Bishops
-                else if(j == 5 && i == 7 || j == 2 && i == 7) {
-                    p = new Piece (this, i, j, "bbishop");
-                    p.setImageResource(R.drawable.bbishop);
-                }
-                else if(j == 5 && i == 0 || j == 2 && i == 0) {
-                    p = new Piece (this, i, j, "wbishop");
-                    p.setImageResource(R.drawable.wbishop);
-                }
-                //Queen
-                else if(j == 4 && i == 7) {
-                    p = new Piece (this, i, j, "bqueen");
-                    p.setImageResource(R.drawable.bqueen);
-                }
-                else if(j == 4 && i == 0 ) {
-                    p = new Piece (this, i, j, "wqueen");
-                    p.setImageResource(R.drawable.wqueen);
-                }
-                //Queen
-                else if(j == 3 && i == 7) {
-                    p = new Piece (this, i, j, "bking");
-                    p.setImageResource(R.drawable.bking);
-                }
-                else if(j == 3 && i == 0 ) {
-                    p = new Piece (this, i, j, "wking");
-                    p.setImageResource(R.drawable.wking);
+                if (newGame) {
+                    //Pawn placement
+                    if (i == 1) {
+                        Drawable wpawn = getResources().getDrawable(R.drawable.wpawn);
+                        p = new Piece(this, i, j, "wpawn");
+                        p.setImageResource(R.drawable.wpawn);
+                    } else if (i == 6) {
+                        p = new Piece(this, i, j, "bpawn");
+                        p.setImageResource(R.drawable.bpawn);
+                    }
+                    //Rook
+                    else if (j == 7 && i == 7 || j == 0 && i == 7) {
+                        p = new Piece(this, i, j, "brook");
+                        p.setImageResource(R.drawable.brook);
+                    } else if (j == 7 && i == 0 || j == 0 && i == 0) {
+                        p = new Piece(this, i, j, "wrook");
+                        p.setImageResource(R.drawable.wrook);
+                    }
+                    //Knights
+                    else if (j == 6 && i == 7 || j == 1 && i == 7) {
+                        p = new Piece(this, i, j, "bknight");
+                        p.setImageResource(R.drawable.bknight);
+                    } else if (j == 6 && i == 0 || j == 1 && i == 0) {
+                        p = new Piece(this, i, j, "wknight");
+                        p.setImageResource(R.drawable.wknight);
+                    }
+                    //Bishops
+                    else if (j == 5 && i == 7 || j == 2 && i == 7) {
+                        p = new Piece(this, i, j, "bbishop");
+                        p.setImageResource(R.drawable.bbishop);
+                    } else if (j == 5 && i == 0 || j == 2 && i == 0) {
+                        p = new Piece(this, i, j, "wbishop");
+                        p.setImageResource(R.drawable.wbishop);
+                    }
+                    //Queen
+                    else if (j == 4 && i == 7) {
+                        p = new Piece(this, i, j, "bqueen");
+                        p.setImageResource(R.drawable.bqueen);
+                    } else if (j == 4 && i == 0) {
+                        p = new Piece(this, i, j, "wqueen");
+                        p.setImageResource(R.drawable.wqueen);
+                    }
+                    //Queen
+                    else if (j == 3 && i == 7) {
+                        p = new Piece(this, i, j, "bking");
+                        p.setImageResource(R.drawable.bking);
+                    } else if (j == 3 && i == 0) {
+                        p = new Piece(this, i, j, "wking");
+                        p.setImageResource(R.drawable.wking);
+                    }
+                } else { // TODO: assign layout based on prev game state
+                    Log.d("ChessScreen", "In progress");
                 }
 
                 if (p != null) {
@@ -317,98 +368,5 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    /*
-
-
-    public class MyTouch implements View.OnTouchListener{
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                ClipData data = ClipData.newPlainText("", "");
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
-                        view);
-                view.startDrag(data, shadowBuilder, view, 0);
-                view.setVisibility(View.INVISIBLE);
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    public class MyDragListener implements View.OnDragListener {
-        @Override
-        public boolean onDrag(View v, DragEvent event) {
-            int action = event.getAction();
-            switch (action) {
-                case DragEvent.ACTION_DRAG_STARTED:
-                    // do nothing
-                    break;
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    break;
-                case DragEvent.ACTION_DROP:
-                    // Dropped, reassign View to ViewGroup
-                    View dragview = (View) event.getLocalState();
-                    dragview.setVisibility(View.VISIBLE);
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
-    }
-
-     */
-
-
-    /*
-    View.OnTouchListener ClickListener = new View.OnTouchListener(){
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            //if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                view.startDrag(null, shadowBuilder, view, 0);
-                view.setVisibility(View.VISIBLE);
-                return true;
-           // } else {
-           //     return false;
-          //  }
-
-        }
-    };
-
-
-    View.OnDragListener dragListener = new View.OnDragListener() {
-        @Override
-        public boolean onDrag(View view, DragEvent event) {
-            View v = (View) event.getLocalState();
-            int dragEvent = event.getAction();
-            switch (dragEvent){
-                case DragEvent.ACTION_DRAG_ENTERED:
-                   break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    break;
-                case DragEvent.ACTION_DROP:
-                    ViewGroup owner = (ViewGroup) v.getParent();
-                    owner.removeView(v);
-                    LinearLayout container = (LinearLayout) v;
-                    container.addView(view);
-                    view.setVisibility(View.VISIBLE);
-                   // view.animate()
-                    //        .x(gir.getX())
-                   //         .y(gir.getY())
-                    //        .setDuration(700)
-                    //        .start();
-                    break;
-            }
-
-            return true;
-        }
-    };
-
-
-     */
 }
 
