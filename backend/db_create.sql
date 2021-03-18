@@ -4,7 +4,7 @@ USE ChessMateDB;
 
 /* User(userID, name) */
 CREATE TABLE User(
-    userID int NOT NULL,
+    userID varchar(400) NOT NULL,
     name varchar(40) NOT NULL,
     PRIMARY KEY(userID)
 );
@@ -29,7 +29,7 @@ CREATE TABLE Board(
 
 /* Results(userID, gameID, result) */
 CREATE TABLE Results(
-	userID int,
+	userID varchar(400),
 	gameID int,
 	result int,
 	PRIMARY KEY(userID, gameID),
@@ -47,15 +47,18 @@ CREATE TABLE GoalsLookup(
 
 /* Achievements(userID, goalID) */
 CREATE TABLE Achievements(
-    userID int,
+    userID varchar(400),
     goalID int,
+    difficulty int,
+    reqCount int,
+    realCount int,
     PRIMARY KEY (userID, goalID),
     FOREIGN KEY (userID) REFERENCES User (userID) ON DELETE CASCADE,
     FOREIGN KEY (goalID) REFERENCES GoalsLookup (goalID) ON DELETE CASCADE
 );
 
 /* some starter values to insert into db to test apis */
-INSERT INTO User(userID, name) VALUES(1,'testUser');
+INSERT INTO User(userID, name) VALUES('testUser123','testUser');
 
 INSERT INTO Game(gameID, difficulty) VALUES(1, 1);
 INSERT INTO Game(gameID, difficulty) VALUES(2, 1);
@@ -71,8 +74,8 @@ INSERT INTO Board(boardID, placements, gameID, sequenceNumber)
     VALUES(4, '55 66 77 88', 2, 2);
 
 
-INSERT INTO Results(userID, gameID, result) VALUES(1,1,0);
-INSERT INTO Results(userID, gameID, result) VALUES(1,2,1);
+INSERT INTO Results(userID, gameID, result) VALUES('testUser123',1,0);
+INSERT INTO Results(userID, gameID, result) VALUES('testUser123',2,1);
 
 INSERT INTO GoalsLookup(goalID, gameCount, gameDifficulty)
     VALUES(1, 1, 1);
