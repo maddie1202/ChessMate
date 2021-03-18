@@ -9,6 +9,8 @@ import androidx.gridlayout.widget.GridLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.Toast;
@@ -108,6 +110,17 @@ public class AccountScreen extends Fragment {
 
         if (!gridArray.isEmpty()) {
             TextView titleText;
+            for (int i = 0; i < gridArray.size(); i++) {
+                titleText = new TextView(getContext());
+                titleText.setText(gridArray.get(i));
+                grid.addView(titleText, i);
+
+                GridLayout.LayoutParams param = new GridLayout.LayoutParams();
+                param.height = LayoutParams.WRAP_CONTENT;
+                param.width = LayoutParams.WRAP_CONTENT;
+                param.setGravity(Gravity.CENTER);
+                titleText.setLayoutParams (param);
+            }
         }
 
         signOutBtn.setOnClickListener(new View.OnClickListener() {
