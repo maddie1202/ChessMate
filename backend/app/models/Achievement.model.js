@@ -19,7 +19,7 @@ const Goal = function(goal){
 //GoalsLookup(goalID, gameCount, gameDifficulty)
 
 Goal.findAll = (userID, result) => {
-    sql.query('SELECT goalID FROM Achievements WHERE userID = ${userID}', (err, res) => {
+    sql.query('SELECT goalID FROM Achievements WHERE userID = \" ${userID} \" ', (err, res) => {
         if(err){
             console.log("error: ", err);
             result(err, null);
