@@ -2,6 +2,13 @@ package com.example.chessiegame;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -23,6 +30,9 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.view.View;
 import android.content.Intent;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -97,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("Signin Activity", "signInWithCredential:success");
+                            user = mAuth.getCurrentUser();
+                            registerNewUser(user.getUid(), user.getEmail());
                             Intent intent = new Intent( this, HomeActivity.class);
                             startActivity( intent );
                             finish();
@@ -116,6 +128,35 @@ public class MainActivity extends AppCompatActivity {
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             startActivityForResult(signInIntent, RC_SIGN_IN);
         }
+    }
+
+    public void registerNewUser(String uid, String email) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makeuser/" + uid;
+
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("userID", uid);
+            postData.put("name", email);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
+                new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("Signin Screen", response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+        queue.add(jsonObjectRequest);
     }
 
     @Override
