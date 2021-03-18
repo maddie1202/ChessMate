@@ -38,7 +38,7 @@ public class Tile extends CardView {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        canvas.drawRect(square, tileColor);
+        //canvas.drawRect(square, tileColor);
     }
 
     //Will return true if x and y points are inside the tile

@@ -47,7 +47,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     boolean err;
     public Board board_view;
-    public TableLayout chessboard;
+    public TableLayout chessBoard;
     public Tile[][] tiles;
     private final int rows = 8;
     private final int cols = 8;
@@ -66,7 +66,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         err = false;
 
         tiles = new Tile[rows][cols];
-        chessboard = findViewById(R.id.chessboard);
+        chessBoard = findViewById(R.id.chess);
         initChessboard();
 
         if (mBlueAdapter == null) {
@@ -105,25 +105,22 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     public void initChessboard() {
         for (int i = 0; i < rows; i++) {
             TableRow row = new TableRow(this);
-            //TableLayout.LayoutParams tLayout = TableLayout.LayoutParams();
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            lp.height = 48;
-            lp.width = 384;
-            row.setLayoutParams(lp);
-            chessboard.addView(row, i);
+            ConstraintLayout.LayoutParams tbl = (ConstraintLayout.LayoutParams) chessBoard.getLayoutParams();
+            TableRow.LayoutParams rp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+            rp.height = 60;
+            rp.width = 60;
+            row.setLayoutParams(tbl);
+            chessBoard.addView(row, i);
 
             for (int j = 0; j < cols; j++) {
                 tiles[i][j] = new Tile(this, i, j);
-                Tile.LayoutParams tLayout = new Tile.LayoutParams(Tile.LayoutParams.MATCH_PARENT, Tile.LayoutParams.MATCH_PARENT);
-                tLayout.width = 48;
-                tLayout.height = 48;
                 if ((i + j) % 2 == 0) {
                     tiles[i][j].setBackgroundColor(Color.WHITE);
                 }
                 else {
                     tiles[i][j].setBackgroundColor(Color.argb(100, 151, 182, 181 ));
                 }
-                tiles[i][j].setLayoutParams(tLayout);
+                tiles[i][j].setLayoutParams(rp);
                 tiles[i][j].setOnDragListener(this);
 
                 Piece p = null;
@@ -278,11 +275,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 // Invalidates the view to force a redraw
                 v.invalidate();
                 // Does a getResult(), and displays what happened.
-                if (event.getResult())
-                    Toast.makeText(this, "The drop was handled.", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(this, "The drop didn't work.", Toast.LENGTH_SHORT).show();
-                // returns true; the value is ignored.
                 return true;
             // An unknown action type was received.
             default:
