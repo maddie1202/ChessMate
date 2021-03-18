@@ -156,7 +156,7 @@ Game.createResult = (userID, gameID, resultnum, result) => {
                 result(err, null);
                 return;
             }
-            const user = "\"" + userID + "\"";
+            const user = "" + userID + "";
             var resultobj = {"userID" : user,
                               "gameID" : gameID,
                               "result" : resultnum };
@@ -182,7 +182,7 @@ Game.updateResult = (userID, gameID, resultnum, result) => {
                 return;
             }
 
-            const user = "\"" + userID + "\"";
+            const user = "" + userID + "";
             var resultobj = {"userID" : user,
                               "gameID" : gameID,
                               "result" : resultnum };
