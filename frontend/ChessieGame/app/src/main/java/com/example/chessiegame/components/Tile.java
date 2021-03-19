@@ -8,7 +8,9 @@ import android.graphics.Rect;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class Tile {
+import androidx.cardview.widget.CardView;
+
+public class Tile extends CardView {
     // represents an tile on the chessboard
     public Paint tileColor; // black = 0, white = 1
     public int highlighted; // false = 0, highlighted = 1
@@ -18,9 +20,10 @@ public class Tile {
     public Rect square;
     public TextView drop;
 
-    public Tile(int x, int y) {
-        this.col = y;
+    public Tile(Context context, int x, int y) {
+        super(context);
         this.row = x;
+        this.col = y;
         this.tileColor = new Paint();
         //Determining the color of the tile
         if ((x + y) %2 == 0){
@@ -32,9 +35,10 @@ public class Tile {
 
     }
 
-
+    @Override
     public void draw(Canvas canvas) {
-        canvas.drawRect(square, tileColor);
+        super.draw(canvas);
+        //canvas.drawRect(square, tileColor);
     }
 
     //Will return true if x and y points are inside the tile
@@ -58,7 +62,15 @@ public class Tile {
 
     public Piece getPiece() {return piece;}
 
-    public void setPiece(Piece p) {this.piece = p;}
+    public void setPiece(Piece p) {
+        this.piece = p;
+        this.addView(p);
+    }
+
+    public void removePiece(Piece p) {
+        this.piece = null;
+        this.removeView(p);
+    }
 
 
     //public int setImage() {

@@ -106,6 +106,9 @@ public class HomeScreen extends Fragment {
         resume.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ChessScreen.class);
+                intent.putExtra("newGame", false);
+                startActivity(intent);
                 tryGetRequest(queue, "http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getboard/1");
             }
         });

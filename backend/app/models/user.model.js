@@ -23,7 +23,7 @@ const User = function(user) {
 //create a new user
 User.create = (newUser, result) => {
   const attributes = "userID, name";
-  const values = "" + newUser.userID + ",\"" + newUser.name + "\"";
+  const values = "\"" + newUser.userID + "\",\"" + newUser.name + "\"";
 
       sql.query("INSERT INTO User(" + attributes + ") VALUES(" + values + ")", (err,res) => {
           if(err){
@@ -38,7 +38,7 @@ User.create = (newUser, result) => {
 
 User.findById = (userID, result) => {
 
-    sql.query('SELECT * FROM User WHERE userID='+ userID, (err, res) => {
+    sql.query('SELECT * FROM User WHERE userID=\"'+ userID + '\"', (err, res) => {
         if(err){
             console.log("error from db: ", err);
             result(err, null);
@@ -58,7 +58,7 @@ User.findById = (userID, result) => {
 
 User.updateById = (userID, user, result) => { // will deal with achievements here
     sql.query(
-        "UPDATE User SET name = \"" + user.name + "\" WHERE userID = " + userID,
+        "UPDATE User SET name = \"" + user.name + "\" WHERE userID = \"" + userID + "\"",
         (err, res) => {
             if(err) {
                 console.log("error: ", err);
@@ -80,7 +80,7 @@ User.updateById = (userID, user, result) => { // will deal with achievements her
 
 User.remove = (userID, result) => {
     sql.query(
-        "DELETE FROM User WHERE userID = " + userID,
+        "DELETE FROM User WHERE userID = \"" + userID + "\"",
         (err, res) => {
             if(err) {
                 console.log("error: ", err);

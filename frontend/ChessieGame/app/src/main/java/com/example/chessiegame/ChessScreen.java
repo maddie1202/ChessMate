@@ -2,64 +2,103 @@ package com.example.chessiegame;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.bluetooth.BluetoothAdapter;
 import android.widget.Toast;
 
-import com.example.chessiegame.components.Board;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+//import com.example.chessiegame.components.Board;
+import com.example.chessiegame.components.Move;
+import com.example.chessiegame.components.Piece;
+import com.example.chessiegame.components.Tile;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
-public class ChessScreen extends AppCompatActivity {
+public class ChessScreen extends AppCompatActivity implements View.OnDragListener, View.OnTouchListener {
 
-    /*
-    TextView piece, place;
-    GridLayout gir;
-    */
     private static final int REQUEST_ENABLE_BT = 0;
     private static final int REQUEST_DISCOVER_BT = 1;
-
-    Board board_view;
     BluetoothAdapter mBlueAdapter;
     TextView paired_devices;
+
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    RequestQueue queue;
+
     boolean err;
+    public TableLayout chessBoard;
+    public Tile[][] tiles;
+    public char[] prevGame;
+    private final int rows = 8;
+    private final int cols = 8;
+    private boolean startNewGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        board_view = new Board(this);
-        setContentView(board_view);
-        /*
-        for(int i = 0; i < 8; i++){
-            for(int j = 0; j < 8; j++){
-                board_view.piece_board[i][j].setOnTouchListener(ClickListener);
-
-            }
-        }
-
-         */
-        //piece.setOnLongClickListener(longClickListener);
-        //gir.setOnDragListener(dragListener);
-        //place.setOnDragListener(dragListener);
+        setContentView(R.layout.activity_chess_screen);
 
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         paired_devices = (TextView) findViewById(R.id.paired_devices);
         err = false;
+
+        queue = Volley.newRequestQueue(this);
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+
+        startNewGame = getIntent().getBooleanExtra("newGame", true);
+        startNewGame = true; // always reinitialize board for now
+        if (!startNewGame) { // get the most recent game and its gamestate
+            getLatestGame(user.getUid());
+        }
+
+        tiles = new Tile[rows][cols];
+        chessBoard = findViewById(R.id.chess);
+        initChessboard(startNewGame);
 
         if (mBlueAdapter == null) {
             showToast("Bluetooth is not available");
@@ -94,6 +133,389 @@ public class ChessScreen extends AppCompatActivity {
 
     }
 
+    public void getLatestGame(String uid) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + uid;
+        Date today = new Date();
+        Long now = today.getTime();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    Long minDiff = today.getTime();
+                    Object game = null;
+                    ArrayList<Object> objArray = new Gson().fromJson(response, new TypeToken<ArrayList<Object>>(){}.getType());
+                    for (Object o : objArray) {
+                        /*if (o.startDate.getTime() - now < minDiff) {
+                            minDiff = o.startDateTime.getTime();
+                            game = o;
+                        }*/
+                    }
+                },
+                error -> {
+                    Log.d("ChessScreen", "Error fetching most recent board");
+                });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    //Method to get the tiles[][] and transform it to a list of char
+    char[][] boardformat(){
+        char[][] board = new char[8][8];
+
+        for (int i = 0; i < cols ; i ++) {
+            for (int j = 0; j < rows; j++) {
+                board [i][j] = tiles[i][j].getPiece().id;
+                    /*
+                    case "wpawn":
+                        board[i][j] = ;
+                    case "wrook":
+                        board[i][j] = ;
+                    case "wknight":
+                        board[i][j] = ;
+                    case "wbishop":
+                        board[i][j] = ;
+                    case "wqueen":
+                        board[i][j] = ;
+                    case "wking":
+                        board[i][j] = ;
+                    case "bpawn":
+                        board[i][j] = ;
+                    case "brook":
+                        board[i][j] = ;
+                    case "bknight":
+                        board[i][j] = ;
+                    case "bbishop":
+                        board[i][j] = ;
+                    case "bqueen":
+                        board[i][j] = ;
+                    case "bking":
+                        board[i][j] = ;
+
+                    default:
+                        board[i][j] = 0; //empty
+
+                     */
+
+            }
+        }
+
+        return board;
+
+    }
+
+   // Tile[][] charToBoard(char[][] board){
+    //    return Tile[8][8];
+   // }
+
+    //Takes a list with all possible moves that a player can make, the move that player wants to make
+    //Returns if the move is valid or not
+    boolean isMoveValid(List<Character> move_list, Move pmove){
+
+        Piece p = mockMove(pmove);
+        char[][] presentBoard = boardformat();
+        if (move_list.contains(presentBoard)){
+            return true;
+        }
+
+        undoMove(pmove, p);
+        return false;
+    }
+
+    //Get our present board and make it as a string
+    String boardToString(){
+        String boardMoves = "";
+
+        for (int i = 0; i < cols ; i ++) {
+            for (int j = 0; j < rows; j++) {
+                boardMoves += tiles[i][j].getPiece().getName();
+            }
+        }
+        return boardMoves;
+    }
+
+    //Apply a move to our board
+    void applyMoveToBoard(Move move){
+        Piece empty = new Piece (this, move.getInit_row(), move.getInit_col(), "empty", (char) 0);
+        tiles[move.getInit_col()][move.getInit_row()].setPiece(empty);
+        tiles[move.getDest_col()][move.getDest_row()].setPiece(move.getPiece());
+    }
+
+    //Mock how the board would be if we applied the move
+    //Returns the piece that was on the tile that we put our piece
+    Piece mockMove(Move move){
+        Piece empty = new Piece (this, move.getInit_row(), move.getInit_col(), "empty", (char) 0);
+        tiles[move.getInit_col()][move.getInit_row()].setPiece(empty);
+        Piece ret = tiles[move.getDest_col()][move.getDest_row()].getPiece();
+        tiles[move.getDest_col()][move.getDest_row()].setPiece(move.getPiece());
+        return ret;
+    }
+
+
+    void undoMove(Move move, Piece p){
+        //Set the intial piece back to its intial positions
+        tiles[move.getInit_col()][move.getInit_row()].setPiece(move.getPiece());
+        //Set the piece that used to be in the board back to its positions
+        tiles[move.getDest_col()][move.getDest_row()].setPiece(p);
+    }
+
+    public void initChessboard(boolean newGame) {
+        int width = getScreenWidth();
+        int tileSize = width / 8;
+
+        for (int i = 0; i < rows; i++) {
+            TableRow row = new TableRow(this);
+            ConstraintLayout.LayoutParams tbl = (ConstraintLayout.LayoutParams) chessBoard.getLayoutParams();
+            tbl.width = width;
+            tbl.height = width;
+
+            TableRow.LayoutParams rp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+            rp.height = tileSize;
+            rp.width = tileSize;
+            row.setLayoutParams(tbl);
+            chessBoard.addView(row, i);
+
+            for (int j = 0; j < cols; j++) {
+                tiles[i][j] = new Tile(this, i, j);
+                if ((i + j) % 2 == 0) {
+                    tiles[i][j].setBackgroundColor(Color.WHITE);
+                }
+                else {
+                    tiles[i][j].setBackgroundColor(Color.argb(100, 151, 182, 181 ));
+                }
+                tiles[i][j].setLayoutParams(rp);
+                tiles[i][j].setOnDragListener(this);
+
+                Piece p = null;
+
+                if (newGame) {
+                    //Pawn placement
+                    if (i == 1) {
+                        if(j == 0){
+                            p = new Piece(this, i, j, "wpawn", (char) 1);
+                        }
+                        if(j == 1){
+                            p = new Piece(this, i, j, "wpawn", (char) 2);
+                        }
+                        if(j == 2){
+                            p = new Piece(this, i, j, "wpawn", (char) 3);
+                        }
+                        if(j == 3){
+                            p = new Piece(this, i, j, "wpawn", (char) 4);
+                        }
+                        if(j == 4){
+                            p = new Piece(this, i, j, "wpawn", (char) 5);
+                        }
+                        if(j == 5){
+                            p = new Piece(this, i, j, "wpawn", (char) 6);
+                        }
+                        if(j == 6){
+                            p = new Piece(this, i, j, "wpawn", (char) 7);
+                        }
+                        if(j == 7){
+                            p = new Piece(this, i, j, "wpawn", (char) 8);
+                        }
+                        p.setImageResource(R.drawable.wpawn);
+                    } else if (i == 6) {
+
+                        if(j == 0){
+                            p = new Piece(this, i, j, "wpawn", (char) -1);
+                        }
+                        if(j == 1){
+                            p = new Piece(this, i, j, "wpawn", (char) -2);
+                        }
+                        if(j == 2){
+                            p = new Piece(this, i, j, "wpawn", (char) -3);
+                        }
+                        if(j == 3){
+                            p = new Piece(this, i, j, "wpawn", (char) -4);
+                        }
+                        if(j == 4){
+                            p = new Piece(this, i, j, "wpawn", (char) -5);
+                        }
+                        if(j == 5){
+                            p = new Piece(this, i, j, "wpawn", (char) -6);
+                        }
+                        if(j == 6){
+                            p = new Piece(this, i, j, "wpawn", (char) -7);
+                        }
+                        if(j == 7){
+                            p = new Piece(this, i, j, "wpawn", (char) -8);
+                        }
+                        p.setImageResource(R.drawable.bpawn);
+                    }
+                    //Rook
+                    else if (j == 7 && i == 7) {
+                        p = new Piece(this, i, j, "brook", (char) -10);
+                        p.setImageResource(R.drawable.brook);
+                    }else if(j == 0 && i == 7){
+                        p = new Piece(this, i, j, "brook", (char) -9);
+                        p.setImageResource(R.drawable.brook);
+                    }
+                    else if (j == 7 && i == 0) {
+                        p = new Piece(this, i, j, "wrook", (char) 10);
+                        p.setImageResource(R.drawable.wrook);
+                    } else if(j == 0 && i == 0){
+                        p = new Piece(this, i, j, "wrook", (char) 9);
+                        p.setImageResource(R.drawable.wrook);
+                    }
+                    //Knights
+                    else if (j == 6 && i == 7) {
+                        p = new Piece(this, i, j, "bknight", (char) -20);
+                        p.setImageResource(R.drawable.bknight);
+                    }else if (j == 1 && i == 7){
+                        p = new Piece(this, i, j, "bknight", (char) -19);
+                        p.setImageResource(R.drawable.bknight);
+                    }
+                    else if (j == 6 && i == 0) {
+                        p = new Piece(this, i, j, "wknight", (char) 20);
+                        p.setImageResource(R.drawable.wknight);
+                    } else if(j == 1 && i == 0){
+                        p = new Piece(this, i, j, "wknight", (char) 19);
+                        p.setImageResource(R.drawable.wknight);
+                    }
+                    //Bishops
+                    else if (j == 5 && i == 7 ) {
+                        p = new Piece(this, i, j, "bbishop", (char) -30);
+                        p.setImageResource(R.drawable.bbishop);
+                    }else if(j == 2 && i == 7){
+                        p = new Piece(this, i, j, "bbishop", (char) -29);
+                        p.setImageResource(R.drawable.bbishop);
+                    } else if (j == 5 && i == 0) {
+                        p = new Piece(this, i, j, "wbishop", (char) 30);
+                        p.setImageResource(R.drawable.wbishop);
+                    }else if( j == 2 && i == 0){
+                        p = new Piece(this, i, j, "wbishop", (char) 29);
+                        p.setImageResource(R.drawable.wbishop);
+                    }
+                    //Queen
+                    else if (j == 4 && i == 7) {
+                        p = new Piece(this, i, j, "bqueen", (char) -39);
+                        p.setImageResource(R.drawable.bqueen);
+                    } else if (j == 4 && i == 0) {
+                        p = new Piece(this, i, j, "wqueen" , (char) 39);
+                        p.setImageResource(R.drawable.wqueen);
+                    }
+                    //Queen
+                    else if (j == 3 && i == 7) {
+                        p = new Piece(this, i, j, "bking", (char) -48);
+                        p.setImageResource(R.drawable.bking);
+                    } else if (j == 3 && i == 0) {
+                        p = new Piece(this, i, j, "wking", (char) 48);
+                        p.setImageResource(R.drawable.wking);
+                    }
+                } else { // TODO: assign layout based on prev game state
+                    Log.d("ChessScreen", "In progress");
+                }
+
+                if (p != null) {
+                    tiles[i][j].setPiece(p);
+                    p.setOnTouchListener(this);
+                }
+
+                row.addView(tiles[i][j], j);
+            }
+        }
+    }
+
+    public static int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            ClipData data = ClipData.newPlainText("", "");
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
+                    v);
+            v.startDrag(data, shadowBuilder, v, 0);
+            v.setVisibility(View.INVISIBLE);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onDrag(View v, DragEvent event) {
+        // Defines a variable to store the action type for the incoming event
+        int action = event.getAction();
+        // Handles each of the expected events
+        switch (action) {
+
+            case DragEvent.ACTION_DRAG_STARTED:
+                // Determines if this View can accept the dragged data
+                if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                    // if you want to apply color when drag started to your view you can uncomment below lines
+                    // to give any color tint to the View to indicate that it can accept data.
+                    // v.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
+                    // Invalidate the view to force a redraw in the new tint
+                    //  v.invalidate();
+                    // returns true to indicate that the View can accept the dragged data.
+                    return true;
+                }
+                // Returns false. During the current drag and drop operation, this View will
+                // not receive events again until ACTION_DRAG_ENDED is sent.
+                return false;
+
+            case DragEvent.ACTION_DRAG_ENTERED:
+                // Applies a GRAY or any color tint to the View. Return true; the return value is ignored.
+                v.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+                // Invalidate the view to force a redraw in the new tint
+                v.invalidate();
+                return true;
+
+            case DragEvent.ACTION_DRAG_LOCATION:
+                // Ignore the event
+                return true;
+
+            case DragEvent.ACTION_DRAG_EXITED:
+                // Re-sets the color tint to blue. Returns true; the return value is ignored.
+                // view.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
+                //It will clear a color filter .
+                v.getBackground().clearColorFilter();
+                // Invalidate the view to force a redraw in the new tint
+                v.invalidate();
+                return true;
+
+            case DragEvent.ACTION_DROP:
+                // Gets the item containing the dragged data
+                ClipData.Item item = event.getClipData().getItemAt(0);
+                // Gets the text data from the item.
+                String dragData = item.getText().toString();
+                // Displays a message containing the dragged data.
+                Toast.makeText(this, "Dragged data is " + dragData, Toast.LENGTH_SHORT).show();
+                // Turns off any color tints
+                v.getBackground().clearColorFilter();
+                // Invalidates the view to force a redraw
+                v.invalidate();
+
+                //TODO IS MOVE VALID??? CHECK
+
+                View vw = (View) event.getLocalState();
+                ViewGroup owner = (ViewGroup) vw.getParent();
+                owner.removeView(vw); //remove the dragged view
+                //caste the view into LinearLayout as our drag acceptable layout is LinearLayout
+                CardView container = (CardView) v;
+                container.addView(vw);//Add the dragged view
+                vw.setVisibility(View.VISIBLE);//finally set Visibility to VISIBLE
+                // Returns true. DragEvent.getResult() will return true.
+                return true;
+
+            case DragEvent.ACTION_DRAG_ENDED:
+                // Turns off any color tinting
+                v.getBackground().clearColorFilter();
+                // Invalidates the view to force a redraw
+                v.invalidate();
+                // Does a getResult(), and displays what happened.
+                return true;
+            // An unknown action type was received.
+            default:
+                Log.e("DragDrop Example", "Unknown action type received by OnDragListener.");
+                break;
+        }
+        return false;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
@@ -116,98 +538,5 @@ public class ChessScreen extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    /*
-
-
-    public class MyTouch implements View.OnTouchListener{
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                ClipData data = ClipData.newPlainText("", "");
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
-                        view);
-                view.startDrag(data, shadowBuilder, view, 0);
-                view.setVisibility(View.INVISIBLE);
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    public class MyDragListener implements View.OnDragListener {
-        @Override
-        public boolean onDrag(View v, DragEvent event) {
-            int action = event.getAction();
-            switch (action) {
-                case DragEvent.ACTION_DRAG_STARTED:
-                    // do nothing
-                    break;
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    break;
-                case DragEvent.ACTION_DROP:
-                    // Dropped, reassign View to ViewGroup
-                    View dragview = (View) event.getLocalState();
-                    dragview.setVisibility(View.VISIBLE);
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
-    }
-
-     */
-
-
-    /*
-    View.OnTouchListener ClickListener = new View.OnTouchListener(){
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            //if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                view.startDrag(null, shadowBuilder, view, 0);
-                view.setVisibility(View.VISIBLE);
-                return true;
-           // } else {
-           //     return false;
-          //  }
-
-        }
-    };
-
-
-    View.OnDragListener dragListener = new View.OnDragListener() {
-        @Override
-        public boolean onDrag(View view, DragEvent event) {
-            View v = (View) event.getLocalState();
-            int dragEvent = event.getAction();
-            switch (dragEvent){
-                case DragEvent.ACTION_DRAG_ENTERED:
-                   break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    break;
-                case DragEvent.ACTION_DROP:
-                    ViewGroup owner = (ViewGroup) v.getParent();
-                    owner.removeView(v);
-                    LinearLayout container = (LinearLayout) v;
-                    container.addView(view);
-                    view.setVisibility(View.VISIBLE);
-                   // view.animate()
-                    //        .x(gir.getX())
-                   //         .y(gir.getY())
-                    //        .setDuration(700)
-                    //        .start();
-                    break;
-            }
-
-            return true;
-        }
-    };
-
-
-     */
 }
 

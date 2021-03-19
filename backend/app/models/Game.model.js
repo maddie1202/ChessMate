@@ -64,7 +64,7 @@ Game.findById = (gameID, result) => {
 
 // get all games played by a user
 Game.getAll = (userID, result) => {
-    sql.query("SELECT * FROM Results WHERE userID=" + userID, (err, res) => {
+    sql.query("SELECT * FROM Results WHERE userID= \"" + userID + "\"", (err, res) => {
         if(err){
             console.log("error from db: ", err);
             result(err, null);
@@ -132,7 +132,7 @@ Game.remove = (gameID, result) => {
 //remove all games with userID
 Game.removeAll = (userID, result) => {
     sql.query(
-        "DELETE FROM Result WHERE userID = " + userID,
+        "DELETE FROM Result WHERE userID = \"" + userID + "\"",
         (err, res) => {
             if(err){
                 console.log("error: ", err);
@@ -149,14 +149,15 @@ Game.removeAll = (userID, result) => {
 Game.createResult = (userID, gameID, resultnum, result) => {
 
         const attributes = "userID, gameID, result";
-        const values = ""+ userID + ", " + gameID + ", " + resultnum;
+        const values = "\""+ userID + "\", " + gameID + ", " + resultnum;
         sql.query("INSERT INTO Results(" + attributes + ") VALUES(" + values + ")", (err, res) => {
             if(err){
                 console.log("error: ", err);
                 result(err, null);
                 return;
             }
-            var resultobj = {"userID" : userID,
+            const user = "" + userID + "";
+            var resultobj = {"userID" : user,
                               "gameID" : gameID,
                               "result" : resultnum };
 
@@ -167,7 +168,7 @@ Game.createResult = (userID, gameID, resultnum, result) => {
 
 Game.updateResult = (userID, gameID, resultnum, result) => {
     sql.query(
-        "UPDATE Results SET result = " +resultnum+ " WHERE userID = " + userID + " AND gameID = " + gameID,
+        "UPDATE Results SET result = " +resultnum+ " WHERE userID = \"" + userID + "\" AND gameID = " + gameID,
         (err, res) => {
             if(err) {
                 console.log("error: ", err);
@@ -181,8 +182,8 @@ Game.updateResult = (userID, gameID, resultnum, result) => {
                 return;
             }
 
-
-            var resultobj = {"userID" : userID,
+            const user = "" + userID + "";
+            var resultobj = {"userID" : user,
                               "gameID" : gameID,
                               "result" : resultnum };
 
