@@ -39,7 +39,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.chessiegame.components.Board;
+//import com.example.chessiegame.components.Board;
+import com.example.chessiegame.components.Move;
 import com.example.chessiegame.components.Piece;
 import com.example.chessiegame.components.Tile;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,6 +55,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.Date;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 public class ChessScreen extends AppCompatActivity implements View.OnDragListener, View.OnTouchListener {
@@ -156,6 +158,106 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         queue.add(stringRequest);
     }
 
+    //Method to get the tiles[][] and transform it to a list of char
+    char[][] boardformat(){
+        char[][] board = new char[8][8];
+
+        for (int i = 0; i < cols ; i ++) {
+            for (int j = 0; j < rows; j++) {
+                board [i][j] = tiles[i][j].getPiece().id;
+                    /*
+                    case "wpawn":
+                        board[i][j] = ;
+                    case "wrook":
+                        board[i][j] = ;
+                    case "wknight":
+                        board[i][j] = ;
+                    case "wbishop":
+                        board[i][j] = ;
+                    case "wqueen":
+                        board[i][j] = ;
+                    case "wking":
+                        board[i][j] = ;
+                    case "bpawn":
+                        board[i][j] = ;
+                    case "brook":
+                        board[i][j] = ;
+                    case "bknight":
+                        board[i][j] = ;
+                    case "bbishop":
+                        board[i][j] = ;
+                    case "bqueen":
+                        board[i][j] = ;
+                    case "bking":
+                        board[i][j] = ;
+
+                    default:
+                        board[i][j] = 0; //empty
+
+                     */
+
+            }
+        }
+
+        return board;
+
+    }
+
+   // Tile[][] charToBoard(char[][] board){
+    //    return Tile[8][8];
+   // }
+
+    //Takes a list with all possible moves that a player can make, the move that player wants to make
+    //Returns if the move is valid or not
+    boolean isMoveValid(List<Character> move_list, Move pmove){
+
+        Piece p = mockMove(pmove);
+        char[][] presentBoard = boardformat();
+        if (move_list.contains(presentBoard)){
+            return true;
+        }
+
+        undoMove(pmove, p);
+        return false;
+    }
+
+    //Get our present board and make it as a string
+    String boardToString(){
+        String boardMoves = "";
+
+        for (int i = 0; i < cols ; i ++) {
+            for (int j = 0; j < rows; j++) {
+                boardMoves += tiles[i][j].getPiece().getName();
+            }
+        }
+        return boardMoves;
+    }
+
+    //Apply a move to our board
+    void applyMoveToBoard(Move move){
+        Piece empty = new Piece (this, move.getInit_row(), move.getInit_col(), "empty", (char) 0);
+        tiles[move.getInit_col()][move.getInit_row()].setPiece(empty);
+        tiles[move.getDest_col()][move.getDest_row()].setPiece(move.getPiece());
+    }
+
+    //Mock how the board would be if we applied the move
+    //Returns the piece that was on the tile that we put our piece
+    Piece mockMove(Move move){
+        Piece empty = new Piece (this, move.getInit_row(), move.getInit_col(), "empty", (char) 0);
+        tiles[move.getInit_col()][move.getInit_row()].setPiece(empty);
+        Piece ret = tiles[move.getDest_col()][move.getDest_row()].getPiece();
+        tiles[move.getDest_col()][move.getDest_row()].setPiece(move.getPiece());
+        return ret;
+    }
+
+
+    void undoMove(Move move, Piece p){
+        //Set the intial piece back to its intial positions
+        tiles[move.getInit_col()][move.getInit_row()].setPiece(move.getPiece());
+        //Set the piece that used to be in the board back to its positions
+        tiles[move.getDest_col()][move.getDest_row()].setPiece(p);
+    }
+
     public void initChessboard(boolean newGame) {
         int width = getScreenWidth();
         int tileSize = width / 8;
@@ -188,51 +290,117 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 if (newGame) {
                     //Pawn placement
                     if (i == 1) {
-                        Drawable wpawn = getResources().getDrawable(R.drawable.wpawn);
-                        p = new Piece(this, i, j, "wpawn");
+                        if(j == 0){
+                            p = new Piece(this, i, j, "wpawn", (char) 1);
+                        }
+                        if(j == 1){
+                            p = new Piece(this, i, j, "wpawn", (char) 2);
+                        }
+                        if(j == 2){
+                            p = new Piece(this, i, j, "wpawn", (char) 3);
+                        }
+                        if(j == 3){
+                            p = new Piece(this, i, j, "wpawn", (char) 4);
+                        }
+                        if(j == 4){
+                            p = new Piece(this, i, j, "wpawn", (char) 5);
+                        }
+                        if(j == 5){
+                            p = new Piece(this, i, j, "wpawn", (char) 6);
+                        }
+                        if(j == 6){
+                            p = new Piece(this, i, j, "wpawn", (char) 7);
+                        }
+                        if(j == 7){
+                            p = new Piece(this, i, j, "wpawn", (char) 8);
+                        }
                         p.setImageResource(R.drawable.wpawn);
                     } else if (i == 6) {
-                        p = new Piece(this, i, j, "bpawn");
+
+                        if(j == 0){
+                            p = new Piece(this, i, j, "wpawn", (char) -1);
+                        }
+                        if(j == 1){
+                            p = new Piece(this, i, j, "wpawn", (char) -2);
+                        }
+                        if(j == 2){
+                            p = new Piece(this, i, j, "wpawn", (char) -3);
+                        }
+                        if(j == 3){
+                            p = new Piece(this, i, j, "wpawn", (char) -4);
+                        }
+                        if(j == 4){
+                            p = new Piece(this, i, j, "wpawn", (char) -5);
+                        }
+                        if(j == 5){
+                            p = new Piece(this, i, j, "wpawn", (char) -6);
+                        }
+                        if(j == 6){
+                            p = new Piece(this, i, j, "wpawn", (char) -7);
+                        }
+                        if(j == 7){
+                            p = new Piece(this, i, j, "wpawn", (char) -8);
+                        }
                         p.setImageResource(R.drawable.bpawn);
                     }
                     //Rook
-                    else if (j == 7 && i == 7 || j == 0 && i == 7) {
-                        p = new Piece(this, i, j, "brook");
+                    else if (j == 7 && i == 7) {
+                        p = new Piece(this, i, j, "brook", (char) -10);
                         p.setImageResource(R.drawable.brook);
-                    } else if (j == 7 && i == 0 || j == 0 && i == 0) {
-                        p = new Piece(this, i, j, "wrook");
+                    }else if(j == 0 && i == 7){
+                        p = new Piece(this, i, j, "brook", (char) -9);
+                        p.setImageResource(R.drawable.brook);
+                    }
+                    else if (j == 7 && i == 0) {
+                        p = new Piece(this, i, j, "wrook", (char) 10);
+                        p.setImageResource(R.drawable.wrook);
+                    } else if(j == 0 && i == 0){
+                        p = new Piece(this, i, j, "wrook", (char) 9);
                         p.setImageResource(R.drawable.wrook);
                     }
                     //Knights
-                    else if (j == 6 && i == 7 || j == 1 && i == 7) {
-                        p = new Piece(this, i, j, "bknight");
+                    else if (j == 6 && i == 7) {
+                        p = new Piece(this, i, j, "bknight", (char) -20);
                         p.setImageResource(R.drawable.bknight);
-                    } else if (j == 6 && i == 0 || j == 1 && i == 0) {
-                        p = new Piece(this, i, j, "wknight");
+                    }else if (j == 1 && i == 7){
+                        p = new Piece(this, i, j, "bknight", (char) -19);
+                        p.setImageResource(R.drawable.bknight);
+                    }
+                    else if (j == 6 && i == 0) {
+                        p = new Piece(this, i, j, "wknight", (char) 20);
+                        p.setImageResource(R.drawable.wknight);
+                    } else if(j == 1 && i == 0){
+                        p = new Piece(this, i, j, "wknight", (char) 19);
                         p.setImageResource(R.drawable.wknight);
                     }
                     //Bishops
-                    else if (j == 5 && i == 7 || j == 2 && i == 7) {
-                        p = new Piece(this, i, j, "bbishop");
+                    else if (j == 5 && i == 7 ) {
+                        p = new Piece(this, i, j, "bbishop", (char) -30);
                         p.setImageResource(R.drawable.bbishop);
-                    } else if (j == 5 && i == 0 || j == 2 && i == 0) {
-                        p = new Piece(this, i, j, "wbishop");
+                    }else if(j == 2 && i == 7){
+                        p = new Piece(this, i, j, "bbishop", (char) -29);
+                        p.setImageResource(R.drawable.bbishop);
+                    } else if (j == 5 && i == 0) {
+                        p = new Piece(this, i, j, "wbishop", (char) 30);
+                        p.setImageResource(R.drawable.wbishop);
+                    }else if( j == 2 && i == 0){
+                        p = new Piece(this, i, j, "wbishop", (char) 29);
                         p.setImageResource(R.drawable.wbishop);
                     }
                     //Queen
                     else if (j == 4 && i == 7) {
-                        p = new Piece(this, i, j, "bqueen");
+                        p = new Piece(this, i, j, "bqueen", (char) -39);
                         p.setImageResource(R.drawable.bqueen);
                     } else if (j == 4 && i == 0) {
-                        p = new Piece(this, i, j, "wqueen");
+                        p = new Piece(this, i, j, "wqueen" , (char) 39);
                         p.setImageResource(R.drawable.wqueen);
                     }
                     //Queen
                     else if (j == 3 && i == 7) {
-                        p = new Piece(this, i, j, "bking");
+                        p = new Piece(this, i, j, "bking", (char) -48);
                         p.setImageResource(R.drawable.bking);
                     } else if (j == 3 && i == 0) {
-                        p = new Piece(this, i, j, "wking");
+                        p = new Piece(this, i, j, "wking", (char) 48);
                         p.setImageResource(R.drawable.wking);
                     }
                 } else { // TODO: assign layout based on prev game state
@@ -320,6 +488,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 v.getBackground().clearColorFilter();
                 // Invalidates the view to force a redraw
                 v.invalidate();
+
+                //TODO IS MOVE VALID??? CHECK
 
                 View vw = (View) event.getLocalState();
                 ViewGroup owner = (ViewGroup) vw.getParent();

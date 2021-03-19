@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.DragEvent;
 import android.widget.Toast;
 
-import com.example.chessiegame.components.Board;
+//import com.example.chessiegame.components.Board;
 
 public class Piece extends androidx.appcompat.widget.AppCompatImageView {
 
@@ -21,12 +21,14 @@ public class Piece extends androidx.appcompat.widget.AppCompatImageView {
     public int row;
     public String name;
     public String color;
+    public char id;
 
-    public Piece (Context context, int row, int col, String name) {
+    public Piece (Context context, int row, int col, String name, char id) {
         super(context);
         this.col = col;
         this.row = row;
         this.name = name;
+        this.id = id;
     }
 
     public void draw(Canvas canvas) {
@@ -34,10 +36,6 @@ public class Piece extends androidx.appcompat.widget.AppCompatImageView {
         this.getDrawable().draw(canvas);
     }
 
-    public Piece(Context context, String name) {
-        super(context);
-        this.name = name;
-    }
 
     /*public Piece(String name){
         this.name = name;

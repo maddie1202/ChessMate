@@ -28,7 +28,8 @@ import android.widget.TableRow;
 import androidx.annotation.RequiresApi;
 
 
-public class Board extends View implements View.OnDragListener, View.OnTouchListener {
+/*
+public class Board extends View {
 
     public Tile[][] board;
     public ImageView[][] piece_board;
@@ -56,6 +57,7 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
         rect = new Rect();
     }
 
+    /*
     @Override
     public void onDraw(Canvas canvas) {
 
@@ -71,6 +73,11 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
      - for tiles that initially contain pieces, create the appropriate Piece
      - add that Piece (ImageView) to the Tile (CardView)
     */
+
+
+/*
+
+
     public void fillBoard(Canvas canvas) {
         int width = getWidth();
         int height = getHeight();
@@ -93,9 +100,8 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
                 Tile.LayoutParams tLayout = new Tile.LayoutParams(Tile.LayoutParams.WRAP_CONTENT, Tile.LayoutParams.WRAP_CONTENT);
                 if ((i + j) % 2 == 0) {
                     board[i][j].setBackgroundColor(Color.WHITE);
-                }
-                else {
-                    board[i][j].setBackgroundColor(Color.argb(100, 151, 182, 181 ));
+                } else {
+                    board[i][j].setBackgroundColor(Color.argb(100, 151, 182, 181));
                 }
 
                 board[i][j].setSquare(rect);
@@ -109,6 +115,8 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
                 // Set up initial layout
                 Piece p = null;
 
+
+                /*
                 //Pawn placement
                 if (i == 1) {
                     Drawable wpawn = getResources().getDrawable(R.drawable.wpawn);
@@ -205,6 +213,8 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
         table.draw(canvas);
     }
 
+
+
     /*@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onDraw(Canvas canvas) {
@@ -214,47 +224,48 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
         drawPiece(canvas);
     }*/
 
-    //
-    public void drawBoard(Canvas canvas) {
-        int width = getWidth();
-        int height = getHeight();
-        size = width/8;
-        this.y0 = (height - size*8)/2;
 
-        for (int i = 0; i < rows ; i ++) {
-            TableRow row = new TableRow(this.context);
-            TableRow.LayoutParams lp = new TableRow.LayoutParams();
-            lp.height = size;
+             /*   //
+                public void drawBoard (Canvas canvas){
+                    int width = getWidth();
+                    int height = getHeight();
+                    size = width / 8;
+                    this.y0 = (height - size * 8) / 2;
 
-            for (int j = 0; j < cols; j++) {
-                int xcoord = size * j;
-                int ycoord = y0 + size * i;
+                    for (int i = 0; i < rows; i++) {
+                        TableRow row = new TableRow(this.context);
+                        TableRow.LayoutParams lp = new TableRow.LayoutParams();
+                        lp.height = size;
 
-                Piece p = new Piece(getContext(), j, i, "empty");
+                        for (int j = 0; j < cols; j++) {
+                            int xcoord = size * j;
+                            int ycoord = y0 + size * i;
 
-                board[i][j] = new Tile(getContext(), j, i);
-                board[i][j].setPiece(p);
-                board[i][j].setSquare(rect);
-                board[i][j].setOnDragListener(this);
-                //board[i][j].setDrop(getContext());
+                            Piece p = new Piece(getContext(), j, i, "empty");
 
-                rect.left = xcoord;
-                rect.top = ycoord;
-                rect.right = xcoord + size;
-                rect.bottom = ycoord + size;
-                board[i][j].draw(canvas);
+                            board[i][j] = new Tile(getContext(), j, i);
+                            board[i][j].setPiece(p);
+                            board[i][j].setSquare(rect);
+                            board[i][j].setOnDragListener(this);
+                            //board[i][j].setDrop(getContext());
 
-            }
+                            rect.left = xcoord;
+                            rect.top = ycoord;
+                            rect.right = xcoord + size;
+                            rect.bottom = ycoord + size;
+                            board[i][j].draw(canvas);
 
-        }
-    }
+                        }
 
-    public void drawPiece(Canvas canvas) {
+                    }
+                }
 
-    }
+                public void drawPiece (Canvas canvas){
+
+                }
 
 
-    //Drawing the board
+                //Drawing the board
     /*public void drawBoard (Canvas canvas) {
         int width = getWidth();
         int height = getHeight();
@@ -406,6 +417,7 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
 
     }*/
 
+                /*
 
     //Takes a list with all possible moves that a player can make, the move that player wants to make
     //Returns if the move is valid or not
@@ -548,4 +560,12 @@ public class Board extends View implements View.OnDragListener, View.OnTouchList
         }
         return false;
     }
-}
+
+    }
+
+
+
+
+
+
+                 */
