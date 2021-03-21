@@ -114,18 +114,18 @@ module tb_pawn();
         master_address, master_read, master_readdata, master_readdatavalid, 
         master_write, master_writedata);
 
-    logic [7:0][`MEM_SIZE - 1:0] write_mem;
-    logic [7:0][63:0] read_mem;
+    logic [7:0] write_mem [`MEM_SIZE - 1:0];
+    logic [7:0] read_mem [63:0];
 
     task reset_mem();
         for (int i = 0; i < `MEM_SIZE; i++) begin
-            mem[i] = 8'hFF;
+            write_mem[i] = 8'hFF;
         end
     endtask
 
     task init();
         master_waitrequest = 0;
-        master_readdatavalid = 0;
+        master_readdatavalid = 1;
         master_readdata = 32'hFFFFFFFF;
         
         slave_address = 32'd0;
@@ -164,26 +164,24 @@ module tb_pawn();
     // sdram mock
     initial begin
         forever begin
+            #5;
             if (master_write) begin
                 write_mem[master_address] = master_writedata;
             end else if (master_read) begin
-                #30;
-                master_readdatavalid = 1;
                 master_readdata = read_mem[master_address];
-                #10;
-                master_readdatavalid = 0;
-                master_readdata = 32'hFFFFFFFF;
-            end
+            end 
         end
     end
 
     // initialize initial board
-    initial $readmemh ("initial-boards/pawn-test-board.memh", read_mem);
+    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\initial-boards\\pawn-test-board.memh", read_mem);
 
 
     // sequential part
     initial begin
         init();
+
+        #30;
         for (int i = 0; i < 64; i++) begin
             $display("%0d", read_mem[i]);
         end

@@ -9,7 +9,8 @@ void write_board_to_file(char* filename, board_t *board)
 
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            fprintf(fp, "0x%x\n", (*board)[i][j]);
+            char ch = 0xC0;
+            fprintf(fp, "%x\n", ch & (*board)[i][j]);
         }
     }
 }
