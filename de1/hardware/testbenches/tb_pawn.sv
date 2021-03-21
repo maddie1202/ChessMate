@@ -1,6 +1,5 @@
-`define MAX_PAWN_MOVES 12
 `define NUM_PAWN_MOVES 2
-`define MEM_SIZE (`MAX_PAWN_MOVES * 64)
+`define MEM_SIZE (`NUM_PAWN_MOVES * 64)
 
 `define WPAWN0  1
 `define WPAWN1  2
@@ -180,7 +179,7 @@ module tb_pawn();
         end
     end
 
-    // initialize initial board adn expected boards
+    // initialize initial board and expected boards
     initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\initial-boards\\pawn-test-board.memh", read_mem);
     initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\pawn-expected1.memh", expected[0]);
     initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\pawn-expected2.memh", expected[1]);
