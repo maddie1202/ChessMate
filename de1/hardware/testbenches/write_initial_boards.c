@@ -31,12 +31,12 @@ void write_pawn_board(char *filename)
 
     board_t* w_expected1 = copy_board(&board);
     move_piece(w_expected1, WPAWN2, 2, 2);
-    write_board_to_file("reference-boards/expected1.memh", w_expected1);
+    write_board_to_file("reference-boards/pawn-expected1.memh", w_expected1);
 
     // move WPAWN2 from (2, 1) to (2, 3)
     board_t* w_expected2 = copy_board(&board);
     move_piece(w_expected2, WPAWN2, 2, 3);
-    write_board_to_file("reference-boards/expected2.memh", w_expected2);
+    write_board_to_file("reference-boards/pawn-expected2.memh", w_expected2);
 }
 
 int main()
