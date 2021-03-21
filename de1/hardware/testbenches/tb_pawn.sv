@@ -141,10 +141,14 @@ module tb_pawn();
 
     task execute_generation();
         slave_write = 1;
-        slave_address = 32'd0;
+        slave_address = 32'd1;
         wait(slave_waitrequest == 0);
 
-        slave_address = 32'd1;
+        slave_address = 32'd2;
+        slave_writedata = `WPAWN2;
+        wait(slave_waitrequest == 0);
+
+        slave_address = 32'd0;
         wait(slave_waitrequest == 0);
 
         slave_write = 0;

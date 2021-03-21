@@ -8,9 +8,8 @@ void write_board_to_file(char* filename, board_t *board)
     FILE *fp = fopen(filename, "w");
 
     for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            char ch = 0xC0;
-            fprintf(fp, "%x\n", ch & (*board)[i][j]);
+        for (int j = 0; j < 8; j++) {   
+            fprintf(fp, "%x\n", (*board)[i][j]);
         }
     }
 }
@@ -29,6 +28,15 @@ void write_pawn_board(char *filename)
         };
 
     write_board_to_file(filename, &board);
+
+    board_t* w_expected1 = copy_board(&board);
+    move_piece(w_expected1, WPAWN2, 2, 2);
+    write_board_to_file("reference-boards/expected1.memh", w_expected1);
+
+    // move WPAWN2 from (2, 1) to (2, 3)
+    board_t* w_expected2 = copy_board(&board);
+    move_piece(w_expected2, WPAWN2, 2, 3);
+    write_board_to_file("reference-boards/expected2.memh", w_expected2);
 }
 
 int main()
