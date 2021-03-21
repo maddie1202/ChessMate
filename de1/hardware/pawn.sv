@@ -15,5 +15,6 @@ module pawn(input logic clk, input logic rst_n,
     assign master_write = 0;
     assign master_address = 32'd0;
     assign master_writedata = 32'd0;
+    assign slave_waitrequest = 0;
 
 endmodule

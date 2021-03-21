@@ -1,4 +1,5 @@
 `define MAX_PAWN_MOVES 12
+`define NUM_PAWN_MOVES 2
 `define MEM_SIZE (`MAX_PAWN_MOVES * 64)
 
 `define WPAWN0  1
@@ -117,6 +118,8 @@ module tb_pawn();
     logic [7:0] write_mem [`MEM_SIZE - 1:0];
     logic [7:0] read_mem [63:0];
 
+    logic [7:0] expected [1:0][63:0];
+
     task reset_mem();
         for (int i = 0; i < `MEM_SIZE; i++) begin
             write_mem[i] = 8'hFF;
@@ -177,19 +180,43 @@ module tb_pawn();
         end
     end
 
-    // initialize initial board
+    // initialize initial board adn expected boards
     initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\initial-boards\\pawn-test-board.memh", read_mem);
+    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\pawn-expected1.memh", expected[0]);
+    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\pawn-expected2.memh", expected[1]);
 
+    task board_equals(input int base, input int expected_i, output logic match);
+        for (int i = 0; i < 64; i++) begin
+            if (write_mem[base + i] !== expected[expected_i][i]) begin
+                match = 0;
+                return;
+            end
+        end
+
+        match = 1;
+    endtask
+
+    logic match;
 
     // sequential part
     initial begin
         init();
+        execute_generation();
 
-        #30;
-        for (int i = 0; i < 64; i++) begin
-            $display("%0d", read_mem[i]);
-        end
-        // execute_generation();
+        // check for correct behaviour
+        for (int i = 0; i < `NUM_PAWN_MOVES; i++) begin
+            match = 0;
+
+            for (int j = 0; j < `NUM_PAWN_MOVES; j++) begin
+                board_equals(i * 64, j, match);
+                if (match) begin
+                    $display("Match!");
+                    break;
+                end
+            end
+
+            if (!match) $error("No match for actual board %0d", i);
+        end 
 
     end
 endmodule  
