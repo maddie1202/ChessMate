@@ -1,77 +1,289 @@
 package com.example.chessiegame.components;
 
 import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Build;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.chessiegame.ChessScreen;
 import com.example.chessiegame.R;
-import com.example.chessiegame.components.Tile;
+
 import java.util.List;
-import android.content.Context;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 
 import androidx.annotation.RequiresApi;
 
 
-public class Board extends View{
+/*
+public class Board extends View {
+
     public Tile[][] board;
     public ImageView[][] piece_board;
     public Rect rect;
-    public static int cols = 8;
-    public static int rows= 8;
+    public static final int cols = 8;
+    public static final int rows = 8;
     public int size = 0;
     private int x0 = 0;
     private int y0 = 0;
 
+    public boolean dragging;
+    public View dragView;
+    public TableLayout table;
+    private Context context;
+
     public Board(Context context) {
         super(context); // initialize a new chessboard
         this.board = new Tile[cols][rows];
-        this.piece_board = new ImageView[cols][rows];
+        this.piece_board = new Piece[cols][rows];
+        this.context = context;
+        this.table = new TableLayout(context);
+        TableLayout.LayoutParams lp = new TableLayout.LayoutParams();
+        lp.height = 360;
+        lp.width = 360;
         rect = new Rect();
-        //setPieces();
-
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    /*
+    @Override
+    public void onDraw(Canvas canvas) {
+
+        canvas.drawColor(Color.argb(100, 151, 182, 167));
+        fillBoard(canvas);
+    }
+
+    /*
+     Populate Chess Board
+     - for each row, create a new TableRow
+     - fill each TableRow with Tiles (which extend CardView)
+     - fill each Tile with the appropriate background color
+     - for tiles that initially contain pieces, create the appropriate Piece
+     - add that Piece (ImageView) to the Tile (CardView)
+    */
+
+
+/*
+
+
+    public void fillBoard(Canvas canvas) {
+        int width = getWidth();
+        int height = getHeight();
+        size = width / 8;
+        this.y0 = (height - width) / 2;
+
+        for (int i = 0; i < rows; i++) {
+            TableRow row = new TableRow(this.context);
+            TableRow.LayoutParams lp = new TableRow.LayoutParams();
+            lp.height = 45;
+            lp.width = 360;
+            row.setLayoutParams(lp);
+
+            for (int j = 0; j < cols; j++) {
+                int xcoord = size * i;
+                int ycoord = y0 + size * j;
+
+                // Tile extends CardView
+                board[i][j] = new Tile(this.context, i, j);
+                Tile.LayoutParams tLayout = new Tile.LayoutParams(Tile.LayoutParams.WRAP_CONTENT, Tile.LayoutParams.WRAP_CONTENT);
+                if ((i + j) % 2 == 0) {
+                    board[i][j].setBackgroundColor(Color.WHITE);
+                } else {
+                    board[i][j].setBackgroundColor(Color.argb(100, 151, 182, 181));
+                }
+
+                board[i][j].setSquare(rect);
+                rect.left = xcoord;
+                rect.top = ycoord;
+                rect.right = xcoord + size;
+                rect.bottom = ycoord + size;
+                board[i][j].draw(canvas);
+                board[i][j].setOnDragListener(this);
+
+                // Set up initial layout
+                Piece p = null;
+
+
+                /*
+                //Pawn placement
+                if (i == 1) {
+                    Drawable wpawn = getResources().getDrawable(R.drawable.wpawn);
+                    wpawn.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wpawn");
+                    p.setImageDrawable(wpawn);
+                }
+                else if(i == 6) {
+                    Drawable bpawn = getResources().getDrawable(R.drawable.bpawn);
+                    bpawn.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "bpawn");
+                    p.setImageDrawable(bpawn);
+                }
+                //Rook
+                else if(j == 7 && i == 7 || j == 0 && i == 7){
+                    Drawable brook =  getResources().getDrawable(R.drawable.brook);
+                    brook.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "brook");
+                    p.setImageDrawable(brook);
+                }
+                else if(j == 7 && i == 0 || j == 0 && i == 0){
+                    Drawable wrook =  getResources().getDrawable(R.drawable.wrook);
+                    wrook.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wrook");
+                    p.setImageDrawable(wrook);
+                }
+                //Knights
+                else if(j == 6 && i == 7 || j == 1 && i == 7){
+                    Drawable bknight =  getResources().getDrawable(R.drawable.bknight);
+                    bknight.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "bknight");
+                    p.setImageDrawable(bknight);
+                }
+                else if(j == 6 && i == 0 || j == 1 && i == 0){
+                    Drawable wknight =  getResources().getDrawable(R.drawable.wknight);
+                    wknight.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wknight");
+                    p.setImageDrawable(wknight);
+                }
+                //Bishops
+                else if(j == 5 && i == 7 || j == 2 && i == 7){
+                    Drawable bbishop =  getResources().getDrawable(R.drawable.bbishop);
+                    bbishop.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "bbishop");
+                    p.setImageDrawable(bbishop);
+                }
+                else if(j == 5 && i == 0 || j == 2 && i == 0){
+                    Drawable wbishop =  getResources().getDrawable(R.drawable.wbishop);
+                    wbishop.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wbishop");
+                    p.setImageDrawable(wbishop);
+                }
+                //Queen
+                else if(j == 4 && i == 7){
+                    Drawable bqueen =  getResources().getDrawable(R.drawable.bqueen);
+                    bqueen.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "bqueen");
+                    p.setImageDrawable(bqueen);
+                }
+                else if(j == 4 && i == 0 ){
+                    Drawable wqueen =  getResources().getDrawable(R.drawable.wqueen);
+                    wqueen.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wqueen");
+                    p.setImageDrawable(wqueen);
+                }
+                //Queen
+                else if(j == 3 && i == 7){
+                    Drawable bking =  getResources().getDrawable(R.drawable.bking);
+                    bking.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "bking");
+                    p.setImageDrawable(bking);
+                }
+                else if(j == 3 && i == 0 ){
+                    Drawable wking =  getResources().getDrawable(R.drawable.wking);
+                    wking.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
+                    p = new Piece (getContext(), i, j, "wking");
+                    p.setImageDrawable(wking);
+                }
+
+                if (p != null) {
+                    p.getDrawable().draw(canvas);
+                    board[i][j].setPiece(p);
+                    p.setOnTouchListener(this);
+                }
+                row.addView(board[i][j], j);
+            }
+
+            table.addView(row, i);
+        }
+
+        table.layout(0, 0, width, width);
+        canvas.save();
+
+        table.draw(canvas);
+    }
+
+
+
+    /*@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onDraw(Canvas canvas) {
 
         canvas.drawColor(Color.argb(100, 151, 182, 167));
         drawBoard(canvas);
         drawPiece(canvas);
-    }
+    }*/
 
 
-    //Drawing the board
-    public void drawBoard (Canvas canvas){
+             /*   //
+                public void drawBoard (Canvas canvas){
+                    int width = getWidth();
+                    int height = getHeight();
+                    size = width / 8;
+                    this.y0 = (height - size * 8) / 2;
+
+                    for (int i = 0; i < rows; i++) {
+                        TableRow row = new TableRow(this.context);
+                        TableRow.LayoutParams lp = new TableRow.LayoutParams();
+                        lp.height = size;
+
+                        for (int j = 0; j < cols; j++) {
+                            int xcoord = size * j;
+                            int ycoord = y0 + size * i;
+
+                            Piece p = new Piece(getContext(), j, i, "empty");
+
+                            board[i][j] = new Tile(getContext(), j, i);
+                            board[i][j].setPiece(p);
+                            board[i][j].setSquare(rect);
+                            board[i][j].setOnDragListener(this);
+                            //board[i][j].setDrop(getContext());
+
+                            rect.left = xcoord;
+                            rect.top = ycoord;
+                            rect.right = xcoord + size;
+                            rect.bottom = ycoord + size;
+                            board[i][j].draw(canvas);
+
+                        }
+
+                    }
+                }
+
+                public void drawPiece (Canvas canvas){
+
+                }
+
+
+                //Drawing the board
+    /*public void drawBoard (Canvas canvas) {
         int width = getWidth();
         int height = getHeight();
         size = width/8;
         this.y0 = (height - size*8)/2;
 
-        for (int i = 0; i < cols ; i ++) {
-            for (int j = 0; j < rows; j++) {
-                int xcoord = size * (7 - i);
-                int ycoord = y0 + size * (7 - j);
+        for (int i = 0; i < rows ; i ++) {
+            for (int j = 0; j < cols; j++) {
+                int xcoord = size * j;
+                int ycoord = y0 + size * i;
 
-                Piece p = new Piece(i, j, "empty");
+                Piece p = new Piece(getContext(), j, i, "empty");
 
-                board[i][j] = new Tile(i, j);
+                board[i][j] = new Tile(getContext(), j, i);
                 board[i][j].setPiece(p);
                 board[i][j].setSquare(rect);
-                board[i][j].setDrop(getContext());
-                board[i][j].drop.setOnDragListener(dragListener);
+                board[i][j].setOnDragListener(this);
+                //board[i][j].setDrop(getContext());
 
                 rect.left = xcoord;
                 rect.top = ycoord;
@@ -103,8 +315,7 @@ public class Board extends View{
                     wpawn.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(wpawn);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "wpawn");
+                    Piece p = new Piece (getContext(), i, j, "wpawn");
                     board[i][j].setPiece(p);
                 }
                 else if(j==6){
@@ -112,8 +323,7 @@ public class Board extends View{
                     bpawn.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(bpawn);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "bpawn");
+                    Piece p = new Piece (getContext(), i, j, "bpawn");
                     board[i][j].setPiece(p);
                 }
                 //Rook
@@ -122,8 +332,7 @@ public class Board extends View{
                     brook.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(brook);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "brook");
+                    Piece p = new Piece (getContext(), i, j, "brook");
                     board[i][j].setPiece(p);
                 }
                 else if(i == 7 && j == 0 || i == 0 && j == 0){
@@ -131,8 +340,7 @@ public class Board extends View{
                     wrook.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(wrook);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "wrook");
+                    Piece p = new Piece (getContext(), i, j, "wrook");
                     board[i][j].setPiece(p);
                 }
                 //Knights
@@ -141,8 +349,7 @@ public class Board extends View{
                     bknight.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(bknight);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "bknight");
+                    Piece p = new Piece (getContext(), i, j, "bknight");
                     board[i][j].setPiece(p);
                 }
                 else if(i == 6 && j == 0 || i == 1 && j == 0){
@@ -150,8 +357,7 @@ public class Board extends View{
                     wknight.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(wknight);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "wknight");
+                    Piece p = new Piece (getContext(), i, j, "wknight");
                     board[i][j].setPiece(p);
                 }
                 //Bishops
@@ -160,8 +366,7 @@ public class Board extends View{
                     bbishop.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(bbishop);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "bbishop");
+                    Piece p = new Piece (getContext(), i, j, "bbishop");
                     board[i][j].setPiece(p);
                 }
                 else if(i == 5 && j == 0 || i == 2 && j == 0){
@@ -169,8 +374,7 @@ public class Board extends View{
                     wbishop.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(wbishop);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "wbishop");
+                    Piece p = new Piece (getContext(), i, j, "wbishop");
                     board[i][j].setPiece(p);
                 }
                 //Queen
@@ -179,8 +383,7 @@ public class Board extends View{
                     bqueen.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(bqueen);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "bqueen");
+                    Piece p = new Piece (getContext(), i, j, "bqueen");
                     board[i][j].setPiece(p);
                 }
                 else if(i == 4 && j == 0 ){
@@ -188,8 +391,7 @@ public class Board extends View{
                     wqueen.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(wqueen);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "wqueen");
+                    Piece p = new Piece (getContext(), i, j, "wqueen");
                     board[i][j].setPiece(p);
                 }
                 //Queen
@@ -198,8 +400,7 @@ public class Board extends View{
                     bking.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(bking);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "bking");
+                    Piece p = new Piece (getContext(), i, j, "bking");
                     board[i][j].setPiece(p);
                 }
                 else if(i == 3 && j == 0 ){
@@ -207,16 +408,16 @@ public class Board extends View{
                     wking.setBounds(xcoord, ycoord, xcoord+size, ycoord+size);
                     piece_board[i][j].setImageDrawable(wking);
                     piece_board[i][j].getDrawable().draw(canvas);
-                    piece_board[i][j].setOnLongClickListener(longClickListener);
-                    Piece p = new Piece (i, j, "wking");
+                    Piece p = new Piece (getContext(), i, j, "wking");
                     board[i][j].setPiece(p);
                 }
 
             }
         }
 
-    }
+    }*/
 
+                /*
 
     //Takes a list with all possible moves that a player can make, the move that player wants to make
     //Returns if the move is valid or not
@@ -246,166 +447,125 @@ public class Board extends View{
 
     //Apply a move to our board
     void applyMoveToBoard(Move move){
-        Piece empty = new Piece ("empty");
+        Piece empty = new Piece (getContext(), "empty");
         board[move.getInit_col()][move.getInit_row()].setPiece(empty);
         board[move.getDest_col()][move.getDest_row()].setPiece(move.getPiece());
     }
 
-   //Mock how the board would be if we applied the move
-   //Returns the piece that was on the tile that we put our piece
-   Piece mockMove(Move move){
-       Piece empty = new Piece ("empty");
-       board[move.getInit_col()][move.getInit_row()].setPiece(empty);
-       Piece ret = board[move.getDest_col()][move.getDest_row()].getPiece();
-       board[move.getDest_col()][move.getDest_row()].setPiece(move.getPiece());
-       return ret;
-  }
+    //Mock how the board would be if we applied the move
+    //Returns the piece that was on the tile that we put our piece
+    Piece mockMove(Move move){
+        Piece empty = new Piece (getContext(), "empty");
+        board[move.getInit_col()][move.getInit_row()].setPiece(empty);
+        Piece ret = board[move.getDest_col()][move.getDest_row()].getPiece();
+        board[move.getDest_col()][move.getDest_row()].setPiece(move.getPiece());
+        return ret;
+    }
 
-  void undoMove(Move move, Piece p){
+
+    void undoMove(Move move, Piece p){
         //Set the intial piece back to its intial positions
-      board[move.getInit_col()][move.getInit_row()].setPiece(move.getPiece());
-      //Set the piece that used to be in the board back to its positions
-      board[move.getDest_col()][move.getDest_row()].setPiece(p);
-  }
+        board[move.getInit_col()][move.getInit_row()].setPiece(move.getPiece());
+        //Set the piece that used to be in the board back to its positions
+        board[move.getDest_col()][move.getDest_row()].setPiece(p);
+    }
 
-
-
-
-    View.OnLongClickListener longClickListener = new View.OnLongClickListener(){
     @Override
-    public boolean onLongClick(View view) {
-        ClipData data = ClipData.newPlainText("", "");
-        View.DragShadowBuilder myshadow = new View.DragShadowBuilder(view);
-        view.startDrag(data, myshadow, view, 0);
-        return true;
-    }
-
-};
-
-
-    View.OnDragListener dragListener = new View.OnDragListener(){
-        @Override
-        public boolean onDrag(View v, DragEvent event) {
-
-            View view = (View) event.getLocalState();
-            int dragEvent = event.getAction();
-            switch (dragEvent){
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    break;
-                case DragEvent.ACTION_DROP:
-
-                    //Create Move
-
-                    //Move pmove = new Move()
-
-                    //Validate Player Move
-                    //isMoveValid()
-                    //Move Piece
-                    /*
-                    view.animate()
-                            .x(event.getX())
-                            .y(event.getY())
-                            .setDuration(700)
-                            .start();
-
-                     */
-
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
-    };
-
-   /*
-
-    View.OnTouchListener longClickListener = new View.OnTouchListener(){
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if(motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+    public boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
             ClipData data = ClipData.newPlainText("", "");
-            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-            view.startDrag(data, shadowBuilder, view, 0);
-            view.setVisibility(View.INVISIBLE);
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
+                    v);
+            v.startDrag(data, shadowBuilder, v, 0);
+            v.setVisibility(View.INVISIBLE);
             return true;
-            } else {
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onDrag(View v, DragEvent event) {
+        // Defines a variable to store the action type for the incoming event
+        int action = event.getAction();
+        // Handles each of the expected events
+        switch (action) {
+
+            case DragEvent.ACTION_DRAG_STARTED:
+                // Determines if this View can accept the dragged data
+                if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                    // if you want to apply color when drag started to your view you can uncomment below lines
+                    // to give any color tint to the View to indicate that it can accept data.
+                    // v.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
+                    // Invalidate the view to force a redraw in the new tint
+                    //  v.invalidate();
+                    // returns true to indicate that the View can accept the dragged data.
+                    return true;
+                }
+                // Returns false. During the current drag and drop operation, this View will
+                // not receive events again until ACTION_DRAG_ENDED is sent.
                 return false;
-            }
 
-        }
-    };
-
-    View.OnDragListener dragListener = new View.OnDragListener() {
-        @Override
-        public boolean onDrag(View view, DragEvent event) {
-            View v = (View) event.getLocalState();
-            int dragEvent = event.getAction();
-            switch (dragEvent){
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    break;
-                case DragEvent.ACTION_DROP:
-                    // Dropped, reassign View to ViewGroup
-                    View dragview = (View) event.getLocalState();
-                    dragview.setVisibility(View.VISIBLE);
-                    break;
-            }
-            return true;
-        }
-    };
-
-
-     */
-
-    /*
-    public class MyTouch implements View.OnTouchListener{
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                ClipData data = ClipData.newPlainText("", "");
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
-                        view);
-                view.startDrag(data, shadowBuilder, view, 0);
-                view.setVisibility(View.INVISIBLE);
+            case DragEvent.ACTION_DRAG_ENTERED:
+                // Applies a GRAY or any color tint to the View. Return true; the return value is ignored.
+                v.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+                // Invalidate the view to force a redraw in the new tint
+                v.invalidate();
                 return true;
-            } else {
-                return false;
-            }
+
+            case DragEvent.ACTION_DRAG_LOCATION:
+                // Ignore the event
+                return true;
+
+            case DragEvent.ACTION_DRAG_EXITED:
+                // Re-sets the color tint to blue. Returns true; the return value is ignored.
+                // view.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
+                //It will clear a color filter .
+                v.getBackground().clearColorFilter();
+                // Invalidate the view to force a redraw in the new tint
+                v.invalidate();
+                return true;
+
+            case DragEvent.ACTION_DROP:
+                // Gets the item containing the dragged data
+                ClipData.Item item = event.getClipData().getItemAt(0);
+                // Gets the text data from the item.
+                String dragData = item.getText().toString();
+                // Turns off any color tints
+                v.getBackground().clearColorFilter();
+                // Invalidates the view to force a redraw
+                v.invalidate();
+
+                View vw = (View) event.getLocalState();
+                ViewGroup owner = (ViewGroup) vw.getParent();
+                owner.removeView(vw); //remove the dragged view
+                //caste the view into LinearLayout as our drag acceptable layout is LinearLayout
+                Tile container = (Tile) v;
+                container.addView(vw);//Add the dragged view
+                vw.setVisibility(View.VISIBLE);//finally set Visibility to VISIBLE
+                // Returns true. DragEvent.getResult() will return true.
+                return true;
+
+            case DragEvent.ACTION_DRAG_ENDED:
+                // Turns off any color tinting
+                v.getBackground().clearColorFilter();
+                // Invalidates the view to force a redraw
+                v.invalidate();
+                // returns true; the value is ignored.
+                return true;
+            // An unknown action type was received.
+            default:
+                Log.e("DragDrop Example", "Unknown action type received by OnDragListener.");
+                break;
         }
+        return false;
     }
 
-     */
-
-    /*
-    public class MyDragListener implements View.OnDragListener {
-        @Override
-        public boolean onDrag(View v, DragEvent event) {
-            int action = event.getAction();
-            switch (action) {
-                case DragEvent.ACTION_DRAG_STARTED:
-                    // do nothing
-                    break;
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    break;
-                case DragEvent.ACTION_DROP:
-                    // Dropped, reassign View to ViewGroup
-                    View dragview = (View) event.getLocalState();
-                    dragview.setVisibility(View.VISIBLE);
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
     }
 
-     */
 
 
-}
+
+
+
+                 */
