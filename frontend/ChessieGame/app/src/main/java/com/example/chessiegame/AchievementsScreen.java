@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,18 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Button;
 import android.content.res.ColorStateList;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,8 +49,11 @@ public class AchievementsScreen extends Fragment {
     private String mParam2;
     public int id;
 
+    private RequestQueue queue;
     private RecyclerView rv;
     private ArrayList<Achievement> items = new ArrayList<Achievement>();
+    private ArrayList<Achievement> doneItems = new ArrayList<Achievement>();
+    private ArrayList<Achievement> progressItems = new ArrayList<Achievement>();
     private Button progressBtn;
     private Button doneBtn;
     private boolean progressPressed; // 1 if progress pressed, 0 otherwise
@@ -82,6 +96,7 @@ public class AchievementsScreen extends Fragment {
         // Inflate the layout for this fragment
         id = container.getId();
         View v = inflater.inflate(R.layout.fragment_achievements_screen, container, false);
+        queue = Volley.newRequestQueue(getContext());
 
         rv = v.findViewById(R.id.achievements_list);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -92,6 +107,8 @@ public class AchievementsScreen extends Fragment {
         progressBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E5E5E5")));
         progressBtn.setElevation((float) -2.0);
 
+        getStatusAchievements(true);
+        getStatusAchievements(false);
         getAchievements(true);
 
         RVAdapter adapter = new RVAdapter(items);
@@ -135,7 +152,27 @@ public class AchievementsScreen extends Fragment {
         return v;
     }
 
-    public void getAchievements(boolean progressSelected) {
+    private void getStatusAchievements(boolean progressSelected) {
+        // TODO: adjust url to query for finished or unfinished achievements
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgoals";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    Gson gson = new Gson();
+                    Toast.makeText(getActivity(),response,Toast.LENGTH_LONG).show();
+                    Type type = new TypeToken<List<Achievement>>(){}.getType();
+                    List<Achievement> a = gson.fromJson(response, type);
+
+                },
+                error -> {
+                    Log.d("AchievmentScreen", "Error fetching goals");
+                });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    private void getAchievements(boolean progressSelected) {
         items.clear();
         if (progressSelected) {
             items.add(new Achievement("Win 3 easy games", false));

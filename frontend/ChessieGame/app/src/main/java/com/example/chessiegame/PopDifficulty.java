@@ -54,6 +54,7 @@ public class PopDifficulty extends Activity {
                 Intent intent = new Intent(PopDifficulty.this, ChessScreen.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 intent.putExtra("newGame", true);
+                intent.putExtra("difficulty", 1);
                 startActivity(intent);
                 overridePendingTransition(0,0);
             }
