@@ -3,62 +3,58 @@
 // - find all achievements for a user
 // - find goal by goalID
 
-const sql - require("./db.js");
+const sql = require("./db.js");
 
 //constructor
-const Goal = function(goal){
-    this.goalID = goal.goalID;
+const Ach = function(goal){
     this.gameCount = goal.gameCount;
     this.gameDifficulty = goal.gameDifficulty;
 };
 
 
 //There is a table in DB called
-//Achievements(userID, goalID)
+//Achievements(userID, goalID, difficulty, reqCount, realCount)
 // and another called
 //GoalsLookup(goalID, gameCount, gameDifficulty)
+Ach.getAllGoals = (result) => {
+    sql.query("SELECT * FROM GoalsLookup", (err, res) => {
+        if(err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
 
-Goal.findAll = (userID, result) => {
-    sql.query('SELECT goalID FROM Achievements WHERE userID = \" ${userID} \" ', (err, res) => {
+        console.log("goals: ", res);
+        result(null, res);
+    });
+};
+
+Ach.getAllGoalsStatus = (userID, result) => {
+
+    sql.query("SELECT * FROM Achievements WHERE userID =\"" + userID + "\"", (err, res) => {
         if(err){
             console.log("error: ", err);
             result(err, null);
             return;
         }
-
-        if(res.length) {
-            console.log("found achievements: ", res); // print goalID's
-
-            const totalAchievements = res.length;
-            var i;
-            for (i = 0; i < totlAchievements; i++) {
-                goalID = res[i];
-                //TODO: use helper function Goal.findById
-            }
-
-            //result(null, res[1]); //provide placements
-            return;
+        if(res.length >= 1){
+            console.log("goals status : ", res);
         }
+         result(null, res);
     });
 
 };
 
-//GoalsLookup(goalID, gameCount, gameDifficulty)
-Goal.findById = (goalID, result) => {
-    sql.query('SELECT * FROM GoalsLookup WHERE goalID = ${goalID}', (err, res) => {
+Ach.getAllCompleted = (userID, result) => {
+    sql.query("SELECT * FROM Achievements WHERE userID = \"" + userID + "\" AND reqCount = realCount", (err, res) => {
         if(err){
             console.log("error: ", err);
             result(err, null);
             return;
         }
-
-        if(res.length) {
-            console.log("found goal: ", res[0]); // print goalID
-            result(null, res);       //provide goal info
-            return;
-        }
-
-        //not found goal with the goalID
-        result({ kind: "not_found" }, null);
+        console.log("achievements : ", res);
+        result(null, res);
     });
 };
+
+module.exports = Ach;

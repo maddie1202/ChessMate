@@ -9,10 +9,10 @@ module.exports = app => {
     app.get("/getboard/:boardID", board.findOne);
 
     //insert a new board
-    app.post("/makeboard/:boardID", board.create);
+    app.post("/makeboard", board.create);
 
     //Update a Board with boardId
-    app.put("/updateboard/:boardID", board.update);
+    app.put("/updateboard", board.update);
 
     //Delete a Board by boardId
     app.delete("/deleteboard/:boardID", board.delete);

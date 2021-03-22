@@ -34,6 +34,19 @@ User.create = (newUser, result) => {
           console.log("created user: ", {...newUser });
           result(null, {...newUser});
       });
+
+      //create achievement entries for this user
+      sql.query("SELECT * FROM GoalsLookup", (err, res) => {
+        if(!err){
+            const goals = res;
+            var i;
+            for(i = 0; i < res.length; i++){
+                const att = "userID, goalID, difficulty, reqCount, realCount";
+                const values = "\"" + newUser.userID + "\", " + res[i].goalID + ", " + res[i].gameDifficulty + ", " + res[i].gameCount + ", 0";
+                sql.query("INSERT INTO Achievements("+att+") VALUES("+values+")");
+            }
+        }
+      });
 };
 
 User.findById = (userID, result) => {
@@ -56,7 +69,7 @@ User.findById = (userID, result) => {
     });
 };
 
-User.updateById = (userID, user, result) => { // will deal with achievements here
+User.updateById = (userID, user, result) => {
     sql.query(
         "UPDATE User SET name = \"" + user.name + "\" WHERE userID = \"" + userID + "\"",
         (err, res) => {

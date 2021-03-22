@@ -164,33 +164,105 @@ Game.createResult = (userID, gameID, resultnum, result) => {
             console.log("created result: ", {resultobj});
             result(null, {resultobj});
         });
+
+        //add this result to Achievements if result = 1
+        if(resultnum == 1){
+        //TODO:
+            sql.query("SELECT difficulty FROM Game WHERE gameID = " + gameID, (err, res) => {
+                if(err){
+                    console.log("err in select difficulty: ", err);
+                    return;
+                }
+
+                var difficulty = res[0].difficulty;
+
+                console.log("diff = " + difficulty);
+                sql.query("SELECT realCount FROM Achievements WHERE userID = \"" + userID + "\" AND difficulty = "+difficulty, (err, res) => {
+                    if(err){
+                        console.log("err in select realCount: ", err);
+                        return;
+                    }
+                    if(res.length >= 1){
+                        var num = res.length;
+                        var realCount = res;
+                        var i;
+                        for(i = 0; i<num; i++){
+                            var count = realCount[i].realCount + 1;
+                            var value = "realCount="+count;
+                            var condition = "userID=\""+userID+"\" AND difficulty="+difficulty;
+                            sql.query("UPDATE Achievements SET "+value+ " WHERE "+condition);
+                        }
+                    }
+                });
+            });
+
+        }
 };
 
 Game.updateResult = (userID, gameID, resultnum, result) => {
     sql.query(
-        "UPDATE Results SET result = " +resultnum+ " WHERE userID = \"" + userID + "\" AND gameID = " + gameID,
-        (err, res) => {
-            if(err) {
-                console.log("error: ", err);
-                result(null, err);
-                return;
-            }
-
-            if(res.affectedRows == 0) {
-                //not found result with userID gameID
-                result({ kind: "not_found" }, null);
-                return;
-            }
-
-            const user = "" + userID + "";
-            var resultobj = {"userID" : user,
-                              "gameID" : gameID,
-                              "result" : resultnum };
-
-            console.log("updated result: ", {...resultobj});
-            result(null, {...resultobj});
+    "UPDATE Results SET result = " +resultnum+ " WHERE userID = \"" + userID + "\" AND gameID = " + gameID,
+     (err, res) => {
+        if(err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
         }
-    );
+
+        if(res.affectedRows == 0) {
+            //not found result with userID gameID
+            result({ kind: "not_found" }, null);
+            return;
+        }
+
+        const user = "" + userID + "";
+        var resultobj = {"userID" : user,
+                          "gameID" : gameID,
+                          "result" : resultnum };
+
+        console.log("updated result: ", {...resultobj});
+        result(null, {...resultobj});
+    });
+
+    //add this result to Achievements if result = 1
+    if(resultnum == 1 || resultnum == 0){
+    //TODO:
+        sql.query("SELECT difficulty FROM Game WHERE gameID = " + gameID, (err, res) => {
+            if(err){
+                console.log("err in select difficulty: ", err);
+                return;
+            }
+
+            var difficulty = res[0].difficulty;
+
+            console.log("diff = " + difficulty);
+            sql.query("SELECT realCount FROM Achievements WHERE userID = \"" + userID + "\" AND difficulty = "+difficulty, (err, res) => {
+                if(err){
+                    console.log("err in select realCount: ", err);
+                    return;
+                }
+                if(res.length >= 1){
+                    var num = res.length;
+                    var realCount = res;
+                    var i;
+                    for(i = 0; i<num; i++){
+                        var count;
+                        if(resultnum == 0){
+                            count = realCount[i].realCount - 1;
+                        }
+                        else {
+                            count = realCount[i].realCount + 1;
+                        }
+
+                        var value = "realCount="+count;
+                        var condition = "userID=\""+userID+"\" AND difficulty="+difficulty;
+                        sql.query("UPDATE Achievements SET "+value+ " WHERE "+condition);
+                    }
+                }
+            });
+        });
+    }
+
 };
 
 module.exports = Game;

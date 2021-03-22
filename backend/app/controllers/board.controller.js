@@ -75,7 +75,7 @@ exports.update = (req,res) => {
         });
       }
 
-      const boardID = req.params.boardID;
+      const boardID = req.body.boardID;
       // Create a Board
       const board = new Board({
           boardID: req.body.boardID,

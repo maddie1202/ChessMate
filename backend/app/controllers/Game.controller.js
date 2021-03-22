@@ -72,7 +72,7 @@ exports.update = (req,res) => {
         });
       }
 
-      const gameID = req.params.gameID;
+      const gameID = req.body.gameID;
       // Create a Game
       const game = new Game({
           gameID: req.body.gameID,

@@ -41,17 +41,17 @@ CREATE TABLE Results(
 CREATE TABLE GoalsLookup(
 	goalID int NOT NULL AUTO_INCREMENT,
 	gameCount int NOT NULL,
-	gameDifficulty int,
+	gameDifficulty int NOT NULL,
 	PRIMARY KEY(goalID)
 );
 
-/* Achievements(userID, goalID) */
+/* Achievements(userID, goalID, difficulty, reqCount, realCount) */
 CREATE TABLE Achievements(
     userID varchar(400),
     goalID int,
-    difficulty int,
-    reqCount int,
-    realCount int,
+    difficulty int NOT NULL,
+    reqCount int NOT NULL,
+    realCount int NOT NULL,
     PRIMARY KEY (userID, goalID),
     FOREIGN KEY (userID) REFERENCES User (userID) ON DELETE CASCADE,
     FOREIGN KEY (goalID) REFERENCES GoalsLookup (goalID) ON DELETE CASCADE
