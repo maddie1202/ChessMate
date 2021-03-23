@@ -34,7 +34,7 @@ Game.create = (newGame, result) => {
             return;
         }
 
-        sql.query(
+        /*sql.query(
         "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = \"ChessMateDB\" AND TABLE_NAME = \"Game\"",
         (err,res) => {
             if(err){
@@ -44,7 +44,9 @@ Game.create = (newGame, result) => {
 
             console.log("created gameID: ", res.insertId);
             result(null, {"gameID" : res.insertId });
-        });
+        });*/
+        console.log("created gameID: ", res.insertId);
+        result(null, {"gameID" : res.insertId });
     });
 
 };
