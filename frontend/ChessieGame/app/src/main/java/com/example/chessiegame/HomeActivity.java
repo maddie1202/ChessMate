@@ -70,22 +70,18 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.nav_home:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new HomeScreen()).commit();
-                showToast("Home Screen");
                 break;
             case R.id.nav_account:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new AccountScreen()).commit();
-                showToast("Account Screen");
                 break;
             case R.id.nav_achievements:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new AchievementsScreen()).commit();
-                showToast("Achievements Screen");
                 break;
             default:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new PastGamesScreen()).commit();
-                showToast("Past Games Screen");
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
