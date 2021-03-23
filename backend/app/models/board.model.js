@@ -47,8 +47,8 @@ const Board = function(board){
 //create a new board in table
 Board.create = (newBoard, result) => {
 
-    const attributes = "boardID, placements, gameID, sequenceNumber";
-    const values = "" + newBoard.boardID + ", \"" + newBoard.placements + "\", " + newBoard.gameID + ", " + newBoard.sequenceNum + "";
+    const attributes = "placements, gameID, sequenceNumber";
+    const values =  "\"" + newBoard.placements + "\", " + newBoard.gameID + ", " + newBoard.sequenceNum + "";
 
     sql.query("INSERT INTO Board(" + attributes + ") VALUES(" + values + ")", (err,res) => {
         if(err){

@@ -47,8 +47,6 @@ exports.create = (req,res) => {
 
       // Create a Game
       const newGame = new Game({
-        gameID: req.body.gameID,
-        startDateTime: req.body.startDateTime,
         difficulty: req.body.difficulty
       });
 
