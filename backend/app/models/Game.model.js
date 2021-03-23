@@ -41,7 +41,7 @@ Game.create = (newGame, result) => {
                 console.log("error: ", err);
                 result(err, null);
             }
-            const id = res[0] - 1;
+            const id = res - 1;
             console.log("created gameID: ", id);
             result(null, {"gameID" : id });
         });
