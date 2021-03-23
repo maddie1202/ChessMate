@@ -38,7 +38,7 @@ exports.findAll = (req,res) => {
 //create a new game in table
 exports.create = (req,res) => {
     //validate request
-    if (!req.body.gameID) {
+    if (!req.body.difficulty) {
         res.status(400).send({
           message: "Content can not be empty!"
         });
