@@ -33,8 +33,18 @@ Game.create = (newGame, result) => {
             result(err, null);
             return;
         }
-        console.log("created game: ", res);
-        result(null, res);
+
+        sql.query(
+        "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = \"ChessMateDB\" AND TABLE_NAME = \"Game\"",
+        (err,res) => {
+            if(err){
+                console.log("error: ", err);
+                result(err, null);
+            }
+            const id = res[0] - 1;
+            console.log("created gameID: ", id);
+            result(null, {"gameID" : id });
+        });
     });
 
 };
