@@ -59,7 +59,7 @@ Game.findById = (gameID, result) => {
         }
 
         if(res.length) {
-            console.log("found game details: ", res[0]); // print gameID
+            console.log("found game details: ", res); // print gameID
             result(null, res);       //provide json
             return;
         }
