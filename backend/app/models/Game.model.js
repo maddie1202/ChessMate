@@ -33,18 +33,6 @@ Game.create = (newGame, result) => {
             result(err, null);
             return;
         }
-
-        /*sql.query(
-        "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = \"ChessMateDB\" AND TABLE_NAME = \"Game\"",
-        (err,res) => {
-            if(err){
-                console.log("error: ", err);
-                result(err, null);
-            }
-
-            console.log("created gameID: ", res.insertId);
-            result(null, {"gameID" : res.insertId });
-        });*/
         console.log("created gameID: ", res.insertId);
         result(null, {"gameID" : res.insertId });
     });
@@ -112,7 +100,7 @@ Game.updateById = (gameID, game, result) => {
             }
 
             console.log("updated game: ",res);
-            result(null, res);
+            result(null, {"affectedRows": res.affectedRows});
         }
     );
 };
