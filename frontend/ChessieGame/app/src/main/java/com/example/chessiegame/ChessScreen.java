@@ -193,9 +193,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
                     default:
                         board[i][j] = 0; //empty
-
-                     */
-
+                    */
             }
         }
 
@@ -203,9 +201,18 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
-   // Tile[][] charToBoard(char[][] board){
-    //    return Tile[8][8];
-   // }
+    /*
+      Tile[][] charToBoard(char[][] board){
+          for (int i = 0; i < cols ; i ++) {
+              for (int j = 0; j < rows; j++) {
+
+              }
+          }
+        return Tile[8][8];
+       }
+
+     */
+
 
     //Takes a list with all possible moves that a player can make, the move that player wants to make
     //Returns if the move is valid or not
@@ -221,17 +228,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         return false;
     }
 
-    //Get our present board and make it as a string
-    String boardToString(){
-        String boardMoves = "";
-
-        for (int i = 0; i < cols ; i ++) {
-            for (int j = 0; j < rows; j++) {
-                boardMoves += tiles[i][j].getPiece().getName();
-            }
-        }
-        return boardMoves;
-    }
 
     //Apply a move to our board
     void applyMoveToBoard(Move move){
