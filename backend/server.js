@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 require("./app/routes/board.routes.js")(app);
 require("./app/routes/user.routes.js")(app);
 require("./app/routes/Game.routes.js")(app);
+require("./app/routes/Achievement.routes.js")(app);
 
 // simple route
 app.get("/", (req, res) => {

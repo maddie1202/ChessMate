@@ -50,7 +50,7 @@ exports.update = (req,res) => {
         });
       }
 
-      const userID = req.params.userID;
+      const userID = req.body.userID;
       // Create a User
       const user = new User({
           userID: req.body.userID,

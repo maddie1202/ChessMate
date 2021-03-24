@@ -25,16 +25,16 @@ const Game = function(game){
 };
 
 Game.create = (newGame, result) => {
-    const attributes = "gameID, difficulty";
-    const values = ""+ newGame.gameID + ", " + newGame.difficulty + "";
+    const attributes = "difficulty";
+    const values = ""+ newGame.difficulty + "";
     sql.query("INSERT INTO Game(" + attributes + ") VALUES(" + values + ")", (err, res) => {
         if(err){
             console.log("error: ", err);
             result(err, null);
             return;
         }
-        console.log("created game: ", {...newGame });
-        result(null, {...newGame});
+        console.log("created gameID: ", res.insertId);
+        result(null, {"gameID" : res.insertId });
     });
 
 };
@@ -49,7 +49,7 @@ Game.findById = (gameID, result) => {
         }
 
         if(res.length) {
-            console.log("found game details: ", res[0]); // print gameID
+            console.log("found game details: ", res); // print gameID
             result(null, res);       //provide json
             return;
         }
@@ -99,8 +99,8 @@ Game.updateById = (gameID, game, result) => {
                 return;
             }
 
-            console.log("updated game: ", { ...game });
-            result(null, { ...game});
+            console.log("updated game: ",res);
+            result(null, {"affectedRows": res.affectedRows});
         }
     );
 };
@@ -161,36 +161,108 @@ Game.createResult = (userID, gameID, resultnum, result) => {
                               "gameID" : gameID,
                               "result" : resultnum };
 
-            console.log("created result: ", {resultobj});
-            result(null, {resultobj});
+            console.log("created result: ", resultobj);
+            result(null, resultobj);
         });
+
+        //add this result to Achievements if result = 1
+        if(resultnum == 1){
+        //TODO:
+            sql.query("SELECT difficulty FROM Game WHERE gameID = " + gameID, (err, res) => {
+                if(err){
+                    console.log("err in select difficulty: ", err);
+                    return;
+                }
+
+                var difficulty = res[0].difficulty;
+
+                console.log("diff = " + difficulty);
+                sql.query("SELECT realCount FROM Achievements WHERE userID = \"" + userID + "\" AND difficulty = "+difficulty, (err, res) => {
+                    if(err){
+                        console.log("err in select realCount: ", err);
+                        return;
+                    }
+                    if(res.length >= 1){
+                        var num = res.length;
+                        var realCount = res;
+                        var i;
+                        for(i = 0; i<num; i++){
+                            var count = realCount[i].realCount + 1;
+                            var value = "realCount="+count;
+                            var condition = "userID=\""+userID+"\" AND difficulty="+difficulty;
+                            sql.query("UPDATE Achievements SET "+value+ " WHERE "+condition);
+                        }
+                    }
+                });
+            });
+
+        }
 };
 
 Game.updateResult = (userID, gameID, resultnum, result) => {
     sql.query(
-        "UPDATE Results SET result = " +resultnum+ " WHERE userID = \"" + userID + "\" AND gameID = " + gameID,
-        (err, res) => {
-            if(err) {
-                console.log("error: ", err);
-                result(null, err);
-                return;
-            }
-
-            if(res.affectedRows == 0) {
-                //not found result with userID gameID
-                result({ kind: "not_found" }, null);
-                return;
-            }
-
-            const user = "" + userID + "";
-            var resultobj = {"userID" : user,
-                              "gameID" : gameID,
-                              "result" : resultnum };
-
-            console.log("updated result: ", {...resultobj});
-            result(null, {...resultobj});
+    "UPDATE Results SET result = " +resultnum+ " WHERE userID = \"" + userID + "\" AND gameID = " + gameID,
+     (err, res) => {
+        if(err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
         }
-    );
+
+        if(res.affectedRows == 0) {
+            //not found result with userID gameID
+            result({ kind: "not_found" }, null);
+            return;
+        }
+
+        const user = "" + userID + "";
+        var resultobj = {"userID" : user,
+                          "gameID" : gameID,
+                          "result" : resultnum };
+
+        console.log("updated result: ", resultobj);
+        result(null, resultobj);
+    });
+
+    //add this result to Achievements if result = 1
+    if(resultnum == 1 || resultnum == 0){
+
+        sql.query("SELECT difficulty FROM Game WHERE gameID = " + gameID, (err, res) => {
+            if(err){
+                console.log("err in select difficulty: ", err);
+                return;
+            }
+
+            var difficulty = res[0].difficulty;
+
+            console.log("diff = " + difficulty);
+            sql.query("SELECT realCount FROM Achievements WHERE userID = \"" + userID + "\" AND difficulty = "+difficulty, (err, res) => {
+                if(err){
+                    console.log("err in select realCount: ", err);
+                    return;
+                }
+                if(res.length >= 1){
+                    var num = res.length;
+                    var realCount = res;
+                    var i;
+                    for(i = 0; i<num; i++){
+                        var count;
+                        if(resultnum == 0){
+                            count = realCount[i].realCount - 1;
+                        }
+                        else {
+                            count = realCount[i].realCount + 1;
+                        }
+
+                        var value = "realCount="+count;
+                        var condition = "userID=\""+userID+"\" AND difficulty="+difficulty;
+                        sql.query("UPDATE Achievements SET "+value+ " WHERE "+condition);
+                    }
+                }
+            });
+        });
+    }
+
 };
 
 module.exports = Game;

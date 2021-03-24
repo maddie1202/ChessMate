@@ -38,7 +38,7 @@ exports.findAll = (req,res) => {
 //create a new game in table
 exports.create = (req,res) => {
     //validate request
-    if (!req.body.gameID) {
+    if (!req.body.difficulty) {
         res.status(400).send({
           message: "Content can not be empty!"
         });
@@ -47,8 +47,6 @@ exports.create = (req,res) => {
 
       // Create a Game
       const newGame = new Game({
-        gameID: req.body.gameID,
-        startDateTime: req.body.startDateTime,
         difficulty: req.body.difficulty
       });
 
@@ -72,7 +70,7 @@ exports.update = (req,res) => {
         });
       }
 
-      const gameID = req.params.gameID;
+      const gameID = req.body.gameID;
       // Create a Game
       const game = new Game({
           gameID: req.body.gameID,

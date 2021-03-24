@@ -37,9 +37,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-//import com.example.chessiegame.components.Board;
 import com.example.chessiegame.components.Move;
 import com.example.chessiegame.components.Piece;
 import com.example.chessiegame.components.Tile;
@@ -94,6 +94,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         startNewGame = true; // always reinitialize board for now
         if (!startNewGame) { // get the most recent game and its gamestate
             getLatestGame(user.getUid());
+        } else {
+            int difficulty = getIntent().getIntExtra("difficulty", 1);
+            postNewGame(user.getUid(), difficulty);
         }
 
         tiles = new Tile[rows][cols];
@@ -133,6 +136,27 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
+    public void postNewGame(String uid, int difficulty) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makegame";
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("difficulty", difficulty);
+            postData.put("gameID", (int) (Math.random() * 10));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        /*JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
+                response -> {
+                    // TODO: implement POST request of a new game
+                    // do games need userId? auto-generate gameID?
+                }, error -> {
+                    Log.d("ChessScreen", "Failed to post game");
+                });
+
+        queue.add(jsonObjectRequest);*/
+    }
+
     public void getLatestGame(String uid) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + uid;
         Date today = new Date();
@@ -144,6 +168,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     Object game = null;
                     ArrayList<Object> objArray = new Gson().fromJson(response, new TypeToken<ArrayList<Object>>(){}.getType());
                     for (Object o : objArray) {
+                        // TODO: GET the latest game, then get the latest board from that game to render
                         /*if (o.startDate.getTime() - now < minDiff) {
                             minDiff = o.startDateTime.getTime();
                             game = o;

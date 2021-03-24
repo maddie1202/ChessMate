@@ -9,10 +9,10 @@ module.exports = app => {
     app.get("/getallgames/:userID", game.findAll);
 
     //create a game with gameID and game details
-    app.post("/makegame/:gameID", game.create);
+    app.post("/makegame", game.create);
 
     //update a game with gameID and game details
-    app.put("/updategame/:gameID", game.update);
+    app.put("/updategame", game.update);
 
     //delete a game with gameID
     app.delete("/deletegamedetails/:gameID", game.delete);
