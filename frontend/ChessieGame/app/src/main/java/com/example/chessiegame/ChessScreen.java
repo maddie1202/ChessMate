@@ -50,6 +50,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -73,9 +75,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     public TableLayout chessBoard;
     public Tile[][] tiles;
     public char[] prevGame;
+    public int gameID;
     private final int rows = 8;
     private final int cols = 8;
+
     private boolean startNewGame;
+    public String boardString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +95,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
+        gameID = 0;
+        boardString = "";
+
         startNewGame = getIntent().getBooleanExtra("newGame", true);
         startNewGame = true; // always reinitialize board for now
         if (!startNewGame) { // get the most recent game and its gamestate
@@ -101,7 +109,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
         tiles = new Tile[rows][cols];
         chessBoard = findViewById(R.id.chess);
-        initChessboard(startNewGame);
+        initChessboard(startNewGame, "");
 
         if (mBlueAdapter == null) {
             showToast("Bluetooth is not available");
@@ -141,20 +149,50 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         JSONObject postData = new JSONObject();
         try {
             postData.put("difficulty", difficulty);
-            postData.put("gameID", (int) (Math.random() * 10));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        /*JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
-                    // TODO: implement POST request of a new game
-                    // do games need userId? auto-generate gameID?
+                    // TODO: parse gameID from response
+                    Log.d("ChessScreen", "Successfully posted game");
+                    JSONObject res = (JSONObject) response;
+                    try {
+                        gameID = (int) res.get("gameID");
+                        postNewGameResult(uid, gameID);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("ChessScreen", String.valueOf(gameID));
                 }, error -> {
                     Log.d("ChessScreen", "Failed to post game");
                 });
 
-        queue.add(jsonObjectRequest);*/
+        queue.add(jsonObjectRequest);
+    }
+
+    public void postNewGameResult(String uid, int gameID) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/postresult";
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("userID", uid);
+            postData.put("gameID", gameID);
+            postData.put("result", null);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
+                response -> {
+                    Log.d("ChessScreen", "Successfully posted game result");
+
+                }, error -> {
+            Log.d("ChessScreen", "Failed to post game result");
+        });
+
+        queue.add(jsonObjectRequest);
+
     }
 
     public void getLatestGame(String uid) {
@@ -165,14 +203,51 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     Long minDiff = today.getTime();
-                    Object game = null;
-                    ArrayList<Object> objArray = new Gson().fromJson(response, new TypeToken<ArrayList<Object>>(){}.getType());
-                    for (Object o : objArray) {
+                    try {
                         // TODO: GET the latest game, then get the latest board from that game to render
-                        /*if (o.startDate.getTime() - now < minDiff) {
-                            minDiff = o.startDateTime.getTime();
-                            game = o;
-                        }*/
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject j = jsonArray.getJSONObject(i);
+                            Long gameTime = ((Timestamp) j.get("startDateTime")).getTime();
+                            if (gameTime - now < minDiff) {
+                                minDiff = gameTime;
+                                gameID = (int) j.get("GameID");
+                            }
+                        }
+                        Log.d("ChessScreen", response);
+                        getLatestBoard(gameID);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    Log.d("ChessScreen", "Error fetching most recent game");
+                });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    public void getLatestBoard(int gameID) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + gameID;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        // Gets the latest board from game with gameID to render
+                        int maxNum = 0;
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject j = jsonArray.getJSONObject(i);
+                            // get the max sequenceNumber to find the most recent board
+                            if ((int) j.get("sequenceNumber") > maxNum) {
+                                maxNum = (int) j.get("sequenceNumber");
+                                boardString = (String) j.get("placements");
+                            }
+                        }
+                        Log.d("ChessScreen", response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
                 error -> {
@@ -190,47 +265,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         for (int i = 0; i < cols ; i ++) {
             for (int j = 0; j < rows; j++) {
                 board [i][j] = tiles[i][j].getPiece().id;
-                    /*
-                    case "wpawn":
-                        board[i][j] = ;
-                    case "wrook":
-                        board[i][j] = ;
-                    case "wknight":
-                        board[i][j] = ;
-                    case "wbishop":
-                        board[i][j] = ;
-                    case "wqueen":
-                        board[i][j] = ;
-                    case "wking":
-                        board[i][j] = ;
-                    case "bpawn":
-                        board[i][j] = ;
-                    case "brook":
-                        board[i][j] = ;
-                    case "bknight":
-                        board[i][j] = ;
-                    case "bbishop":
-                        board[i][j] = ;
-                    case "bqueen":
-                        board[i][j] = ;
-                    case "bking":
-                        board[i][j] = ;
-
-                    default:
-                        board[i][j] = 0; //empty
-
-                     */
-
             }
         }
 
         return board;
-
     }
-
-   // Tile[][] charToBoard(char[][] board){
-    //    return Tile[8][8];
-   // }
 
     //Takes a list with all possible moves that a player can make, the move that player wants to make
     //Returns if the move is valid or not
@@ -247,14 +286,16 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     }
 
     //Get our present board and make it as a string
-    String boardToString(){
+    String boardToString() {
         String boardMoves = "";
 
         for (int i = 0; i < cols ; i ++) {
             for (int j = 0; j < rows; j++) {
-                boardMoves += tiles[i][j].getPiece().getName();
+                boardMoves += tiles[i][j].getPiece().id;
             }
         }
+
+        // TODO: Post board
         return boardMoves;
     }
 
@@ -283,7 +324,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         tiles[move.getDest_col()][move.getDest_row()].setPiece(p);
     }
 
-    public void initChessboard(boolean newGame) {
+    public void initChessboard(boolean newGame, String boardString) {
         int width = getScreenWidth();
         int tileSize = width / 8;
 

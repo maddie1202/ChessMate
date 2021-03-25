@@ -162,10 +162,10 @@ public class AchievementsScreen extends Fragment {
                     Toast.makeText(getActivity(),response,Toast.LENGTH_LONG).show();
                     Type type = new TypeToken<List<Achievement>>(){}.getType();
                     List<Achievement> a = gson.fromJson(response, type);
-
+                    //TODO: Parse goals into array
                 },
                 error -> {
-                    Log.d("AchievmentScreen", "Error fetching goals");
+                    Log.d("AchievementScreen", "Error fetching goals");
                 });
 
         // Add the request to the RequestQueue.
