@@ -6,3 +6,4 @@ simple-chess-ai/*
 simple-chess-ai
 backend/config/db_config_file.js
 de1/hardware/modelsim/*
+de1/hardware/rook_project

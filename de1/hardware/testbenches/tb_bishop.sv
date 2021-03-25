@@ -117,7 +117,7 @@ module tb_bishop();
     logic [7:0] write_mem [`MEM_SIZE - 1:0];
     logic [7:0] read_mem [63:0];
 
-    logic [7:0] expected [1:0][63:0];
+    logic [7:0] expected [`NUM_BISHOP_MOVES - 1:0][63:0];
 
     task reset_mem();
         for (int i = 0; i < `MEM_SIZE; i++) begin
@@ -130,7 +130,7 @@ module tb_bishop();
         master_readdatavalid = 1;
         master_readdata = 32'hFFFFFFFF;
         
-        slave_address = 32'd0;
+        slave_address = 4'd0;
         slave_read = 0;
         slave_write = 0;
         slave_writedata = 32'd0;
@@ -142,15 +142,29 @@ module tb_bishop();
     endtask
 
     task execute_generation();
+        // write src address of current board
         slave_write = 1;
-        slave_address = 32'd1;
+        slave_address = 4'd1; 
+        slave_writedata = 32'd0;
         wait(slave_waitrequest == 0);
 
-        slave_address = 32'd2;
-        slave_writedata = `WBISHOP0;
+        // write destination address for generated boards
+        slave_address = 4'd2;
+        slave_writedata = 32'd0;
         wait(slave_waitrequest == 0);
 
-        slave_address = 32'd0;
+        // write x coordinate of piece to generate for
+        slave_address = 4'd3;
+        slave_writedata = 5;
+        wait(slave_waitrequest == 0);
+
+        // write y coordinate of piece to generate for
+        slave_address = 4'd4;
+        slave_writedata = 3;
+        wait(slave_waitrequest == 0);
+
+        // read from address 0 to wait for completion
+        slave_address = 4'd0;
         wait(slave_waitrequest == 0);
 
         slave_write = 0;
@@ -180,16 +194,16 @@ module tb_bishop();
     end
 
     // initialize initial board and expected boards
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\initial-boards\\bishop-test-board.memh", read_mem);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\bishop-expected1.memh", expected[0]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\bishop-expected2.memh", expected[1]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\bishop-expected3.memh", expected[2]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\bishop-expected4.memh", expected[3]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\bishop-expected5.memh", expected[4]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\bishop-expected6.memh", expected[5]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\bishop-expected7.memh", expected[6]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\bishop-expected8.memh", expected[7]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\bishop-expected9.memh", expected[8]);
+    initial $readmemh ("./bishop-test-board.memh", read_mem);
+    initial $readmemh ("./bishop-expected1.memh", expected[0]);
+    initial $readmemh ("./bishop-expected2.memh", expected[1]);
+    initial $readmemh ("./bishop-expected3.memh", expected[2]);
+    initial $readmemh ("./bishop-expected4.memh", expected[3]);
+    initial $readmemh ("./bishop-expected5.memh", expected[4]);
+    initial $readmemh ("./bishop-expected6.memh", expected[5]);
+    initial $readmemh ("./bishop-expected7.memh", expected[6]);
+    initial $readmemh ("./bishop-expected8.memh", expected[7]);
+    initial $readmemh ("./bishop-expected9.memh", expected[8]);
 
     task board_equals(input int base, input int expected_i, output logic match);
         for (int i = 0; i < 64; i++) begin

@@ -117,7 +117,7 @@ module tb_queen();
     logic [7:0] write_mem [`MEM_SIZE - 1:0];
     logic [7:0] read_mem [63:0];
 
-    logic [7:0] expected [1:0][63:0];
+    logic [7:0] expected [`NUM_QUEEN_MOVES - 1:0][63:0];
 
     task reset_mem();
         for (int i = 0; i < `MEM_SIZE; i++) begin
@@ -142,15 +142,29 @@ module tb_queen();
     endtask
 
     task execute_generation();
+        // write src address of current board
         slave_write = 1;
-        slave_address = 32'd1;
+        slave_address = 4'd1; 
+        slave_writedata = 32'd0;
         wait(slave_waitrequest == 0);
 
-        slave_address = 32'd2;
-        slave_writedata = `WBISHOP0;
+        // write destination address for generated boards
+        slave_address = 4'd2;
+        slave_writedata = 32'd0;
         wait(slave_waitrequest == 0);
 
-        slave_address = 32'd0;
+        // write x coordinate of piece to generate for
+        slave_address = 4'd3;
+        slave_writedata = 6;
+        wait(slave_waitrequest == 0);
+
+        // write y coordinate of piece to generate for
+        slave_address = 4'd4;
+        slave_writedata = 3;
+        wait(slave_waitrequest == 0);
+
+        // read from address 0 to wait for completion
+        slave_address = 4'd0;
         wait(slave_waitrequest == 0);
 
         slave_write = 0;
@@ -180,21 +194,21 @@ module tb_queen();
     end
 
     // initialize initial board and expected boards
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\initial-boards\\queen-test-board.memh", read_mem);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected1.memh", expected[0]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected2.memh", expected[1]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected3.memh", expected[2]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected4.memh", expected[3]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected5.memh", expected[4]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected6.memh", expected[5]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected7.memh", expected[6]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected8.memh", expected[7]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected9.memh", expected[8]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected10.memh", expected[9]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected11.memh", expected[10]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected12.memh", expected[11]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected13.memh", expected[12]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\queen-expected14.memh", expected[13]);
+    initial $readmemh ("./queen-test-board.memh", read_mem);
+    initial $readmemh ("./queen-expected1.memh", expected[0]);
+    initial $readmemh ("./queen-expected2.memh", expected[1]);
+    initial $readmemh ("./queen-expected3.memh", expected[2]);
+    initial $readmemh ("./queen-expected4.memh", expected[3]);
+    initial $readmemh ("./queen-expected5.memh", expected[4]);
+    initial $readmemh ("./queen-expected6.memh", expected[5]);
+    initial $readmemh ("./queen-expected7.memh", expected[6]);
+    initial $readmemh ("./queen-expected8.memh", expected[7]);
+    initial $readmemh ("./queen-expected9.memh", expected[8]);
+    initial $readmemh ("./queen-expected10.memh", expected[9]);
+    initial $readmemh ("./queen-expected11.memh", expected[10]);
+    initial $readmemh ("./queen-expected12.memh", expected[11]);
+    initial $readmemh ("./queen-expected13.memh", expected[12]);
+    initial $readmemh ("./queen-expected14.memh", expected[13]);
 
     task board_equals(input int base, input int expected_i, output logic match);
         for (int i = 0; i < 64; i++) begin
