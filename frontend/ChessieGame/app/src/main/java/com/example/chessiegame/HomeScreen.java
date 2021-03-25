@@ -1,10 +1,13 @@
 package com.example.chessiegame;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +24,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.sql.Timestamp;
+import java.util.Date;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link HomeScreen#newInstance} factory method to
@@ -32,13 +42,16 @@ public class HomeScreen extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-   /* private FirebaseUser user;
-    private FirebaseAuth mAuth;
-    private String uid;*/
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+
+    private FirebaseUser user;
+    private FirebaseAuth mAuth;
+    private RequestQueue queue;
+    private int gameID;
+    public String boardString;
+
     public int id;
     private Button start;
     private Button resume;
@@ -84,15 +97,11 @@ public class HomeScreen extends Fragment {
 
         start = v.findViewById(R.id.start_new_game);
         resume = v.findViewById(R.id.resume_previous);
-        /*mAuth = FirebaseAuth.getInstance();
+
+        gameID = 0;
+        queue = Volley.newRequestQueue(getActivity());
+        mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        uid = user.getUid();
-
-        TextView userUID = v.findViewById(R.id.user_uid);
-        userUID.setText(uid);*/
-
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        String url = "http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/";
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,37 +113,117 @@ public class HomeScreen extends Fragment {
         });
 
         resume.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ChessScreen.class);
-                intent.putExtra("newGame", false);
-                startActivity(intent);
-                tryGetRequest(queue, "http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getboard/1");
+                getLatestGame(user.getUid());
             }
         });
-
-        tryGetRequest(queue, url);
 
         return v;
     }
 
-    public void tryGetRequest(RequestQueue queue, String url) {
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void getLatestGame(String uid) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + uid;
+
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        Toast.makeText(getActivity(),response,Toast.LENGTH_LONG).show();
+                response -> {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+
+                        // find the most recent game
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject j = jsonArray.getJSONObject(i);
+                            if ((int) j.get("gameID") > gameID && (int) j.get("result") == -1) {
+                                gameID = (int) j.get("gameID");
+                            }
+                        }
+
+                        // get the result of the most recent game
+                        if (gameID == 0) {
+                            showToast("No Games Currently in Progress");
+                        } else {
+                            getLatestBoard(gameID);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(),error.getMessage(),Toast.LENGTH_LONG).show();
-            }
-        });
+                },
+                error -> {
+                    Log.d("ChessScreen", "Error fetching most recent game");
+                });
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
+
+    public void getLatestBoard(int gameID) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgame/" + gameID;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        // Gets the board with the highest sequence number from game with gameID to render
+                        int maxNum = 0;
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject j = jsonArray.getJSONObject(i);
+                            // get the max sequenceNumber to find the most recent board
+                            if ((int) j.get("sequenceNumber") > maxNum) {
+                                maxNum = (int) j.get("sequenceNumber");
+                                boardString = (String) j.get("placements");
+                            }
+                        }
+
+                        getGameDetails(gameID);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    Log.d("ChessScreen", "Error fetching most recent board");
+                });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    public void getGameDetails(int gameID) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgamedetails/" + gameID;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        // Gets the board with the highest sequence number from game with gameID to render
+                        JSONArray arr = new JSONArray(response);
+                        JSONObject res = (JSONObject) arr.get(0);
+
+                        // finally navigate to the chess screen
+                        Intent intent = new Intent(getActivity(), ChessScreen.class);
+                        intent.putExtra("gameID", gameID);
+                        intent.putExtra("newGame", false);
+                        intent.putExtra("boardString", boardString);
+                        intent.putExtra("difficulty", (int) res.get("difficulty"));
+                        startActivity(intent);
+                        Log.d("ChessScreen", response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    Log.d("ChessScreen", "Error fetching most recent game's details");
+                });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    private void showToast(String msg){
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
+
 
 }

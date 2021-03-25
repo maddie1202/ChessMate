@@ -59,6 +59,7 @@ import java.util.Date;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
+import java.lang.Integer.*;
 
 public class ChessScreen extends AppCompatActivity implements View.OnDragListener, View.OnTouchListener {
 
@@ -95,14 +96,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
-        gameID = 0;
-        boardString = "";
+        gameID = getIntent().getIntExtra("gameID", 0);
+        boardString = getIntent().getStringExtra("boardString");
 
         startNewGame = getIntent().getBooleanExtra("newGame", true);
-        startNewGame = true; // always reinitialize board for now
-        if (!startNewGame) { // get the most recent game and its gamestate
-            getLatestGame(user.getUid());
-        } else {
+        if (startNewGame) { // get the most recent game and its gamestate
             int difficulty = getIntent().getIntExtra("difficulty", 1);
             postNewGame(user.getUid(), difficulty);
         }
@@ -159,7 +157,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     Log.d("ChessScreen", "Successfully posted game");
                     JSONObject res = (JSONObject) response;
                     try {
-                        gameID = (int) res.get("gameID");
+                        gameID = Integer.parseInt(res.get("gameID").toString());
                         postNewGameResult(uid, gameID);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -178,7 +176,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         try {
             postData.put("userID", uid);
             postData.put("gameID", gameID);
-            postData.put("result", null);
+            postData.put("result", -1);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -188,74 +186,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     Log.d("ChessScreen", "Successfully posted game result");
 
                 }, error -> {
-            Log.d("ChessScreen", "Failed to post game result");
+            Log.d("ChessScreen", error.toString());
         });
 
         queue.add(jsonObjectRequest);
 
-    }
-
-    public void getLatestGame(String uid) {
-        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + uid;
-        Date today = new Date();
-        Long now = today.getTime();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                response -> {
-                    Long minDiff = today.getTime();
-                    try {
-                        // TODO: GET the latest game, then get the latest board from that game to render
-                        JSONArray jsonArray = new JSONArray(response);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject j = jsonArray.getJSONObject(i);
-                            Long gameTime = ((Timestamp) j.get("startDateTime")).getTime();
-                            if (gameTime - now < minDiff) {
-                                minDiff = gameTime;
-                                gameID = (int) j.get("GameID");
-                            }
-                        }
-                        Log.d("ChessScreen", response);
-                        getLatestBoard(gameID);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                },
-                error -> {
-                    Log.d("ChessScreen", "Error fetching most recent game");
-                });
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }
-
-    public void getLatestBoard(int gameID) {
-        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + gameID;
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                response -> {
-                    try {
-                        // Gets the latest board from game with gameID to render
-                        int maxNum = 0;
-                        JSONArray jsonArray = new JSONArray(response);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject j = jsonArray.getJSONObject(i);
-                            // get the max sequenceNumber to find the most recent board
-                            if ((int) j.get("sequenceNumber") > maxNum) {
-                                maxNum = (int) j.get("sequenceNumber");
-                                boardString = (String) j.get("placements");
-                            }
-                        }
-                        Log.d("ChessScreen", response);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                },
-                error -> {
-                    Log.d("ChessScreen", "Error fetching most recent board");
-                });
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
     }
 
     //Method to get the tiles[][] and transform it to a list of char

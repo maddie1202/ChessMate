@@ -27,6 +27,9 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
@@ -158,11 +161,15 @@ public class AchievementsScreen extends Fragment {
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
-                    Gson gson = new Gson();
                     Toast.makeText(getActivity(),response,Toast.LENGTH_LONG).show();
-                    Type type = new TypeToken<List<Achievement>>(){}.getType();
-                    List<Achievement> a = gson.fromJson(response, type);
-                    //TODO: Parse goals into array
+                    try {
+                        JSONArray arr = new JSONArray(response);
+                        for (int i = 0; i < arr.length(); i++) {
+                            //TODO: Parse goals into array
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 },
                 error -> {
                     Log.d("AchievementScreen", "Error fetching goals");
