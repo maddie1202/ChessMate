@@ -14,7 +14,6 @@ exports.create = (req,res) => {
 
       // Create a Board
       const newBoard = new Board({
-        boardID: req.body.boardID,
         placements: req.body.placements,
         gameID: req.body.gameID,
         sequenceNum : req.body.sequenceNum

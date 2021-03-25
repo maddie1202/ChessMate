@@ -25,16 +25,16 @@ const Game = function(game){
 };
 
 Game.create = (newGame, result) => {
-    const attributes = "gameID, difficulty";
-    const values = ""+ newGame.gameID + ", " + newGame.difficulty + "";
+    const attributes = "difficulty";
+    const values = ""+ newGame.difficulty + "";
     sql.query("INSERT INTO Game(" + attributes + ") VALUES(" + values + ")", (err, res) => {
         if(err){
             console.log("error: ", err);
             result(err, null);
             return;
         }
-        console.log("created game: ", {...newGame });
-        result(null, {...newGame});
+        console.log("created gameID: ", res.insertId);
+        result(null, {"gameID" : res.insertId });
     });
 
 };
@@ -49,7 +49,7 @@ Game.findById = (gameID, result) => {
         }
 
         if(res.length) {
-            console.log("found game details: ", res[0]); // print gameID
+            console.log("found game details: ", res); // print gameID
             result(null, res);       //provide json
             return;
         }
@@ -99,8 +99,8 @@ Game.updateById = (gameID, game, result) => {
                 return;
             }
 
-            console.log("updated game: ", { ...game });
-            result(null, { ...game});
+            console.log("updated game: ",res);
+            result(null, {"affectedRows": res.affectedRows});
         }
     );
 };
@@ -161,8 +161,8 @@ Game.createResult = (userID, gameID, resultnum, result) => {
                               "gameID" : gameID,
                               "result" : resultnum };
 
-            console.log("created result: ", {resultobj});
-            result(null, {resultobj});
+            console.log("created result: ", resultobj);
+            result(null, resultobj);
         });
 
         //add this result to Achievements if result = 1
@@ -220,13 +220,13 @@ Game.updateResult = (userID, gameID, resultnum, result) => {
                           "gameID" : gameID,
                           "result" : resultnum };
 
-        console.log("updated result: ", {...resultobj});
-        result(null, {...resultobj});
+        console.log("updated result: ", resultobj);
+        result(null, resultobj);
     });
 
     //add this result to Achievements if result = 1
     if(resultnum == 1 || resultnum == 0){
-    //TODO:
+
         sql.query("SELECT difficulty FROM Game WHERE gameID = " + gameID, (err, res) => {
             if(err){
                 console.log("err in select difficulty: ", err);

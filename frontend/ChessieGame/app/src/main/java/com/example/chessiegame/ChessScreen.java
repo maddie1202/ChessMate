@@ -271,6 +271,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         return board;
     }
 
+
     //Takes a list with all possible moves that a player can make, the move that player wants to make
     //Returns if the move is valid or not
     boolean isMoveValid(List<Character> move_list, Move pmove){
