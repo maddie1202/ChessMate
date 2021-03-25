@@ -2,7 +2,7 @@
 `define BLACK -2'd1
 `define EMPTY 2'd0
 
-module bishop(input logic clk, input logic rst_n, // STILL ROOK
+module bishop(input logic clk, input logic rst_n,
     // slave (CPU-facing)
     output logic slave_waitrequest,
     input logic [3:0] slave_address,

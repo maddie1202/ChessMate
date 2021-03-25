@@ -241,7 +241,7 @@ module tb_queen();
             for (int j = 0; j < `NUM_QUEEN_MOVES; j++) begin
                 board_equals(i * 64, j, match);
                 if (match) begin
-                    $$display("Match for actual board %0d on expected[%0d]", i, j);
+                    $display("Match for actual board %0d on expected[%0d]", i, j);
                     break;
                 end
             end
