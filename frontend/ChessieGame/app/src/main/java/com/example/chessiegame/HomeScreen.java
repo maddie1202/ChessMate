@@ -171,6 +171,7 @@ public class HomeScreen extends Fragment {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject j = jsonArray.getJSONObject(i);
                             // get the max sequenceNumber to find the most recent board
+                            // TODO: change sequenceNum -> boardID after DB is changed
                             if ((int) j.get("sequenceNumber") > maxNum) {
                                 maxNum = (int) j.get("sequenceNumber");
                                 boardString = (String) j.get("placements");

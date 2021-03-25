@@ -98,6 +98,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
         gameID = getIntent().getIntExtra("gameID", 0);
         boardString = getIntent().getStringExtra("boardString");
+        tiles = new Tile[rows][cols];
+        chessBoard = findViewById(R.id.chess);
 
         startNewGame = getIntent().getBooleanExtra("newGame", true);
         if (startNewGame) { // get the most recent game and its gamestate
@@ -105,8 +107,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             postNewGame(user.getUid(), difficulty);
         }
 
-        tiles = new Tile[rows][cols];
-        chessBoard = findViewById(R.id.chess);
         initChessboard(startNewGame, "");
 
         if (mBlueAdapter == null) {
@@ -159,6 +159,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     try {
                         gameID = Integer.parseInt(res.get("gameID").toString());
                         postNewGameResult(uid, gameID);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -184,7 +185,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
                     Log.d("ChessScreen", "Successfully posted game result");
-
+                    boardToString(); // post the initialized chessboard
                 }, error -> {
             Log.d("ChessScreen", error.toString());
         });
@@ -222,16 +223,40 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     }
 
     //Get our present board and make it as a string
-    String boardToString() {
+    public String boardToString() {
         String boardMoves = "";
 
         for (int i = 0; i < cols ; i ++) {
             for (int j = 0; j < rows; j++) {
-                boardMoves += tiles[i][j].getPiece().id;
+                if (tiles[i][j].getPiece() == null) {
+                    boardMoves += (char) 0;
+                } else {
+                    boardMoves += tiles[i][j].getPiece().id;
+                }
             }
         }
 
-        // TODO: Post board
+        // TODO: Fix POST board
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makeboard";
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("boardID", 1);
+            postData.put("placements", boardMoves);
+            postData.put("gameID", gameID);
+            postData.put("sequenceNum", 1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
+                response -> {
+                    Log.d("ChessScreen", "Successfully posted board");
+                }, error -> {
+            Log.d("ChessScreen", "Failed to post board");
+        });
+
+        queue.add(jsonObjectRequest);
+
         return boardMoves;
     }
 
@@ -292,57 +317,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 if (newGame) {
                     //Pawn placement
                     if (i == 1) {
-                        if(j == 0){
-                            p = new Piece(this, i, j, "wpawn", (char) 1);
-                        }
-                        if(j == 1){
-                            p = new Piece(this, i, j, "wpawn", (char) 2);
-                        }
-                        if(j == 2){
-                            p = new Piece(this, i, j, "wpawn", (char) 3);
-                        }
-                        if(j == 3){
-                            p = new Piece(this, i, j, "wpawn", (char) 4);
-                        }
-                        if(j == 4){
-                            p = new Piece(this, i, j, "wpawn", (char) 5);
-                        }
-                        if(j == 5){
-                            p = new Piece(this, i, j, "wpawn", (char) 6);
-                        }
-                        if(j == 6){
-                            p = new Piece(this, i, j, "wpawn", (char) 7);
-                        }
-                        if(j == 7){
-                            p = new Piece(this, i, j, "wpawn", (char) 8);
-                        }
+                        p = new Piece(this, i, j, "wpawn", (char) (j + 1));
                         p.setImageResource(R.drawable.wpawn);
                     } else if (i == 6) {
-
-                        if(j == 0){
-                            p = new Piece(this, i, j, "wpawn", (char) -1);
-                        }
-                        if(j == 1){
-                            p = new Piece(this, i, j, "wpawn", (char) -2);
-                        }
-                        if(j == 2){
-                            p = new Piece(this, i, j, "wpawn", (char) -3);
-                        }
-                        if(j == 3){
-                            p = new Piece(this, i, j, "wpawn", (char) -4);
-                        }
-                        if(j == 4){
-                            p = new Piece(this, i, j, "wpawn", (char) -5);
-                        }
-                        if(j == 5){
-                            p = new Piece(this, i, j, "wpawn", (char) -6);
-                        }
-                        if(j == 6){
-                            p = new Piece(this, i, j, "wpawn", (char) -7);
-                        }
-                        if(j == 7){
-                            p = new Piece(this, i, j, "wpawn", (char) -8);
-                        }
+                        p = new Piece(this, i, j, "wpawn", (char) (-1 * j - 1));
                         p.setImageResource(R.drawable.bpawn);
                     }
                     //Rook

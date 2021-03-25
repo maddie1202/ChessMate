@@ -29,17 +29,13 @@ public class Piece extends androidx.appcompat.widget.AppCompatImageView {
         this.row = row;
         this.name = name;
         this.id = id;
+
     }
 
     public void draw(Canvas canvas) {
         super.draw(canvas);
         this.getDrawable().draw(canvas);
     }
-
-
-    /*public Piece(String name){
-        this.name = name;
-    }*/
 
     public String getName(){ return name;}
 

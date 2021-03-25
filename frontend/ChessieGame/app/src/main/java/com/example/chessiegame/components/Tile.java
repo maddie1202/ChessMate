@@ -14,7 +14,7 @@ public class Tile extends CardView {
     // represents an tile on the chessboard
     public Paint tileColor; // black = 0, white = 1
     public int highlighted; // false = 0, highlighted = 1
-    public Piece piece; // null if no piece currently on tile
+    public Piece piece = null; // null if no piece currently on tile
     public final int col ;
     public final int row;
     public Rect square;
