@@ -154,6 +154,7 @@ module tb_rook();
         slave_writedata = 32'd0;
         wait(slave_waitrequest == 0);
         #10;
+        
         // write x coordinate of piece to generate for
         slave_address = 4'd3;
         slave_writedata = 3;

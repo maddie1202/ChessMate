@@ -147,29 +147,35 @@ module tb_bishop();
         slave_address = 4'd1; 
         slave_writedata = 32'd0;
         wait(slave_waitrequest == 0);
+        #10;
 
         // write destination address for generated boards
         slave_address = 4'd2;
         slave_writedata = 32'd0;
         wait(slave_waitrequest == 0);
+        #10;
 
         // write x coordinate of piece to generate for
         slave_address = 4'd3;
         slave_writedata = 5;
         wait(slave_waitrequest == 0);
+        #10;
 
         // write y coordinate of piece to generate for
         slave_address = 4'd4;
         slave_writedata = 3;
         wait(slave_waitrequest == 0);
+        #10;
 
         // read from address 0 to wait for completion
         slave_address = 4'd0;
         wait(slave_waitrequest == 0);
+        #10;
 
         slave_write = 0;
         slave_read = 1;
         wait(slave_waitrequest == 0);
+        #10;
     endtask
 
     // clock 
@@ -230,7 +236,7 @@ module tb_bishop();
             for (int j = 0; j < `NUM_BISHOP_MOVES; j++) begin
                 board_equals(i * 64, j, match);
                 if (match) begin
-                    $display("Match!");
+                    $display("Match for actual board %0d on expected[%0d]", i, j);
                     break;
                 end
             end
