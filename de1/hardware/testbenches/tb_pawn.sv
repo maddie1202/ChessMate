@@ -130,7 +130,7 @@ module tb_pawn();
         master_readdatavalid = 1;
         master_readdata = 32'hFFFFFFFF;
         
-        slave_address = 32'd0;
+        slave_address = 4'd0;
         slave_read = 0;
         slave_write = 0;
         slave_writedata = 32'd0;
@@ -142,19 +142,45 @@ module tb_pawn();
     endtask
 
     task execute_generation();
+        // write address of board
         slave_write = 1;
-        slave_address = 32'd1;
+        slave_address = 4'd1;
+        slave_writedata = 32'd0;
+        #20;
         wait(slave_waitrequest == 0);
 
-        slave_address = 32'd2;
-        slave_writedata = `WPAWN2;
+        // write destination board address
+        slave_write = 1;
+        slave_address = 4'd2;
+        slave_writedata = 32'd0;
+        #20;
         wait(slave_waitrequest == 0);
 
-        slave_address = 32'd0;
+        // write x coordinate of piece to generate for
+        slave_write = 1;
+        slave_address = 4'd3;
+        slave_writedata = 32'd2;
+        #20;
         wait(slave_waitrequest == 0);
 
+        // write y coordinate of piece to generate for
+        slave_write = 1;
+        slave_address = 4'd4;
+        slave_writedata = 32'd1;
+        #10;
+        wait(slave_waitrequest == 0);
+
+        // write to address 0 to start
+        slave_write = 1;
+        slave_address = 4'd0;
+        #20;
+        wait(slave_waitrequest == 0);
+
+        // read from address 0 to wait for completion
         slave_write = 0;
         slave_read = 1;
+        slave_address = 4'd0;
+        #20;
         wait(slave_waitrequest == 0);
     endtask
 
