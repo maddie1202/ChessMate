@@ -130,7 +130,8 @@ move_list_t *generate_pawn_moves(board_t *board, char pawn)
 
     // move forward by 2 (if pawn is in its initial position only)
     int two_forward = 2 * forward;
-    if (src_y == home_row && get_piece(board, src_x, src_y + two_forward) == EMPTY) {
+    if (src_y == home_row && get_piece(board, src_x, src_y + two_forward) == EMPTY && 
+        get_piece(board, src_x, src_y + forward) == EMPTY) {
         add_move_to_list(move_list, board, pawn, src_x, src_y + two_forward); 
     }
 
