@@ -19,7 +19,6 @@ module pawn(input logic clk, input logic rst_n,
         CHECK_BOARD, RD_SRC, SV_SRC, WR_DEST, INC_COPY_XY, INC_CURR_BOARD, FINISH } state;
 
     assign slave_waitrequest = state != WAIT && state != ACK_START;
-    assign slave_readdata = 32'd0;
 
     logic [`NUM_MOVES * 8 - 1: 0] x_offsets, y_offsets, dest_xs, dest_ys, dest_pcs;
     logic [`NUM_MOVES - 1: 0] move_valid;
@@ -28,12 +27,19 @@ module pawn(input logic clk, input logic rst_n,
     logic [7:0] src_x, src_y, copy_x, copy_y, home_row;
     logic signed [7:0] src_pc, forward, copy_pc, check_val, check_val_x, check_val_y;
     logic src_is_white;
-    integer curr_move, curr_board;
+    integer curr_move, curr_board, move_i, move_j;
 
     assign src_is_white = src_pc >= 8'sd0;
     assign home_row = src_is_white ? 8'd1 : 8'd6;
     assign master_read = state == RD_SRC_PC || state == RD_DEST_PC || state == RD_SRC;
     assign master_write = state == WR_DEST;
+
+    always@(*) begin
+        slave_readdata = 32'd0;
+        for(move_j = 0; move_j < `NUM_MOVES; move_j++) begin
+            slave_readdata += move_valid[move_j];
+        end
+    end
 
     always@ (*) begin
         if (state != WR_DEST) begin
@@ -122,7 +128,6 @@ module pawn(input logic clk, input logic rst_n,
     end
 
     // x_offsets,  y_offsets, dest_xs, dest_ys, move_valid, forward
-    integer move_i;
     always@ (posedge clk) begin
         if (~rst_n) begin
             x_offsets = {`NUM_MOVES{8'hFF}};
