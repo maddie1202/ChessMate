@@ -117,7 +117,7 @@ module tb_king();
     logic [7:0] write_mem [`MEM_SIZE - 1:0];
     logic [7:0] read_mem [63:0];
 
-    logic [7:0] expected [1:0][63:0];
+    logic [7:0] expected [`NUM_KING_MOVES - 1:0][63:0];
 
     task reset_mem();
         for (int i = 0; i < `MEM_SIZE; i++) begin
@@ -146,35 +146,41 @@ module tb_king();
         slave_write = 1;
         slave_address = 4'd1;
         slave_writedata = 32'd0;
+        #20;
         wait(slave_waitrequest == 0);
 
         // write destination board address
         slave_write = 1;
         slave_address = 4'd2;
         slave_writedata = 32'd0;
+        #20;
         wait(slave_waitrequest == 0);
 
         // write x coordinate of piece to generate for
         slave_write = 1;
         slave_address = 4'd3;
-        // slave_writedata = 32'd2;
+        slave_writedata = 32'd4;
+        #20;
         wait(slave_waitrequest == 0);
 
         // write y coordinate of piece to generate for
         slave_write = 1;
         slave_address = 4'd4;
-        // slave_writedata = 32'd1;
+        slave_writedata = 32'd1;
+        #20;
         wait(slave_waitrequest == 0);
 
         // write to address 0 to start
         slave_write = 1;
         slave_address = 4'd0;
+        #10;
         wait(slave_waitrequest == 0);
-
+        
         // read from address 0 to wait for completion
         slave_write = 0;
         slave_read = 1;
         slave_address = 4'd0;
+        #20;
         wait(slave_waitrequest == 0);
     endtask
 
