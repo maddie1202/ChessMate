@@ -117,7 +117,7 @@ module tb_rook();
     logic [7:0] write_mem [`MEM_SIZE - 1:0];
     logic [7:0] read_mem [63:0];
 
-    logic [7:0] expected [1:0][63:0];
+    logic [7:0] expected [`NUM_ROOK_MOVES - 1:0][63:0];
 
     task reset_mem();
         for (int i = 0; i < `MEM_SIZE; i++) begin
@@ -142,20 +142,40 @@ module tb_rook();
     endtask
 
     task execute_generation();
+        // write src address of current board
         slave_write = 1;
-        slave_address = 32'd1;
+        slave_address = 4'd1; 
+        slave_writedata = 32'd0;
         wait(slave_waitrequest == 0);
+        #10;
 
-        slave_address = 32'd2;
-        slave_writedata = `WROOK0;
+        // write destination address for generated boards
+        slave_address = 4'd2;
+        slave_writedata = 32'd0;
         wait(slave_waitrequest == 0);
+        #10;
+        
+        // write x coordinate of piece to generate for
+        slave_address = 4'd3;
+        slave_writedata = 3;
+        wait(slave_waitrequest == 0);
+        #10;
 
-        slave_address = 32'd0;
+        // write y coordinate of piece to generate for
+        slave_address = 4'd4;
+        slave_writedata = 3;
         wait(slave_waitrequest == 0);
+        #10;
+
+        // read from address 0 to wait for completion
+        slave_address = 4'd0;
+        wait(slave_waitrequest == 0);
+        #10;
 
         slave_write = 0;
         slave_read = 1;
         wait(slave_waitrequest == 0);
+        #10;
     endtask
 
     // clock 
@@ -180,18 +200,18 @@ module tb_rook();
     end
 
     // initialize initial board and expected boards
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\initial-boards\\rook-test-board.memh", read_mem);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\rook-expected1.memh", expected[0]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\rook-expected2.memh", expected[1]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\rook-expected3.memh", expected[2]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\rook-expected4.memh", expected[3]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\rook-expected5.memh", expected[4]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\rook-expected6.memh", expected[5]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\rook-expected7.memh", expected[6]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\rook-expected8.memh", expected[7]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\rook-expected9.memh", expected[8]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\rook-expected10.memh", expected[9]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\rook-expected11.memh", expected[10]);
+    initial $readmemh ("./rook-test-board.memh", read_mem);
+    initial $readmemh ("./rook-expected1.memh", expected[0]);
+    initial $readmemh ("./rook-expected2.memh", expected[1]);
+    initial $readmemh ("./rook-expected3.memh", expected[2]);
+    initial $readmemh ("./rook-expected4.memh", expected[3]);
+    initial $readmemh ("./rook-expected5.memh", expected[4]);
+    initial $readmemh ("./rook-expected6.memh", expected[5]);
+    initial $readmemh ("./rook-expected7.memh", expected[6]);
+    initial $readmemh ("./rook-expected8.memh", expected[7]);
+    initial $readmemh ("./rook-expected9.memh", expected[8]);
+    initial $readmemh ("./rook-expected10.memh", expected[9]);
+    initial $readmemh ("./rook-expected11.memh", expected[10]);
 
     task board_equals(input int base, input int expected_i, output logic match);
         for (int i = 0; i < 64; i++) begin
@@ -218,7 +238,7 @@ module tb_rook();
             for (int j = 0; j < `NUM_ROOK_MOVES; j++) begin
                 board_equals(i * 64, j, match);
                 if (match) begin
-                    $display("Match!");
+                    $display("Match for actual board %0d on expected[%0d]", i, j);
                     break;
                 end
             end
