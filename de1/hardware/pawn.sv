@@ -14,7 +14,7 @@ module pawn(input logic clk, input logic rst_n,
     input logic master_readdatavalid,
     output logic master_write, output logic [31:0] master_writedata);
 
-    enum { WAIT, INPUT, ACK_START, RD_SRC_PC, SV_SRC_PC, COMP_DEST_XYS, 
+    enum { WAIT, INPUT, ACK_START, RD_SRC_PC, SV_SRC_PC, COMP_DEST_XYS, CHECK_DEST_XYS, 
         CHECK_DEST_ADDR, RD_DEST_PC, SV_DEST_PC, INC_CURR_MOVE, CHECK_DEST_PCS, 
         CHECK_BOARD, RD_SRC, SV_SRC, WR_DEST, INC_COPY_XY, INC_CURR_BOARD, FINISH } state;
 
@@ -26,7 +26,7 @@ module pawn(input logic clk, input logic rst_n,
 
     logic [31:0] src_board_addr, dest_board_addr, curr_dest_board_addr;
     logic [7:0] src_x, src_y, copy_x, copy_y, home_row;
-    logic signed [7:0] src_pc, forward, copy_pc;
+    logic signed [7:0] src_pc, forward, copy_pc, check_val, check_val_x, check_val_y;
     logic src_is_white;
     integer curr_move, curr_board;
 
@@ -143,19 +143,19 @@ module pawn(input logic clk, input logic rst_n,
             for (move_i = 0; move_i < `NUM_MOVES; move_i++) begin
                 dest_ys[move_i * 8 +: 8] = src_y + y_offsets[move_i * 8 +: 8];
             end
-
+        end else if (state == CHECK_DEST_XYS) begin
             for (move_i = 0; move_i < `NUM_MOVES; move_i++) begin
-                move_valid[move_i] = dest_xs[move_i * 8 +: 8] >= 8'd0 &&  
-                    dest_ys[move_i * 8 +: 8] >= 8'd0;
+                check_val_x = dest_xs[move_i * 8 +: 8];
+                check_val_y = dest_ys[move_i * 8 +: 8];
+                move_valid[move_i] = check_val_x >= 8'sd0 &&  
+                    check_val_y >= 8'sd0;
             end
         end else if (state == CHECK_DEST_PCS) begin
-            if (dest_pcs[0 +: 8] != `EMPTY) move_valid[0] = 0;
-            if (dest_pcs[0 +: 8] != `EMPTY || dest_pcs[8 +: 8] != `EMPTY || 
-                src_y != home_row) move_valid[1] = 0;
-            if ((dest_pcs[16 +: 8] >= 8'sd0 && src_pc < 8'sd0) || 
-                (dest_pcs[16 +: 8] <= 8'sd0 && src_pc > 8'sd0)) move_valid[2] = 0;
-            if ((dest_pcs[24 +: 8] >= 8'sd0 && src_pc < 8'sd0) || 
-                (dest_pcs[24 +: 8] <= 8'sd0 && src_pc > 8'sd0)) move_valid[3] = 0;
+            for (move_i = 0; move_i < `NUM_MOVES; move_i++) begin
+                check_val = dest_pcs[move_i * 8 +: 8];
+                if (~((check_val >= 8'sd0 && src_pc < 8'sd0) || 
+                    (check_val <= 8'sd0 && src_pc > 8'sd0))) move_valid[move_i] = 0;
+            end
         end
     end
 
@@ -204,13 +204,14 @@ module pawn(input logic clk, input logic rst_n,
                 ACK_START: state = RD_SRC_PC;
                 RD_SRC_PC: state = master_readdatavalid ? SV_SRC_PC : RD_SRC_PC;
                 SV_SRC_PC: state = COMP_DEST_XYS;
-                COMP_DEST_XYS: state = CHECK_DEST_ADDR;
+                COMP_DEST_XYS: state = CHECK_DEST_XYS;
+                CHECK_DEST_XYS: state = CHECK_DEST_ADDR;
                 CHECK_DEST_ADDR: state = move_valid[curr_move] ? RD_DEST_PC : CHECK_DEST_ADDR;
                 RD_DEST_PC: state = master_readdatavalid ? SV_DEST_PC : RD_DEST_PC;
                 SV_DEST_PC: state = curr_move < `NUM_MOVES - 1 ? INC_CURR_MOVE : CHECK_DEST_PCS;
                 INC_CURR_MOVE: state = CHECK_DEST_ADDR;
                 CHECK_DEST_PCS: state = CHECK_BOARD;
-                CHECK_BOARD: state = curr_board == `NUM_MOVES - 1 ? FINISH : move_valid[curr_board] ? RD_SRC : CHECK_BOARD;
+                CHECK_BOARD: state = curr_board == `NUM_MOVES ? FINISH : move_valid[curr_board] ? RD_SRC : CHECK_BOARD;
                 RD_SRC: state = master_readdatavalid ? SV_SRC : RD_SRC;
                 SV_SRC: state = WR_DEST;
                 WR_DEST: state = master_waitrequest ? WR_DEST : copy_x == 8'd7 && copy_y == 8'd7 ? INC_CURR_BOARD : INC_COPY_XY;
