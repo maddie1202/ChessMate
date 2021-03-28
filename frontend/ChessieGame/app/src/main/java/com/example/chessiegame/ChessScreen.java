@@ -66,7 +66,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    RequestQueue queue;
+    private RequestQueue queue;
 
     public TableLayout chessBoard;
     public Tile[][] tiles;
