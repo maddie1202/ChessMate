@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void registerNewUser(String uid, String email) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makeuser/" + uid;
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makeuser/";
 
         JSONObject postData = new JSONObject();
         try {

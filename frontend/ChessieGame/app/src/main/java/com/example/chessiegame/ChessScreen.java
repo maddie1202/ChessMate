@@ -49,14 +49,12 @@ import com.google.firebase.auth.FirebaseUser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.lang.Integer.*;
 
 public class ChessScreen extends AppCompatActivity implements View.OnDragListener, View.OnTouchListener {
 
@@ -64,18 +62,21 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     private static final int REQUEST_DISCOVER_BT = 1;
     BluetoothAdapter mBlueAdapter;
     TextView paired_devices;
+    boolean err;
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    RequestQueue queue;
+    private RequestQueue queue;
 
-    boolean err;
     public TableLayout chessBoard;
     public Tile[][] tiles;
     public char[] prevGame;
+    public int gameID;
     private final int rows = 8;
     private final int cols = 8;
+
     private boolean startNewGame;
+    public String boardString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,18 +91,18 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
+        gameID = getIntent().getIntExtra("gameID", 0);
+        boardString = getIntent().getStringExtra("boardString");
+        tiles = new Tile[rows][cols];
+        chessBoard = findViewById(R.id.chess);
+
         startNewGame = getIntent().getBooleanExtra("newGame", true);
-        startNewGame = true; // always reinitialize board for now
-        if (!startNewGame) { // get the most recent game and its gamestate
-            getLatestGame(user.getUid());
-        } else {
+        if (startNewGame) { // get the most recent game and its gamestate
             int difficulty = getIntent().getIntExtra("difficulty", 1);
             postNewGame(user.getUid(), difficulty);
         }
 
-        tiles = new Tile[rows][cols];
-        chessBoard = findViewById(R.id.chess);
-        initChessboard(startNewGame);
+        initChessboard(startNewGame, "");
 
         if (mBlueAdapter == null) {
             showToast("Bluetooth is not available");
@@ -141,46 +142,51 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         JSONObject postData = new JSONObject();
         try {
             postData.put("difficulty", difficulty);
-            postData.put("gameID", (int) (Math.random() * 10));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        /*JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
-                    // TODO: implement POST request of a new game
-                    // do games need userId? auto-generate gameID?
+                    // TODO: parse gameID from response
+                    Log.d("ChessScreen", "Successfully posted game");
+                    JSONObject res = (JSONObject) response;
+                    try {
+                        gameID = Integer.parseInt(res.get("gameID").toString());
+                        postNewGameResult(uid, gameID);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("ChessScreen", String.valueOf(gameID));
                 }, error -> {
                     Log.d("ChessScreen", "Failed to post game");
                 });
 
-        queue.add(jsonObjectRequest);*/
+        queue.add(jsonObjectRequest);
     }
 
-    public void getLatestGame(String uid) {
-        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + uid;
-        Date today = new Date();
-        Long now = today.getTime();
+    public void postNewGameResult(String uid, int gameID) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/postresult";
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("userID", uid);
+            postData.put("gameID", gameID);
+            postData.put("result", -1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
-                    Long minDiff = today.getTime();
-                    Object game = null;
-                    ArrayList<Object> objArray = new Gson().fromJson(response, new TypeToken<ArrayList<Object>>(){}.getType());
-                    for (Object o : objArray) {
-                        // TODO: GET the latest game, then get the latest board from that game to render
-                        /*if (o.startDate.getTime() - now < minDiff) {
-                            minDiff = o.startDateTime.getTime();
-                            game = o;
-                        }*/
-                    }
-                },
-                error -> {
-                    Log.d("ChessScreen", "Error fetching most recent board");
-                });
+                    Log.d("ChessScreen", "Successfully posted game result");
+                    boardToString(); // post the initialized chessboard
+                }, error -> {
+            Log.d("ChessScreen", error.toString());
+        });
 
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        queue.add(jsonObjectRequest);
+
     }
 
     //Method to get the tiles[][] and transform it to a list of char
@@ -190,47 +196,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         for (int i = 0; i < cols ; i ++) {
             for (int j = 0; j < rows; j++) {
                 board [i][j] = tiles[i][j].getPiece().id;
-                    /*
-                    case "wpawn":
-                        board[i][j] = ;
-                    case "wrook":
-                        board[i][j] = ;
-                    case "wknight":
-                        board[i][j] = ;
-                    case "wbishop":
-                        board[i][j] = ;
-                    case "wqueen":
-                        board[i][j] = ;
-                    case "wking":
-                        board[i][j] = ;
-                    case "bpawn":
-                        board[i][j] = ;
-                    case "brook":
-                        board[i][j] = ;
-                    case "bknight":
-                        board[i][j] = ;
-                    case "bbishop":
-                        board[i][j] = ;
-                    case "bqueen":
-                        board[i][j] = ;
-                    case "bking":
-                        board[i][j] = ;
-
-                    default:
-                        board[i][j] = 0; //empty
-
-                     */
-
             }
         }
 
         return board;
-
     }
 
-   // Tile[][] charToBoard(char[][] board){
-    //    return Tile[8][8];
-   // }
 
     //Takes a list with all possible moves that a player can make, the move that player wants to make
     //Returns if the move is valid or not
@@ -247,14 +218,46 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     }
 
     //Get our present board and make it as a string
-    String boardToString(){
-        String boardMoves = "";
+    public String boardToString() {
+        char[] boardArray = new char[rows * cols];
 
-        for (int i = 0; i < cols ; i ++) {
-            for (int j = 0; j < rows; j++) {
-                boardMoves += tiles[i][j].getPiece().getName();
+        for (int i = 0; i < rows ; i ++) {
+            for (int j = 0; j < cols; j++) {
+                if (tiles[i][j].getPiece() == null) {
+                    boardArray[i * rows + j] = (char) 0;
+                } else {
+                    boardArray[i * rows + j] = tiles[i][j].getPiece().id;
+                }
             }
         }
+
+        String boardMoves = boardArray.toString();
+
+        // TODO: Fix POST board - probably a timing issue
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makeboard";
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("boardID", 1);
+            postData.put("placements", boardMoves);
+            postData.put("gameID", gameID);
+            postData.put("sequenceNum", 1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("ChessScreen", "Post board gameID is: " + String.valueOf(gameID));
+        Log.d("ChessScreen", "Post board placement string: " + boardMoves);
+        Log.d("ChessScreen", "Post board example piece: " + tiles[0][0].getPiece().name);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
+                response -> {
+                    Log.d("ChessScreen", "Successfully posted board");
+                }, error -> {
+                    Log.d("ChessScreen", error.toString());
+        });
+
+        queue.add(jsonObjectRequest);
+
         return boardMoves;
     }
 
@@ -283,7 +286,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         tiles[move.getDest_col()][move.getDest_row()].setPiece(p);
     }
 
-    public void initChessboard(boolean newGame) {
+    public void initChessboard(boolean newGame, String boardString) {
         int width = getScreenWidth();
         int tileSize = width / 8;
 
@@ -303,9 +306,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 tiles[i][j] = new Tile(this, i, j);
                 if ((i + j) % 2 == 0) {
                     tiles[i][j].setBackgroundColor(Color.WHITE);
-                }
-                else {
-                    tiles[i][j].setBackgroundColor(Color.argb(100, 151, 182, 181 ));
+                } else {
+                    tiles[i][j].setBackgroundColor(Color.argb(100, 151, 182, 181));
                 }
                 tiles[i][j].setLayoutParams(rp);
                 tiles[i][j].setOnDragListener(this);
@@ -315,71 +317,23 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 if (newGame) {
                     //Pawn placement
                     if (i == 1) {
-                        if(j == 0){
-                            p = new Piece(this, i, j, "wpawn", (char) 1);
-                        }
-                        if(j == 1){
-                            p = new Piece(this, i, j, "wpawn", (char) 2);
-                        }
-                        if(j == 2){
-                            p = new Piece(this, i, j, "wpawn", (char) 3);
-                        }
-                        if(j == 3){
-                            p = new Piece(this, i, j, "wpawn", (char) 4);
-                        }
-                        if(j == 4){
-                            p = new Piece(this, i, j, "wpawn", (char) 5);
-                        }
-                        if(j == 5){
-                            p = new Piece(this, i, j, "wpawn", (char) 6);
-                        }
-                        if(j == 6){
-                            p = new Piece(this, i, j, "wpawn", (char) 7);
-                        }
-                        if(j == 7){
-                            p = new Piece(this, i, j, "wpawn", (char) 8);
-                        }
+                        p = new Piece(this, i, j, "wpawn", (char) (j + 1));
                         p.setImageResource(R.drawable.wpawn);
                     } else if (i == 6) {
-
-                        if(j == 0){
-                            p = new Piece(this, i, j, "wpawn", (char) -1);
-                        }
-                        if(j == 1){
-                            p = new Piece(this, i, j, "wpawn", (char) -2);
-                        }
-                        if(j == 2){
-                            p = new Piece(this, i, j, "wpawn", (char) -3);
-                        }
-                        if(j == 3){
-                            p = new Piece(this, i, j, "wpawn", (char) -4);
-                        }
-                        if(j == 4){
-                            p = new Piece(this, i, j, "wpawn", (char) -5);
-                        }
-                        if(j == 5){
-                            p = new Piece(this, i, j, "wpawn", (char) -6);
-                        }
-                        if(j == 6){
-                            p = new Piece(this, i, j, "wpawn", (char) -7);
-                        }
-                        if(j == 7){
-                            p = new Piece(this, i, j, "wpawn", (char) -8);
-                        }
+                        p = new Piece(this, i, j, "wpawn", (char) (-1 * j - 1));
                         p.setImageResource(R.drawable.bpawn);
                     }
                     //Rook
                     else if (j == 7 && i == 7) {
                         p = new Piece(this, i, j, "brook", (char) -10);
                         p.setImageResource(R.drawable.brook);
-                    }else if(j == 0 && i == 7){
+                    } else if (j == 0 && i == 7) {
                         p = new Piece(this, i, j, "brook", (char) -9);
                         p.setImageResource(R.drawable.brook);
-                    }
-                    else if (j == 7 && i == 0) {
+                    } else if (j == 7 && i == 0) {
                         p = new Piece(this, i, j, "wrook", (char) 10);
                         p.setImageResource(R.drawable.wrook);
-                    } else if(j == 0 && i == 0){
+                    } else if (j == 0 && i == 0) {
                         p = new Piece(this, i, j, "wrook", (char) 9);
                         p.setImageResource(R.drawable.wrook);
                     }
@@ -387,28 +341,27 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     else if (j == 6 && i == 7) {
                         p = new Piece(this, i, j, "bknight", (char) -20);
                         p.setImageResource(R.drawable.bknight);
-                    }else if (j == 1 && i == 7){
+                    } else if (j == 1 && i == 7) {
                         p = new Piece(this, i, j, "bknight", (char) -19);
                         p.setImageResource(R.drawable.bknight);
-                    }
-                    else if (j == 6 && i == 0) {
+                    } else if (j == 6 && i == 0) {
                         p = new Piece(this, i, j, "wknight", (char) 20);
                         p.setImageResource(R.drawable.wknight);
-                    } else if(j == 1 && i == 0){
+                    } else if (j == 1 && i == 0) {
                         p = new Piece(this, i, j, "wknight", (char) 19);
                         p.setImageResource(R.drawable.wknight);
                     }
                     //Bishops
-                    else if (j == 5 && i == 7 ) {
+                    else if (j == 5 && i == 7) {
                         p = new Piece(this, i, j, "bbishop", (char) -30);
                         p.setImageResource(R.drawable.bbishop);
-                    }else if(j == 2 && i == 7){
+                    } else if (j == 2 && i == 7) {
                         p = new Piece(this, i, j, "bbishop", (char) -29);
                         p.setImageResource(R.drawable.bbishop);
                     } else if (j == 5 && i == 0) {
                         p = new Piece(this, i, j, "wbishop", (char) 30);
                         p.setImageResource(R.drawable.wbishop);
-                    }else if( j == 2 && i == 0){
+                    } else if (j == 2 && i == 0) {
                         p = new Piece(this, i, j, "wbishop", (char) 29);
                         p.setImageResource(R.drawable.wbishop);
                     }
@@ -417,7 +370,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "bqueen", (char) -39);
                         p.setImageResource(R.drawable.bqueen);
                     } else if (j == 4 && i == 0) {
-                        p = new Piece(this, i, j, "wqueen" , (char) 39);
+                        p = new Piece(this, i, j, "wqueen", (char) 39);
                         p.setImageResource(R.drawable.wqueen);
                     }
                     //Queen
