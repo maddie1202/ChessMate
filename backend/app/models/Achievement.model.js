@@ -46,7 +46,7 @@ Ach.getAllGoalsStatus = (userID, result) => {
 };
 
 Ach.getAllCompleted = (userID, result) => {
-    sql.query("SELECT * FROM Achievements WHERE userID = \"" + userID + "\" AND reqCount = realCount", (err, res) => {
+    sql.query("SELECT * FROM Achievements WHERE userID = \"" + userID + "\" AND reqCount >= realCount", (err, res) => {
         if(err){
             console.log("error: ", err);
             result(err, null);
