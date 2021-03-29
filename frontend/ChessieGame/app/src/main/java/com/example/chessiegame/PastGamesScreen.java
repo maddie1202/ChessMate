@@ -1,5 +1,7 @@
 package com.example.chessiegame;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -34,6 +36,8 @@ import org.json.JSONObject;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,6 +61,20 @@ public class PastGamesScreen extends Fragment {
     private RequestQueue queue;
     private ArrayList<Integer> gameIDList;
     private ArrayList<PastGame> gameList;
+    private final Map<String, String> monthMap = new HashMap<String, String>() {{
+        put("01", "January");
+        put("02", "February");
+        put("03", "March");
+        put("04", "April");
+        put("05", "May");
+        put("06", "June");
+        put("07", "July");
+        put("08", "August");
+        put("09", "September");
+        put("10", "October");
+        put("11", "November");
+        put("12", "December");
+    }};
 
     TableLayout gameTable;
     private int tableHeight;
@@ -182,33 +200,44 @@ public class PastGamesScreen extends Fragment {
             }
 
             TableRow.LayoutParams rp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            rp.height = 380;
+            rp.height = 430;
             rp.width = 380;
-            rp.rightMargin = 20;
+            rp.rightMargin = 10;
+            rp.leftMargin = 10;
             rp.topMargin = 20;
             rp.gravity = Gravity.CENTER;
             rp.gravity = Gravity.CENTER_HORIZONTAL;
 
-            /*LinearLayout gameItem = new LinearLayout(getActivity());
+            LinearLayout gameItem = new LinearLayout(getActivity());
             gameItem.setOrientation(LinearLayout.VERTICAL);
-            gameItem.setLayoutParams(rp);*/
+            gameItem.setLayoutParams(rp);
 
+            PastGame g = gameList.get(i);
             ImageView chessImage = new ImageView(getActivity());
             chessImage.setImageResource(R.drawable.chessimage);
-            //chessImage.setMaxWidth(125);
-            //chessImage.setMaxHeight(125);
-            chessImage.setLayoutParams(rp);
-            row.addView(chessImage, colNum);
+            chessImage.setMaxWidth(360);
+            chessImage.setMaxHeight(360);
+            chessImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), ChessScreen.class);
+                    intent.putExtra("gameID", g.gameID);
+                    intent.putExtra("replay", true);
+                    startActivity(intent);
+                }
+            });
+            gameItem.addView(chessImage, 0);
 
-            //TextView gameDate = new TextView(getActivity());
-            PastGame g = gameList.get(i);
+            TextView gameDate = new TextView(getActivity());
             Log.d("Past Games Screen", g.date);
-            /*gameDate.append(g.date);
-            Date date = new Date();
-            gameItem.addView(gameDate);*/
+            gameDate.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            gameDate.setText(g.date); // g.date is date that the game was played
+            gameDate.setTextColor(Color.BLACK);
+            gameDate.setTextSize(20);
+            gameItem.addView(gameDate, 1);
 
-            //row.addView(gameItem);
-            i++; // remove later
+            row.addView(gameItem, colNum);
+            i++;
             colNum++;
         }
     }
@@ -222,7 +251,7 @@ public class PastGamesScreen extends Fragment {
         public PastGame(int gameID, String month, String day, String time) {
             this.timeOfDay = time;
             this.gameID = gameID;
-            this.date = month + " " + day + " 2021";
+            this.date = monthMap.get(month) + " " + day + " 2021";
         }
     }
 }
