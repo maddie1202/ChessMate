@@ -103,4 +103,42 @@ response = [
     }
 ]
 //////////////////////////////////////////
+
+CLEAN UP FOR THE USER
+
+
+//////////////////////////////////////////
+delete a user
+DELETE method
+
+Remember to put userID in url 
+
+url = http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/deleteuser/userID
+
+response = {
+    "message": "User was deleted successfully!"
+}
+
+This deletes all games in Games, 
+all results in Results, 
+all boards for games, and 
+Achievements table
+/////////////////////////////////////////////
+
+OPTIONAL APIS we might need
+
+//////////////////////////////////////////////
+delete all games for that user
+DELETE method
+
+Remember to put userID in url
+
+url = http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/deleteallgames/userID
+
+response = {
+    "message": " x games deleted!"
+}
+////////////////////////////////////////////
+
+
 */
