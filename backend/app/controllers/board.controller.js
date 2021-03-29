@@ -5,7 +5,7 @@ const Board = require("../models/board.model.js");
 //create a new board in table
 exports.create = (req,res) => {
     //validate request
-    if (!req.body.boardID) {
+    if (!req.body.placements) {
         res.status(400).send({
           message: "Content can not be empty!"
         });

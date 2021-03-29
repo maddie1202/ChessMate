@@ -131,19 +131,28 @@ Game.remove = (gameID, result) => {
 
 //remove all games with userID
 Game.removeAll = (userID, result) => {
-    sql.query(
-        "DELETE FROM Result WHERE userID = \"" + userID + "\"",
-        (err, res) => {
-            if(err){
-                console.log("error: ", err);
-                result(null, err);
-                return;
-            }
 
-            console.log('deleted ' + res.affectedRows + 'games');
-            result(null, res);
+    Game.getAll(userID, (err, data) => {
+        if (!err){
+            if(data.length >= 1){
+                var num = data.length;
+                var i;
+                for(i = 0; i<num; i++){
+                    const gameID = data[i].gameID;
+                    Game.remove(gameID, (error, res) => {
+                        if(err){
+                            console.log(error);
+                        }
+                    });
+                }
+                const message = " " + num + " games deleted!";
+                result({ "message" : message}, null)
+            }
         }
-    );
+        else{
+            result(null, err);
+        }
+    });
 };
 
 Game.createResult = (userID, gameID, resultnum, result) => {
@@ -167,7 +176,6 @@ Game.createResult = (userID, gameID, resultnum, result) => {
 
         //add this result to Achievements if result = 1
         if(resultnum == 1){
-        //TODO:
             sql.query("SELECT difficulty FROM Game WHERE gameID = " + gameID, (err, res) => {
                 if(err){
                     console.log("err in select difficulty: ", err);

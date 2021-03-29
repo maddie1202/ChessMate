@@ -1,4 +1,5 @@
 const User = require("../models/user.model.js");
+const Game = require("../models/Game.model.js");
 
 exports.create = (req,res) => {
     //validate request
@@ -75,6 +76,12 @@ exports.update = (req,res) => {
 exports.delete = (req,res) => {
 
     const userID = req.params.userID;
+
+    Game.removeAll(userID, (err, data) => {
+        if(err){
+            console.log(err.message);
+        }
+    });
 
     User.remove(userID, (err, data) => {
         if (err) {
