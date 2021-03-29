@@ -131,19 +131,26 @@ Game.remove = (gameID, result) => {
 
 //remove all games with userID
 Game.removeAll = (userID, result) => {
-    sql.query(
-        "DELETE FROM Result WHERE userID = \"" + userID + "\"",
-        (err, res) => {
-            if(err){
-                console.log("error: ", err);
-                result(null, err);
-                return;
-            }
 
-            console.log('deleted ' + res.affectedRows + 'games');
-            result(null, res);
+    Game.getAll(userID, (err, data) => {
+        if (!err){
+            if(res.length >= 1){
+                var num = res.length;
+                var i;
+                for(i = 0; i<num; i++){
+                    const gameID = res[i].gameID;
+                    Game.remove(gameID, (err, data) => {
+
+                    });
+                }
+                const message = " " + num + " games deleted!";
+                result({ "message" : message}, null)
+            }
         }
-    );
+        else{
+            result(null, err);
+        }
+    });
 };
 
 Game.createResult = (userID, gameID, resultnum, result) => {
