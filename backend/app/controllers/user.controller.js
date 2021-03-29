@@ -79,8 +79,7 @@ exports.delete = (req,res) => {
 
     Game.removeAll(userID, (err, data) => {
         if(err){
-            const res_message = "Some error while deleting associated games, see more : " + err;
-            res.send({message: res_message });
+            console.log(err.message);
         }
     });
 
