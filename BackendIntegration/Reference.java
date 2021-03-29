@@ -103,6 +103,65 @@ response = [
     }
 ]
 //////////////////////////////////////////
+get the games for the user (sample flow of app)
+
+step 1: get all gameIDs for that user
+    GET method (remember to put userID in url)
+    url = http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/userID
+    response = [
+    {
+        "userID": "userID string",
+        "gameID": some_gameID,
+        "result": 0
+    },
+    {
+        "userID": "userID string",
+        "gameID": some_other_gameID,
+        "result": 1
+    },
+    {
+        "userID": "userID string",
+        "gameID": another_gameID,
+        "result": null
+    }
+]
+
+step 2: display these games in the user screen
+for every game in response above
+    if you want to display start time and difficulty: 
+        GET method (remember to put gameID in url = res[i].gameID)
+        url = http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgamedetails/gameID
+
+    if you want to get the last snapshot
+        GET method (remember to put gameID in url)
+        url = http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgame/gameID
+
+        this will return reponse with all boards for this user
+        now display the board with largest sequence number
+/////////////////////////////////////////
+
+get a game with all boards 
+GET method
+
+Remember to put gameID in url
+
+url = http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgame/gameID
+
+response = [
+    {
+        "boardID": some_boardID,
+        "placements": "1 2 3 4 5",
+        "gameID": gameID,
+        "sequenceNumber": 1
+    },
+    {
+        "boardID": some_other_boardID,
+        "placements": "5 6 7 8",
+        "gameID": gameID,
+        "sequenceNumber": 2
+    }
+]
+//////////////////////////////////////////
 
 CLEAN UP FOR THE USER
 
