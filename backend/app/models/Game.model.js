@@ -134,13 +134,15 @@ Game.removeAll = (userID, result) => {
 
     Game.getAll(userID, (err, data) => {
         if (!err){
-            if(res.length >= 1){
-                var num = res.length;
+            if(data.length >= 1){
+                var num = data.length;
                 var i;
                 for(i = 0; i<num; i++){
-                    const gameID = res[i].gameID;
-                    Game.remove(gameID, (err, data) => {
-
+                    const gameID = data[i].gameID;
+                    Game.remove(gameID, (error, res) => {
+                        if(err){
+                            console.log(error);
+                        }
                     });
                 }
                 const message = " " + num + " games deleted!";
