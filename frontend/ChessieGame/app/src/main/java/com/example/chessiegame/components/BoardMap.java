@@ -1,32 +1,64 @@
 package com.example.chessiegame.components;
 
-import android.content.ClipData;
-import android.content.ClipDescription;
-import android.content.Context;
-import android.graphics.PorterDuff;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.util.Log;
-import android.view.DragEvent;
-import android.view.MotionEvent;
-import android.view.View;
 
-import com.example.chessiegame.ChessScreen;
-import com.example.chessiegame.R;
-
+import java.util.HashMap;
 import java.util.List;
-
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import java.util.Map;
 
 import androidx.annotation.RequiresApi;
 
+public class BoardMap {
+    Map<Integer, Integer> imageMap;
+
+    public BoardMap() {
+        imageMap = new HashMap<>();
+        for (int i = 1; i < 9; i++) {
+            imageMap.put(i, 700144); // wpawn drawable
+        }
+
+        for (int i = 9; i < 19; i++) {
+            imageMap.put(i, 700008); // wrook
+        }
+
+        for (int i = 19; i < 29; i++) {
+            imageMap.put(i, 700022); // wknight
+        }
+
+        for (int i = 29; i < 39; i++) {
+            imageMap.put(i, 700156); // wbishop
+        }
+
+        for (int i = 39; i < 48; i++) {
+            imageMap.put(i, 700078); // wqueen
+        }
+
+        imageMap.put(48, 700035); // wking
+
+        for (int i = -1; i > -9; i--) {
+            imageMap.put(i, 700083); // bpawn
+        }
+
+        for (int i = -9; i > -19; i--) {
+            imageMap.put(i, 700115); // brook
+        }
+
+        for (int i = -19; i > -29; i--) {
+            imageMap.put(i, 700108); // bknight
+        }
+
+        for (int i = -29; i > -39; i--) {
+            imageMap.put(i, 700150); // bbishop
+        }
+
+        for (int i = -39; i > -48; i--) {
+            imageMap.put(i, 700116); // bqueen
+        }
+
+        imageMap.put(-48, 700080); // bking
+
+    }
+
+}
 
 /*
 public class Board extends View {

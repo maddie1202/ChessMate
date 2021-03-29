@@ -78,6 +78,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     private boolean startNewGame;
     public String boardString;
 
+
+    //TODO: notes
+    // on resume, send the player's last move (second most recent board in DB) and send to DE1 to get possible moves
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -232,8 +236,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         }
 
         String boardMoves = boardArray.toString();
-
-        // TODO: Fix POST board - probably a timing issue
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makeboard";
         JSONObject postData = new JSONObject();
         try {

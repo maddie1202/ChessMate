@@ -13,9 +13,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.ChessieGame">
-        <activity android:name=".ChessScreen"></activity>
+        android:theme="@style/Theme.ChessieGame"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".ReplayPastGamesScreen"></activity>
+        <activity android:name=".ChessScreen" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

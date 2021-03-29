@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -220,10 +221,7 @@ public class PastGamesScreen extends Fragment {
             chessImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), ChessScreen.class);
-                    intent.putExtra("gameID", g.gameID);
-                    intent.putExtra("replay", true);
-                    startActivity(intent);
+                    fetchGameBoards(g.gameID);
                 }
             });
             gameItem.addView(chessImage, 0);
@@ -240,6 +238,34 @@ public class PastGamesScreen extends Fragment {
             i++;
             colNum++;
         }
+    }
+
+    public void fetchGameBoards(int gameID) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgame/" + gameID;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        JSONArray arr = new JSONArray(response);
+                        // TODO: sort arr by increasing boardID, get string placements in that order, map to int array
+                        // TODO: figure out decoding of boards
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject elem = arr.getJSONObject(i);
+                        }
+
+                        Intent intent = new Intent(getActivity(), ReplayPastGamesScreen.class);
+                        intent.putExtra("gameID", gameID);
+                        startActivity(intent);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    Log.d("ChessScreen", "Error fetching most game details");
+                });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
     class PastGame {
