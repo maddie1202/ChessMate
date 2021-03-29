@@ -167,7 +167,6 @@ Game.createResult = (userID, gameID, resultnum, result) => {
 
         //add this result to Achievements if result = 1
         if(resultnum == 1){
-        //TODO:
             sql.query("SELECT difficulty FROM Game WHERE gameID = " + gameID, (err, res) => {
                 if(err){
                     console.log("err in select difficulty: ", err);
