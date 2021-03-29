@@ -56,8 +56,8 @@ Board.create = (newBoard, result) => {
             result(err, null);
             return;
         }
-        console.log("created board: ", {id: res.insertId, ...newBoard });
-        result(null, { id: res.insertId, ...newBoard});
+        console.log("created board: ", {boardID: res.insertId, ...newBoard });
+        result(null, { boardID: res.insertId, ...newBoard});
     });
 };
 
