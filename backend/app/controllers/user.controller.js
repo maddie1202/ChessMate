@@ -75,14 +75,14 @@ exports.update = (req,res) => {
 
 exports.delete = (req,res) => {
 
+    const userID = req.params.userID;
+
     Game.removeAll(userID, (err, data) => {
         if(err){
             const res_message = "Some error while deleting associated games, see more : " + err;
             res.send({message: res_messgae });
         }
     });
-
-    const userID = req.params.userID;
 
     User.remove(userID, (err, data) => {
         if (err) {
