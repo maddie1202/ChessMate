@@ -202,7 +202,8 @@ module pawn(input logic clk, input logic rst_n,
             case (state)
                 WAIT: begin
                     if (slave_write && slave_address == 4'd0) begin
-                        state = ACK_START;
+                        // state = ACK_START;
+                        state = RD_SRC_PC;
                     end else if (slave_write) begin
                         state = INPUT;
                     end else begin
