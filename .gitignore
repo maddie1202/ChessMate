@@ -9,3 +9,17 @@ de1/hardware/modelsim/*
 de1/hardware/rook_project
 de1/hardware/bishop_project
 de1/hardware/queen_project
+*.qsf
+*.qpf
+*.csv
+*.tcl
+*.sopcinfo
+*.qsf.bak
+*.txt
+de1/hardware/de1-system/.qsys_edit
+de1/hardware/de1-system/db
+de1/hardware/de1-system/hps_isw_handoff
+de1/hardware/de1-system/monitor
+de1/hardware/de1-system/incremental_db
+de1/hardware/de1-system/output_files
+de1/hardware/de1-system/sys

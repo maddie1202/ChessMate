@@ -34,11 +34,17 @@ module pawn(input logic clk, input logic rst_n,
     assign master_read = state == RD_SRC_PC || state == RD_DEST_PC || state == RD_SRC;
     assign master_write = state == WR_DEST;
 
-    always@(*) begin
-        slave_readdata = 32'd0;
-        for(move_j = 0; move_j < `NUM_MOVES; move_j++) begin
-            slave_readdata += move_valid[move_j];
-        end
+    // always@(*) begin
+    //     slave_readdata = 32'd0;
+    //     for(move_j = 0; move_j < `NUM_MOVES; move_j++) begin
+    //         slave_readdata += move_valid[move_j];
+    //     end
+    // end
+    always@(posedge clk) begin
+        if(~rst_n) slave_readdata = 32'd0;
+        else if (state == RD_SRC_PC) slave_readdata = 32'd1;
+        else if (state == CHECK_BOARD) slave_readdata = 32'd2;
+        else if (state == FINISH) slave_readdata = 32'd3;
     end
 
     always@ (*) begin
@@ -202,7 +208,7 @@ module pawn(input logic clk, input logic rst_n,
             case (state)
                 WAIT: begin
                     if (slave_write && slave_address == 4'd0) begin
-                        state = ACK_START;
+                        state = RD_SRC_PC;
                     end else if (slave_write) begin
                         state = INPUT;
                     end else begin
@@ -211,18 +217,18 @@ module pawn(input logic clk, input logic rst_n,
                 end
                 INPUT: state = WAIT;
                 ACK_START: state = RD_SRC_PC;
-                RD_SRC_PC: state = master_readdatavalid ? SV_SRC_PC : RD_SRC_PC;
-                SV_SRC_PC: state = COMP_DEST_XYS;
+                RD_SRC_PC: state = ~master_waitrequest ? SV_SRC_PC : RD_SRC_PC;
+                SV_SRC_PC: state = master_readdatavalid ? COMP_DEST_XYS : SV_SRC_PC;
                 COMP_DEST_XYS: state = CHECK_DEST_XYS;
                 CHECK_DEST_XYS: state = CHECK_DEST_ADDR;
                 CHECK_DEST_ADDR: state = move_valid[curr_move] ? RD_DEST_PC : CHECK_DEST_ADDR;
-                RD_DEST_PC: state = master_readdatavalid ? SV_DEST_PC : RD_DEST_PC;
-                SV_DEST_PC: state = curr_move < `NUM_MOVES - 1 ? INC_CURR_MOVE : CHECK_DEST_PCS;
+                RD_DEST_PC: state = ~master_waitrequest ? SV_DEST_PC : RD_DEST_PC;
+                SV_DEST_PC: state = master_readdatavalid ? (curr_move < `NUM_MOVES - 1 ? INC_CURR_MOVE : CHECK_DEST_PCS) : SV_DEST_PC;
                 INC_CURR_MOVE: state = CHECK_DEST_ADDR;
                 CHECK_DEST_PCS: state = CHECK_BOARD;
                 CHECK_BOARD: state = curr_board == `NUM_MOVES ? FINISH : move_valid[curr_board] ? RD_SRC : CHECK_BOARD;
-                RD_SRC: state = master_readdatavalid ? SV_SRC : RD_SRC;
-                SV_SRC: state = WR_DEST;
+                RD_SRC: state = ~master_waitrequest ? SV_SRC : RD_SRC;
+                SV_SRC: state = master_readdatavalid ? WR_DEST : SV_SRC;
                 WR_DEST: state = master_waitrequest ? WR_DEST : copy_x == 8'd7 && copy_y == 8'd7 ? INC_CURR_BOARD : INC_COPY_XY;
                 INC_COPY_XY: state = RD_SRC;
                 INC_CURR_BOARD: state = CHECK_BOARD;
