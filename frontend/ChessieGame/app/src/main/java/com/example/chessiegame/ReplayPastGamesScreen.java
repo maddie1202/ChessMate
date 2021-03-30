@@ -3,10 +3,12 @@ package com.example.chessiegame;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +20,7 @@ import com.example.chessiegame.components.Tile;
 import com.example.chessiegame.components.BoardMap;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +34,8 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
     public int gameID;
     private final int rows = 8;
     private final int cols = 8;
-    private final BoardMap bmap = new BoardMap();
+    private BoardMap imageMap;
+    private Context context;
 
     private ArrayList<Integer[][]> boards;
 
@@ -50,13 +54,32 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
             }
         });
 
+        context = this;
+        imageMap = new BoardMap(this);
         tiles = new Tile[rows][cols];
         chessBoard = findViewById(R.id.chess);
         boards = new ArrayList<Integer[][]>();
         mockBoards();
 
         initChessboard();
-        replayGame();
+        mockOneMove();
+        //replayGame();
+    }
+
+    public void mockOneMove() {
+        Handler h = new Handler();
+        Runnable r = new Runnable() {
+            public void run() {
+                // move pawn 1 one space up
+                Piece p = tiles[6][0].getPiece();
+                tiles[6][0].removePiece(p);
+
+                Piece pc = new Piece(context, 6, 0, "bpawn", (char) -1);
+                tiles[5][0].setPiece(pc);
+                pc.setImageResource(imageMap.get(-1));
+            }
+        };
+        h.postDelayed(r,2000);
     }
 
     public void mockBoards() {
@@ -83,7 +106,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         boards.add(new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {-1, -2, 0, -4, -5, -6, -7, -8},
-                {0, 0, 0, -3, 0, 0, 0, 0},
+                {0, 0, -3, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 5, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0},
@@ -93,7 +116,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         boards.add(new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {-1, -2, 0, -4, -5, -6, -7, -8},
-                {0, 0, 0, -3, 0, 0, 0, 0},
+                {0, 0, -3, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 5, 0, 0, 8},
                 {0, 0, 0, 0, 0, 0, 0, 0},
@@ -103,7 +126,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         boards.add(new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {0, -2, 0, -4, -5, -6, -7, -8},
-                {0, 0, 0, -3, 0, 0, 0, 0},
+                {0, 0, -3, 0, 0, 0, 0, 0},
                 {-1, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 5, 0, 0, 8},
                 {0, 0, 0, 0, 0, 0, 0, 0},
@@ -113,7 +136,17 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         boards.add(new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {0, -2, 0, -4, -5, -6, -7, -8},
-                {0, 0, 0, -3, 0, 0, 0, 0},
+                {0, 0, -3, 0, 0, 0, 0, 0},
+                {-1, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 5, 0, 0, 8},
+                {0, 0, 0, 0, 0, 0, 0, 10},
+                {1, 2, 3, 4, 0, 6, 7, 0},
+                {9, 19, 29, 48, 39, 30, 20, 0}
+        });
+        boards.add(new Integer[][]{
+                {-9, -19, -29, -48, -39, -30, -20, -10},
+                {0, -2, 0, 0, -5, -6, -7, -8},
+                {0, 0, -3, -4, 0, 0, 0, 0},
                 {-1, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 5, 0, 0, 8},
                 {0, 0, 0, 0, 0, 0, 0, 10},
@@ -123,9 +156,19 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         boards.add(new Integer[][]{
                 {0, -19, -29, -48, -39, -30, -20, -10},
                 {0, -2, 0, -4, -5, -6, -7, -8},
-                {-9, 0, 0, -3, 0, 0, 0, 0},
-                {-1, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 5, 0, 0, 8},
+                {-9, 0, -3, -4, 0, 0, 0, 0},
+                {-1, 0, 0, 0, 5, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 8},
+                {0, 0, 0, 0, 0, 0, 0, 10},
+                {1, 2, 3, 4, 0, 6, 7, 0},
+                {9, 19, 29, 48, 39, 30, 20, 0}
+        });
+        boards.add(new Integer[][]{
+                {0, -19, -29, -48, -39, -30, -20, -10},
+                {0, -2, 0, 0, -5, -6, -7, -8},
+                {-9, 0, -3, 0, 0, 0, 0, 0},
+                {-1, 0, 0, 0, -4, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 8},
                 {0, 0, 0, 0, 0, 0, 0, 10},
                 {1, 2, 3, 4, 0, 6, 7, 0},
                 {9, 19, 29, 48, 39, 30, 20, 0}
@@ -237,21 +280,48 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
 
     public void replayGame() {
         int iteration = 0;
-        int length = boards.size();
+        int length = 4;
 
         while (iteration < length) {
             // get the current board
             Integer[][] b = boards.get(iteration);
 
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    Piece p = tiles[i][j].getPiece();
-                    /*if (b[i][j] != (int) p.id) {
-                        // if the new board is not the same as the current board
-                        tiles[i][j].removePiece(p);
-                        p.setImageResource(android.R.color.transparent);
+            for (int index = 0; index < rows; index++) {
+                for (int jndex = 0; jndex < cols; jndex++) {
 
-                    }*/
+                    int i = index;
+                    int j = jndex;
+                    Piece p = tiles[i][j].getPiece();
+                    Tile t = tiles[i][j];
+                    int newPieceID = b[i][j];
+                    Context context = this;
+
+                    Handler h = new Handler();
+                    Runnable r = new Runnable() {
+                        public void run() {
+                            if (t.hasPiece() && p != null) { // there was a already piece on that square
+                                if (newPieceID == 0) { // piece gets replaced with a blank
+                                    t.removePiece(p);
+                                    p.setImageResource(android.R.color.transparent);
+                                }
+                                else if (newPieceID != (int) p.id) { // b[i][j] is not 0
+                                    // if the new board is not the same as the current board
+                                    t.removePiece(p);
+                                    // TODO: fix casting once char id is turned into an int id
+                                    t.setPiece(new Piece(context, i, j, "Piece", (char) newPieceID));
+                                    p.setImageResource(android.R.color.transparent);
+                                }
+                            } else { // no piece was on that square
+                                if (newPieceID != 0) { // the square on new board has a piece
+                                    Piece pc = new Piece(context, i, j, "Piece", (char) newPieceID);
+                                    t.setPiece(pc);
+                                    Log.d("Replay Games Screen", String.valueOf(newPieceID));
+                                    pc.setImageResource(imageMap.get(newPieceID));
+                                }
+                            }
+                        }
+                    };
+                    h.postDelayed(r, 3000);
                 }
             }
 

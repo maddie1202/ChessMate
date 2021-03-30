@@ -128,6 +128,7 @@ public class PastGamesScreen extends Fragment {
         gameList = new ArrayList<>();
         gameIDList = new ArrayList<>();
 
+        //TODO: change this back to user.getUid() for final - leave this for now
         fetchPastGames("xQYSsLmZ8JU6jCNL1kL7g7QcDqE3");
 
         return v;
