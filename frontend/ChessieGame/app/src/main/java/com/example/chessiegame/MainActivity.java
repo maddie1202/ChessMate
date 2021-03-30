@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        printHashKey(getApplicationContext());
+        //printHashKey(getApplicationContext());
     }
 
     public void facebookLogin()
@@ -181,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    /*
     public void disconnectFromFacebook()
     {
         if (AccessToken.getCurrentAccessToken() == null) {
@@ -237,6 +238,8 @@ public class MainActivity extends AppCompatActivity {
             Log.e("TAG","printhaskey", e);
         }
     }
+
+     */
 
     // checks if user has signed in successfully
     @Override
