@@ -41,7 +41,13 @@ module rook(input logic clk, input logic rst_n,
     logic done_direction; // set flag if taking enemy piece so we stop after adding it
 
     // return the number of potential moves generated to the CPU
-    assign slave_readdata = board_count;
+    //assign slave_readdata = board_count;
+
+    // always@(posedge clk) begin
+    //     if(~rst_n) slave_readdata = 32'd0;
+    //     else if (state == FINISH) slave_readdata = src;
+    // end
+    assign slave_readdata = x;
 
     // signal settings
     always @(posedge clk) begin

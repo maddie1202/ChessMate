@@ -18,7 +18,7 @@ module pawn(input logic clk, input logic rst_n,
         CHECK_DEST_ADDR, RD_DEST_PC, SV_DEST_PC, INC_CURR_MOVE, CHECK_DEST_PCS, 
         CHECK_BOARD, RD_SRC, SV_SRC, WR_DEST, INC_COPY_XY, INC_CURR_BOARD, FINISH } state;
 
-    assign slave_waitrequest = state != WAIT && state != ACK_START;
+    assign slave_waitrequest = state != WAIT && state != FINISH;
 
     logic [`NUM_MOVES * 8 - 1: 0] x_offsets, y_offsets, dest_xs, dest_ys, dest_pcs;
     logic [`NUM_MOVES - 1: 0] move_valid;
@@ -42,9 +42,10 @@ module pawn(input logic clk, input logic rst_n,
     // end
     always@(posedge clk) begin
         if(~rst_n) slave_readdata = 32'd0;
-        else if (state == RD_SRC_PC) slave_readdata = 32'd1;
-        else if (state == CHECK_BOARD) slave_readdata = 32'd2;
-        else if (state == FINISH) slave_readdata = 32'd3;
+        else if (state == INPUT) slave_readdata = 32'd1;
+        else if (state == RD_SRC_PC) slave_readdata = 32'd2;
+        else if (state == CHECK_BOARD) slave_readdata = 32'd3;
+        else if (state == FINISH) slave_readdata = 32'd4;
     end
 
     always@ (*) begin
@@ -207,15 +208,16 @@ module pawn(input logic clk, input logic rst_n,
         end else begin
             case (state)
                 WAIT: begin
-                    if (slave_write && slave_address == 4'd0) begin
-                        state = RD_SRC_PC;
-                    end else if (slave_write) begin
+                    // if (slave_write && slave_address == 4'd0) begin
+                    //     state = RD_SRC_PC;
+                    // end else 
+                    if (slave_write) begin
                         state = INPUT;
                     end else begin
                         state = WAIT;
                     end
                 end
-                INPUT: state = WAIT;
+                INPUT: state = slave_address == 4'd0 ? RD_SRC_PC : WAIT;
                 ACK_START: state = RD_SRC_PC;
                 RD_SRC_PC: state = ~master_waitrequest ? SV_SRC_PC : RD_SRC_PC;
                 SV_SRC_PC: state = master_readdatavalid ? COMP_DEST_XYS : SV_SRC_PC;

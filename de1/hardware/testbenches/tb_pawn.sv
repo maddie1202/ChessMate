@@ -206,9 +206,9 @@ module tb_pawn();
     end
 
     // initialize initial board and expected boards
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\initial-boards\\pawn-test-board.memh", read_mem);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\pawn-expected1.memh", expected[0]);
-    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\pawn-expected2.memh", expected[1]);
+    initial $readmemh ("./pawn-test-board.memh", read_mem);
+    initial $readmemh ("./pawn-expected1.memh", expected[0]);
+    initial $readmemh ("./pawn-expected2.memh", expected[1]);
 
     task board_equals(input int base, input int expected_i, output logic match);
         for (int i = 0; i < 64; i++) begin

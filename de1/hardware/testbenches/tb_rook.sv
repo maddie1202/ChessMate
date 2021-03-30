@@ -146,36 +146,36 @@ module tb_rook();
         slave_write = 1;
         slave_address = 4'd1; 
         slave_writedata = 32'd0;
+        #11;
         wait(slave_waitrequest == 0);
-        #10;
 
         // write destination address for generated boards
         slave_address = 4'd2;
         slave_writedata = 32'd0;
+        #11;
         wait(slave_waitrequest == 0);
-        #10;
         
         // write x coordinate of piece to generate for
         slave_address = 4'd3;
         slave_writedata = 3;
+        #11;
         wait(slave_waitrequest == 0);
-        #10;
 
         // write y coordinate of piece to generate for
         slave_address = 4'd4;
         slave_writedata = 3;
+        #11;
         wait(slave_waitrequest == 0);
-        #10;
 
         // read from address 0 to wait for completion
         slave_address = 4'd0;
-        wait(slave_waitrequest == 0);
-        #10;
+        #11;
+        //wait(slave_waitrequest == 0);
 
         slave_write = 0;
         slave_read = 1;
+        #11;
         wait(slave_waitrequest == 0);
-        #10;
     endtask
 
     // clock 
