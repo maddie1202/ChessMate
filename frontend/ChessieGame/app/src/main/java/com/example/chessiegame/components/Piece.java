@@ -21,9 +21,9 @@ public class Piece extends androidx.appcompat.widget.AppCompatImageView {
     public int row;
     public String name;
     public String color;
-    public char id;
+    public int id;
 
-    public Piece (Context context, int row, int col, String name, char id) {
+    public Piece (Context context, int row, int col, String name, int id) {
         super(context);
         this.col = col;
         this.row = row;

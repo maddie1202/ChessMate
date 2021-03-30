@@ -62,8 +62,8 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         mockBoards();
 
         initChessboard();
-        mockOneMove();
-        //replayGame();
+        //mockOneMove();
+        replayGame();
     }
 
     public void mockOneMove() {
@@ -154,9 +154,9 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                 {9, 19, 29, 48, 39, 30, 20, 0}
         });
         boards.add(new Integer[][]{
-                {0, -19, -29, -48, -39, -30, -20, -10},
-                {0, -2, 0, -4, -5, -6, -7, -8},
-                {-9, 0, -3, -4, 0, 0, 0, 0},
+                {-9, -19, -29, -48, -39, -30, -20, -10},
+                {0, -2, 0, 0, -5, -6, -7, -8},
+                {0, 0, -3, -4, 0, 0, 0, 0},
                 {-1, 0, 0, 0, 5, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 8},
                 {0, 0, 0, 0, 0, 0, 0, 10},
@@ -164,9 +164,9 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                 {9, 19, 29, 48, 39, 30, 20, 0}
         });
         boards.add(new Integer[][]{
-                {0, -19, -29, -48, -39, -30, -20, -10},
+                {-9, -19, -29, -48, -39, -30, -20, -10},
                 {0, -2, 0, 0, -5, -6, -7, -8},
-                {-9, 0, -3, 0, 0, 0, 0, 0},
+                {0, 0, -3, 0, 0, 0, 0, 0},
                 {-1, 0, 0, 0, -4, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 8},
                 {0, 0, 0, 0, 0, 0, 0, 10},
@@ -204,69 +204,70 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
 
                 //Pawn placement
                 if (i == 1) {
-                    p = new Piece(this, i, j, "wpawn", (char) (j + 1));
-                    p.setImageResource(R.drawable.wpawn);
-                } else if (i == 6) {
-                    p = new Piece(this, i, j, "bpawn", (char) (-1 * j - 1));
+                    p = new Piece(this, i, j, "bpawn", (-1 * j - 1));
                     p.setImageResource(R.drawable.bpawn);
+                } else if (i == 6) {
+                    p = new Piece(this, i, j, "wpawn", (j + 1));
+                    p.setImageResource(R.drawable.wpawn);
                 }
                 //Rook
                 else if (j == 7 && i == 7) {
-                    p = new Piece(this, i, j, "brook", (char) -10);
-                    p.setImageResource(R.drawable.brook);
+                    p = new Piece(this, i, j, "wrook", 10);
+                    p.setImageResource(R.drawable.wrook);
                 } else if (j == 0 && i == 7) {
-                    p = new Piece(this, i, j, "brook", (char) -9);
-                    p.setImageResource(R.drawable.brook);
+                    p = new Piece(this, i, j, "wrook", 9);
+                    p.setImageResource(R.drawable.wrook);
                 } else if (j == 7 && i == 0) {
-                    p = new Piece(this, i, j, "wrook", (char) 10);
-                    p.setImageResource(R.drawable.wrook);
+                    p = new Piece(this, i, j, "brook", -10);
+                    p.setImageResource(R.drawable.brook);
                 } else if (j == 0 && i == 0) {
-                    p = new Piece(this, i, j, "wrook", (char) 9);
-                    p.setImageResource(R.drawable.wrook);
+                    p = new Piece(this, i, j, "brook", -9);
+                    p.setImageResource(R.drawable.brook);
+
                 }
                 //Knights
                 else if (j == 6 && i == 7) {
-                    p = new Piece(this, i, j, "bknight", (char) -20);
-                    p.setImageResource(R.drawable.bknight);
+                    p = new Piece(this, i, j, "wknight", 20);
+                    p.setImageResource(R.drawable.wknight);
                 } else if (j == 1 && i == 7) {
-                    p = new Piece(this, i, j, "bknight", (char) -19);
-                    p.setImageResource(R.drawable.bknight);
+                    p = new Piece(this, i, j, "wknight", 19);
+                    p.setImageResource(R.drawable.wknight);
                 } else if (j == 6 && i == 0) {
-                    p = new Piece(this, i, j, "wknight", (char) 20);
-                    p.setImageResource(R.drawable.wknight);
+                    p = new Piece(this, i, j, "bknight", -20);
+                    p.setImageResource(R.drawable.bknight);
                 } else if (j == 1 && i == 0) {
-                    p = new Piece(this, i, j, "wknight", (char) 19);
-                    p.setImageResource(R.drawable.wknight);
+                    p = new Piece(this, i, j, "bknight", -19);
+                    p.setImageResource(R.drawable.bknight);
                 }
                 //Bishops
                 else if (j == 5 && i == 7) {
-                    p = new Piece(this, i, j, "bbishop", (char) -30);
-                    p.setImageResource(R.drawable.bbishop);
+                    p = new Piece(this, i, j, "wbishop", 30);
+                    p.setImageResource(R.drawable.wbishop);
                 } else if (j == 2 && i == 7) {
-                    p = new Piece(this, i, j, "bbishop", (char) -29);
-                    p.setImageResource(R.drawable.bbishop);
+                    p = new Piece(this, i, j, "wbishop", 29);
+                    p.setImageResource(R.drawable.wbishop);
                 } else if (j == 5 && i == 0) {
-                    p = new Piece(this, i, j, "wbishop", (char) 30);
-                    p.setImageResource(R.drawable.wbishop);
+                    p = new Piece(this, i, j, "bbishop", -30);
+                    p.setImageResource(R.drawable.bbishop);
                 } else if (j == 2 && i == 0) {
-                    p = new Piece(this, i, j, "wbishop", (char) 29);
-                    p.setImageResource(R.drawable.wbishop);
+                    p = new Piece(this, i, j, "bbishop", -29);
+                    p.setImageResource(R.drawable.bbishop);
                 }
                 //Queen
                 else if (j == 4 && i == 7) {
-                    p = new Piece(this, i, j, "bqueen", (char) -39);
-                    p.setImageResource(R.drawable.bqueen);
-                } else if (j == 4 && i == 0) {
-                    p = new Piece(this, i, j, "wqueen", (char) 39);
+                    p = new Piece(this, i, j, "wqueen", 39);
                     p.setImageResource(R.drawable.wqueen);
+                } else if (j == 4 && i == 0) {
+                    p = new Piece(this, i, j, "bqueen", -39);
+                    p.setImageResource(R.drawable.bqueen);
                 }
-                //Queen
+                //King
                 else if (j == 3 && i == 7) {
-                    p = new Piece(this, i, j, "bking", (char) -48);
-                    p.setImageResource(R.drawable.bking);
-                } else if (j == 3 && i == 0) {
-                    p = new Piece(this, i, j, "wking", (char) 48);
+                    p = new Piece(this, i, j, "wking", 48);
                     p.setImageResource(R.drawable.wking);
+                } else if (j == 3 && i == 0) {
+                    p = new Piece(this, i, j, "bking", -48);
+                    p.setImageResource(R.drawable.bking);
                 }
 
                 if (p != null) {
@@ -279,53 +280,43 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
     }
 
     public void replayGame() {
-        int iteration = 0;
-        int length = 4;
+        int length = boards.size();
 
-        while (iteration < length) {
-            // get the current board
-            Integer[][] b = boards.get(iteration);
+        Handler h = new Handler();
+        for(int index = 0; index < length; index++) {
+            Integer[][] b = boards.get(index);
+            h.postDelayed(new Runnable() {
+                public void run() {
+                    for (int i = 0; i < rows; i++) {
+                        for (int j = 0; j < cols; j++) {
+                            Piece p = tiles[i][j].getPiece();
+                            Tile t = tiles[i][j];
+                            int newPieceID = b[i][j];
 
-            for (int index = 0; index < rows; index++) {
-                for (int jndex = 0; jndex < cols; jndex++) {
-
-                    int i = index;
-                    int j = jndex;
-                    Piece p = tiles[i][j].getPiece();
-                    Tile t = tiles[i][j];
-                    int newPieceID = b[i][j];
-                    Context context = this;
-
-                    Handler h = new Handler();
-                    Runnable r = new Runnable() {
-                        public void run() {
                             if (t.hasPiece() && p != null) { // there was a already piece on that square
                                 if (newPieceID == 0) { // piece gets replaced with a blank
                                     t.removePiece(p);
-                                    p.setImageResource(android.R.color.transparent);
-                                }
-                                else if (newPieceID != (int) p.id) { // b[i][j] is not 0
+                                } else if (newPieceID != p.id) { // b[i][j] is not 0
                                     // if the new board is not the same as the current board
                                     t.removePiece(p);
-                                    // TODO: fix casting once char id is turned into an int id
-                                    t.setPiece(new Piece(context, i, j, "Piece", (char) newPieceID));
-                                    p.setImageResource(android.R.color.transparent);
+                                    Piece pc = new Piece(context, i, j, "Piece", newPieceID);
+                                    t.setPiece(pc);
+                                    Log.d("Replay Games Screen", "NewPieceID is " + String.valueOf(newPieceID));
+                                    pc.setImageResource(imageMap.get(newPieceID));
                                 }
                             } else { // no piece was on that square
                                 if (newPieceID != 0) { // the square on new board has a piece
-                                    Piece pc = new Piece(context, i, j, "Piece", (char) newPieceID);
+                                    Piece pc = new Piece(context, i, j, "Piece", newPieceID);
                                     t.setPiece(pc);
-                                    Log.d("Replay Games Screen", String.valueOf(newPieceID));
+                                    Log.d("Replay Games Screen", "NewPieceID is " + String.valueOf(newPieceID));
                                     pc.setImageResource(imageMap.get(newPieceID));
                                 }
                             }
                         }
-                    };
-                    h.postDelayed(r, 3000);
+                    }
                 }
-            }
 
-            iteration++;
+            }, 1000 * index);
         }
     }
 
