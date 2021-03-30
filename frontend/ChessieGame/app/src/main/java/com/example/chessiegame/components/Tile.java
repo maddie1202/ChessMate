@@ -25,6 +25,7 @@ public class Tile extends CardView {
         this.row = x;
         this.col = y;
         this.tileColor = new Paint();
+        this.piece = null;
         //Determining the color of the tile
         if ((x + y) %2 == 0){
             tileColor.setColor(Color.WHITE);
@@ -60,6 +61,10 @@ public class Tile extends CardView {
         return col;
     }
 
+    public boolean hasPiece() {
+        return piece != null;
+    }
+
     public Piece getPiece() {return piece;}
 
     public void setPiece(Piece p) {
@@ -72,13 +77,5 @@ public class Tile extends CardView {
         this.removeView(p);
     }
 
-
-    //public int setImage() {
-
-        //square.
-   // }
-
-
-        // TODO: write more class functions
 
 }

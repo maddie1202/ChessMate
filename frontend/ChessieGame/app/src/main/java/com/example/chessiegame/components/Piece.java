@@ -29,8 +29,11 @@ public class Piece extends androidx.appcompat.widget.AppCompatImageView {
         this.row = row;
         this.name = name;
         this.id = id;
-
     }
+
+    /*public void replaceID(int newID) {
+        this.id = newID;
+    }*/
 
     public void draw(Canvas canvas) {
         super.draw(canvas);
