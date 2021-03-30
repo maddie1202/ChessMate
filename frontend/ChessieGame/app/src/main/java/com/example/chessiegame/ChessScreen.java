@@ -164,6 +164,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         }
 
         timerTextView = (TextView) findViewById(R.id.timerTextView);
+        timerTextView.setTextSize(20);
+        timerTextView.setTextColor(Color.BLACK);
 
         /*
 
@@ -196,11 +198,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 int minutes = seconds / 60;
                 seconds = seconds % 60;
 
-                timerTextView.setText(String.format("%d:%02d", minutes, seconds));
+                timerTextView.setText(String.format("Time Remaining: %d:%02d", minutes, seconds));
             }
 
             public void onFinish() {
-                timerTextView.setText("Over! You loose");
+                timerTextView.setText("Over! You lost");
             }
         }.start();
 
@@ -395,6 +397,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 tiles[i][j].setOnDragListener(this);
 
                 Piece p = null;
+
 
                 if (newGame) {
                     //Pawn placement

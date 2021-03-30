@@ -224,14 +224,25 @@ public class PastGamesScreen extends Fragment {
                     fetchGameBoards(g.gameID);
                 }
             });
+
             gameItem.addView(chessImage, 0);
 
             TextView gameDate = new TextView(getActivity());
             Log.d("Past Games Screen", g.date);
-            gameDate.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+
+            LinearLayout.LayoutParams rp2 = new LinearLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+            //rp2.setMargins(5, 5, 5, 5);
+            //rp2.gravity = Gravity.CENTER;
+            //rp2.gravity = Gravity.CENTER_HORIZONTAL;
+
+            //gameDate.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
             gameDate.setText(g.date); // g.date is date that the game was played
             gameDate.setTextColor(Color.BLACK);
-            gameDate.setTextSize(20);
+            gameDate.setTextSize(10);
+            //gameDate.setPadding(5,5,5,5);
+            //rp2.setMargins(5,5,5,5);
+            gameDate.setLayoutParams(rp2);
+            //gameItem.addView(gameDate, 1);
             gameItem.addView(gameDate, 1);
 
             row.addView(gameItem, colNum);
