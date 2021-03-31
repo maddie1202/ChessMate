@@ -18,8 +18,6 @@ module pawn(input logic clk, input logic rst_n,
         CHECK_DEST_ADDR, RD_DEST_PC, SV_DEST_PC, INC_CURR_MOVE, CHECK_DEST_PCS, 
         CHECK_BOARD, RD_SRC, SV_SRC, WR_DEST, INC_COPY_XY, INC_CURR_BOARD, FINISH } state;
 
-    // assign slave_waitrequest = state != WAIT && state != INPUT && state != FINISH;
-
     logic [`NUM_MOVES_PAWN * 8 - 1: 0] x_offsets, y_offsets, dest_xs, dest_ys, dest_pcs;
     logic [`NUM_MOVES_PAWN - 1: 0] move_valid;
 
@@ -34,17 +32,15 @@ module pawn(input logic clk, input logic rst_n,
     assign master_read = state == RD_SRC_PC || state == RD_DEST_PC || state == RD_SRC;
     assign master_write = state == WR_DEST;
 
-    // always@(*) begin
-    //     slave_readdata = 32'd0;
-    //     for(move_j = 0; move_j < `NUM_MOVES_PAWN; move_j++) begin
-    //         slave_readdata += move_valid[move_j];
-    //     end
-    // end
-    always@ (posedge clk) begin
-        if(~rst_n) slave_readdata = 32'd1;
-        else if (state == WAIT) slave_readdata = 32'd2;
+    // slave_readdata
+    always@(*) begin
+        slave_readdata = 32'd0;
+        for(move_j = 0; move_j < `NUM_MOVES_PAWN; move_j++) begin
+            slave_readdata += move_valid[move_j];
+        end
     end
-
+    
+    // slave_waitrequest
     always@ (posedge clk) begin
         if (~rst_n) begin
             slave_waitrequest = 0;
@@ -58,6 +54,7 @@ module pawn(input logic clk, input logic rst_n,
         end
     end
 
+    // master_writedata
     always@ (*) begin
         if (state != WR_DEST) begin
             master_writedata = 32'hFFFFFFFF;
@@ -102,7 +99,7 @@ module pawn(input logic clk, input logic rst_n,
 
     // curr_board, curr_dest_board_addr
     always@ (posedge clk) begin
-        if (~rst_n) begin
+        if (~rst_n || state == WAIT) begin
             curr_board = 0;
             curr_dest_board_addr = 32'd0;
         end else if (state == INC_CURR_BOARD) begin
@@ -118,7 +115,7 @@ module pawn(input logic clk, input logic rst_n,
 
     // curr_move
     always@ (posedge clk) begin
-        if (~rst_n) begin
+        if (~rst_n || state == WAIT) begin
             curr_move = 0;
         end else if (state == INC_CURR_MOVE || 
             (state == CHECK_DEST_ADDR && ~move_valid[curr_move])) begin
@@ -146,7 +143,7 @@ module pawn(input logic clk, input logic rst_n,
 
     // x_offsets,  y_offsets, dest_xs, dest_ys, move_valid, forward
     always@ (posedge clk) begin
-        if (~rst_n) begin
+        if (~rst_n || state == WAIT) begin
             x_offsets = {`NUM_MOVES_PAWN{8'hFF}};
             y_offsets = {`NUM_MOVES_PAWN{8'hFF}};
             dest_xs = {`NUM_MOVES_PAWN{8'hFF}};
