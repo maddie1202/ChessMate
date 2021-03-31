@@ -27,3 +27,4 @@ de1/hardware/de1-system/incremental_db
 de1/hardware/de1-system/output_files
 de1/hardware/de1-system/sys
 de1/game.c.o
+*.c.o
