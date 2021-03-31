@@ -41,13 +41,7 @@ module rook(input logic clk, input logic rst_n,
     logic done_direction; // set flag if taking enemy piece so we stop after adding it
 
     // return the number of potential moves generated to the CPU
-    //assign slave_readdata = board_count;
-
-    // always@(posedge clk) begin
-    //     if(~rst_n) slave_readdata = 32'd0;
-    //     else if (state == FINISH) slave_readdata = src;
-    // end
-    assign slave_readdata = x;
+    assign slave_readdata = board_count;
 
     // signal settings
     always @(posedge clk) begin
@@ -59,7 +53,7 @@ module rook(input logic clk, input logic rst_n,
             state = WAIT;
         end else begin
             case(state)
-                WAIT: begin // still something wrong
+                WAIT: begin
                     slave_waitrequest = 1'd0;
                     count = 8'd0;
                     board_count = 8'd0;
@@ -92,7 +86,7 @@ module rook(input logic clk, input logic rst_n,
                     slave_waitrequest = 1'd1;
                     if (count < 8'd64) begin
                         master_read = 1'd1;
-                        master_address = src + count;
+                        master_address = src + (count << 2'd2); // SHIFT OFFSET!!!
                     end
 
                     state = master_waitrequest ? RD_B1 : RD_B2;
@@ -101,17 +95,17 @@ module rook(input logic clk, input logic rst_n,
                 // get board from mem
                 RD_B2: begin
                     master_read = 1'd0;
-                    src_board[master_address - src] = master_readdata;
+                    src_board[(master_address - src) >> 2'd2] = master_readdata; // SHIFT OFFSET BACK
 
                     // if this is the current piece, save it + its colour
-                    if (master_address == (src + (y << 2'd3) + x)) begin
+                    if (master_address == (src + ((y << 2'd3) + x) << 2'd2)) begin
                         colour = signed'(master_readdata) > signed'(1'd0) ? `WHITE : (signed'(master_readdata) < signed'(1'd0) ? `BLACK : `EMPTY);
                         piece = master_readdata;
                     end
                     // only inc counter when we are done
                     if (master_readdatavalid) count = count + 1;
                     
-                    state = master_readdatavalid & count > 8'd63 ? MV_F : (master_readdatavalid ? RD_B1 : RD_B2);
+                    state = master_readdatavalid & (count > 8'd63) ? MV_F : (master_readdatavalid ? RD_B1 : RD_B2);
                 end
 
                 // move forward one square
@@ -132,7 +126,7 @@ module rook(input logic clk, input logic rst_n,
                         done_direction = tmp_colour != `EMPTY;
                     end
 
-                    state = tmp_colour == colour | tmp_y > 8'd7 ? PREP_B : EDIT_F; // if sq had friendly piece (or not on board), done in this direction
+                    state = (tmp_colour == colour) | signed'(tmp_y) > signed'(8'd7) ? PREP_B : EDIT_F; // if sq had friendly piece (or not on board), done in this direction
                 end
 
                 // decide what goes in the square
@@ -150,13 +144,13 @@ module rook(input logic clk, input logic rst_n,
                         sq_data = src_board[count]; 
                     end
 
-                    state = count > 8'd63 & done_direction ? PREP_B : (count > 8'd63 ? MV_F : WRITE_SQF);
+                    state = (count > 8'd63) & done_direction ? PREP_B : (count > 8'd63 ? MV_F : WRITE_SQF);
                 end
 
                 // write the square to mem
                 WRITE_SQF: begin
                     master_write = 1'd1;
-                    master_address = dest + board_offset + ((board_count - 1) << 3'd6); // need board count - 1 bc big line of boards, and inc count b4 writing
+                    master_address = dest + ((board_offset + ((board_count - 1) << 3'd6)) << 2'd2); // need board count - 1 bc big line of boards, and inc count b4 writing
                     master_writedata = sq_data;
 
                     if (~master_waitrequest) count = count + 1'd1;
@@ -191,7 +185,7 @@ module rook(input logic clk, input logic rst_n,
                         done_direction = tmp_colour != `EMPTY;
                     end
 
-                    state = tmp_colour == colour | signed'(tmp_y) < signed'(8'd0) ? PREP_L : EDIT_B; // if sq had friendly piece, done in this direction
+                    state = (tmp_colour == colour) | (signed'(tmp_y) < signed'(8'd0)) ? PREP_L : EDIT_B; // if sq had friendly piece, done in this direction
                 end
 
                 // decide what goes in the square
@@ -209,13 +203,13 @@ module rook(input logic clk, input logic rst_n,
                         sq_data = src_board[count]; 
                     end
 
-                    state = count > 8'd63 & done_direction ? PREP_L : (count > 8'd63 ? MV_B : WRITE_SQB);
+                    state = (count > 8'd63) & done_direction ? PREP_L : (count > 8'd63 ? MV_B : WRITE_SQB);
                 end
 
                 // write the square to mem
                 WRITE_SQB: begin
                     master_write = 1'd1;
-                    master_address = dest + board_offset + ((board_count - 1) << 3'd6); // need board count - 1 bc big line of boards, and inc count b4 writing
+                    master_address = dest + ((board_offset + ((board_count - 1) << 3'd6)) << 2'd2); // need board count - 1 bc big line of boards, and inc count b4 writing
                     master_writedata = sq_data;
 
                     if (~master_waitrequest) count = count + 1'd1;
@@ -250,7 +244,7 @@ module rook(input logic clk, input logic rst_n,
                         done_direction = tmp_colour != `EMPTY;
                     end
 
-                    state = tmp_colour == colour | signed'(tmp_x) < signed'(8'd0) ? PREP_R : EDIT_L; // if sq had friendly piece, done in this direction
+                    state = (tmp_colour == colour) | (signed'(tmp_x) < signed'(8'd0)) ? PREP_R : EDIT_L; // if sq had friendly piece, done in this direction
                 end
 
                 // decide what goes in the square
@@ -268,13 +262,13 @@ module rook(input logic clk, input logic rst_n,
                         sq_data = src_board[count]; 
                     end
 
-                    state = count > 8'd63 & done_direction ? PREP_R : (count > 8'd63 ? MV_L : WRITE_SQL);
+                    state = (count > 8'd63) & done_direction ? PREP_R : (count > 8'd63 ? MV_L : WRITE_SQL);
                 end
 
                 // write the square to mem
                 WRITE_SQL: begin
                     master_write = 1'd1;
-                    master_address = dest + board_offset + ((board_count - 1) << 3'd6); // need board count - 1 bc big line of boards, and inc count b4 writing
+                    master_address = dest + ((board_offset + ((board_count - 1) << 3'd6)) << 2'd2); // need board count - 1 bc big line of boards, and inc count b4 writing
                     master_writedata = sq_data;
 
                     if (~master_waitrequest) count = count + 1'd1;
@@ -309,7 +303,7 @@ module rook(input logic clk, input logic rst_n,
                         done_direction = tmp_colour != `EMPTY;
                     end
 
-                    state = tmp_colour == colour | tmp_x > 8'd7 ? FINISH : EDIT_R; // if sq had friendly piece, done in this direction
+                    state = (tmp_colour == colour) | (signed'(tmp_x) > signed'(8'd7)) ? FINISH : EDIT_R; // if sq had friendly piece, done in this direction
                 end
 
                 // decide what goes in the square
@@ -327,13 +321,13 @@ module rook(input logic clk, input logic rst_n,
                         sq_data = src_board[count]; 
                     end
 
-                    state = count > 8'd63 & done_direction ? FINISH : (count > 8'd63 ? MV_R : WRITE_SQR);
+                    state = (count > 8'd63) & done_direction ? FINISH : (count > 8'd63 ? MV_R : WRITE_SQR);
                 end
 
                 // write the square to mem
                 WRITE_SQR: begin
                     master_write = 1'd1;
-                    master_address = dest + board_offset + ((board_count - 1) << 3'd6); // need board count - 1 bc big line of boards, and inc count b4 writing
+                    master_address = dest + ((board_offset + ((board_count - 1) << 3'd6)) << 2'd2); // need board count - 1 bc big line of boards, and inc count b4 writing
                     master_writedata = sq_data;
 
                     if (~master_waitrequest) count = count + 1'd1;
