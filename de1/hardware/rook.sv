@@ -62,6 +62,7 @@ module rook(input logic clk, input logic rst_n,
 
                     state = slave_write ? RD_ARGS : WAIT; // wait until cpu tries to write to addr0 (meaning they are done writing params)
                 end
+                
                 // if cpu is writing, receive and save params
                 RD_ARGS: begin
                     slave_waitrequest = 1'd1;

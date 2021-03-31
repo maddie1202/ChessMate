@@ -13,6 +13,7 @@ de1/hardware/pawn-project
 *.qsf
 *.qpf
 *.csv
+*.qws
 #*.tcl
 *.tcl~
 *.sopcinfo
