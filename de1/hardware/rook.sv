@@ -31,7 +31,7 @@ module rook(input logic clk, input logic rst_n,
     // signals for the piece's position
     logic [7:0] x, y; // [0, 7]
     logic signed [1:0] colour;
-    logic signed [7:0] piece, src_offset; // save what piece it is and its offset on the board
+    logic signed [7:0] piece; // save what piece it is
 
     // temporary signals as we move around the board
     logic signed [7:0] tmp_x, tmp_y; // note that these could be negative since we set them first and check bounds later: [-1, 8]
@@ -49,8 +49,6 @@ module rook(input logic clk, input logic rst_n,
     // signal settings
     always @(posedge clk) begin
         if (~rst_n) begin
-            // master_read = 1'd0;
-            // master_write = 1'd0;
             slave_waitrequest = 1'd1;
 
             state = WAIT;
@@ -68,7 +66,6 @@ module rook(input logic clk, input logic rst_n,
                 RD_ARGS: begin
                     slave_waitrequest = 1'd1;
                     case(slave_address)
-                        4'd0: src_offset = (y << 2'd3) + x; // calc offset of piece once we have all params
                         4'd1: src = slave_writedata;
                         4'd2: dest = slave_writedata;
                         4'd3: begin
@@ -89,7 +86,6 @@ module rook(input logic clk, input logic rst_n,
                 RD_B1: begin
                     slave_waitrequest = 1'd1;
                     if (count < 8'd64) begin
-                        // master_read = 1'd1;
                         master_address = src + (count << 2'd2); // SHIFT OFFSET!!!
                     end
 
@@ -98,7 +94,6 @@ module rook(input logic clk, input logic rst_n,
 
                 // get board from mem
                 RD_B2: begin
-                    // master_read = 1'd0;
                     src_board[(master_address - src) >> 2'd2] = master_readdata[7:0];
 
                     // if this is the current piece, save it + its colour
@@ -136,7 +131,6 @@ module rook(input logic clk, input logic rst_n,
 
                 // decide what goes in the square
                 EDIT_F: begin
-                    // master_write = 1'd0;
                     board_offset = count;
                     // original spot on board
                     if (count == ((y << 2'd3) + x)) begin
@@ -155,7 +149,6 @@ module rook(input logic clk, input logic rst_n,
 
                 // write the square to mem
                 WRITE_SQF: begin
-                    // master_write = 1'd1;
                     master_address = dest + ((board_offset + ((board_count - 1) << 3'd6)) << 2'd2); // need board count - 1 bc big line of boards, and inc count b4 writing
                     master_writedata = sq_data;
 
@@ -196,7 +189,6 @@ module rook(input logic clk, input logic rst_n,
 
                 // decide what goes in the square
                 EDIT_B: begin
-                    // master_write = 1'd0;
                     board_offset = count;
                     // original spot on board
                     if (count == ((y << 2'd3) + x)) begin
@@ -215,7 +207,6 @@ module rook(input logic clk, input logic rst_n,
 
                 // write the square to mem
                 WRITE_SQB: begin
-                    // master_write = 1'd1;
                     master_address = dest + ((board_offset + ((board_count - 1) << 3'd6)) << 2'd2); // need board count - 1 bc big line of boards, and inc count b4 writing
                     master_writedata = sq_data;
 
@@ -256,7 +247,6 @@ module rook(input logic clk, input logic rst_n,
 
                 // decide what goes in the square
                 EDIT_L: begin
-                    // master_write = 1'd0;
                     board_offset = count;
                     // original spot on board
                     if (count == ((y << 2'd3) + x)) begin
@@ -275,7 +265,6 @@ module rook(input logic clk, input logic rst_n,
 
                 // write the square to mem
                 WRITE_SQL: begin
-                    // master_write = 1'd1;
                     master_address = dest + ((board_offset + ((board_count - 1) << 3'd6)) << 2'd2); // need board count - 1 bc big line of boards, and inc count b4 writing
                     master_writedata = sq_data;
 
@@ -316,7 +305,6 @@ module rook(input logic clk, input logic rst_n,
 
                 // decide what goes in the square
                 EDIT_R: begin
-                    // master_write = 1'd0;
                     board_offset = count;
                     // original spot on board
                     if (count == ((y << 2'd3) + x)) begin
@@ -335,7 +323,6 @@ module rook(input logic clk, input logic rst_n,
 
                 // write the square to mem
                 WRITE_SQR: begin
-                    // master_write = 1'd1;
                     master_address = dest + ((board_offset + ((board_count - 1) << 3'd6)) << 2'd2); // need board count - 1 bc big line of boards, and inc count b4 writing
                     master_writedata = sq_data;
 
