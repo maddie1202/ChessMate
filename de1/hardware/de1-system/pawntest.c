@@ -1,12 +1,12 @@
 #include <stdio.h>
-#include "../../../include/game.h"
+#include "../../include/game.h"
 
 #define pawn_base (volatile int *) 0xFF202040
 #define rook_base (volatile int *) 0xFF202080
-#define bishop_base (volatile int *) 0xFF202080 // CHANGE
-#define knight_base (volatile int *) 0xFF202080 // CHANGE
-#define queen_base (volatile int *) 0xFF202080 // CHANGE
-#define king_base (volatile int *) 0xFF202080 // CHANGE
+#define bishop_base (volatile int *) 0xFF2020C0 
+#define knight_base (volatile int *) 0xFF202100 
+#define queen_base (volatile int *) 0xFF202140 
+#define king_base (volatile int *) 0xFF202180 
 
 #define sdram_base (volatile int *) 0xC0000000
 
@@ -82,9 +82,9 @@ int main()
     int i;
     for (i = 0; i < 64; i++) {
         // *(sdram_base + i) = pawn_board[i / 8][i % 8];
-        *(sdram_base + i) = rook_board[i / 8][i % 8];
+        // *(sdram_base + i) = rook_board[i / 8][i % 8];
         // *(sdram_base + i) = bishop_board[i / 8][i % 8];
-        // *(sdram_base + i) = knight_board[i / 8][i % 8];
+        *(sdram_base + i) = knight_board[i / 8][i % 8];
         // *(sdram_base + i) = queen_board[i / 8][i % 8];
         // *(sdram_base + i) = king_board[i / 8][i % 8];
     }
@@ -96,26 +96,26 @@ int main()
     // *pawn_base = 0; // start the module
     // int count = *pawn_base; // expect 2
 
-    *(rook_base + 1) = 0; // src
-    *(rook_base + 2) = 64*4; // dest
-    *(rook_base + 3) = 3; // x = 3 for rook
-    *(rook_base + 4) = 3; // y = 3 for rook
-    *rook_base = 0; // start the module
-    int count = *rook_base; // expect 11
+    // *(rook_base + 1) = 0; // src
+    // *(rook_base + 2) = 64*4; // dest
+    // *(rook_base + 3) = 3; // x = 3 for rook
+    // *(rook_base + 4) = 3; // y = 3 for rook
+    // *rook_base = 0; // start the module
+    // int count = *rook_base; // expect 11
 
     // *(bishop_base + 1) = 0; // src
     // *(bishop_base + 2) = 64*4; // dest
-    // *(bishop_base + 3) = 3; // x = 5 for bishop
+    // *(bishop_base + 3) = 5; // x = 5 for bishop
     // *(bishop_base + 4) = 3; // y = 3 for bishop
     // *bishop_base = 0; // start the module
     // int count = *bishop_base; // expect 9
 
-    // *(knight_base + 1) = 0; // src
-    // *(knight_base + 2) = 64*4; // dest
-    // *(knight_base + 3) = 3; // x = 1 for knight
-    // *(knight_base + 4) = 3; // y = 0 for knight
-    // *knight_base = 0; // start the module
-    // int count = *knight_base; // expect 2
+    *(knight_base + 1) = 0; // src
+    *(knight_base + 2) = 64*4; // dest
+    *(knight_base + 3) = 1; // x = 1 for knight
+    *(knight_base + 4) = 0; // y = 0 for knight
+    *knight_base = 0; // start the module
+    int count = *knight_base; // expect 2
 
     // *(queen_base + 1) = 0; // src
     // *(queen_base + 2) = 64*4; // dest
@@ -132,6 +132,18 @@ int main()
     // int count = *king_base; // expect 8
 
     printf("board count: %d\n", count);
+
+    // for (i = 0; i < 64; i++) {
+    //     if (i % 8 == 0) printf("\n");
+    //     printf("%3d ", *(sdram_base + 64 + i));
+    // }
+
+    // printf("\n");
+
+    // for (i = 0; i < 64 + 8; i++) {
+    //     if (i % 8 == 0) printf("\n");
+    //     printf("%3d ", *(sdram_base + 128 + i));
+    // }
 
     return(0);
 }

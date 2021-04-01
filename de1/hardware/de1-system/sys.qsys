@@ -246,11 +246,48 @@
          type = "boolean";
       }
    }
+   element bishop_0
+   {
+      datum _sortIndex
+      {
+         value = "22";
+         type = "int";
+      }
+   }
+   element king_0
+   {
+      datum _sortIndex
+      {
+         value = "20";
+         type = "int";
+      }
+   }
+   element knight_0
+   {
+      datum _sortIndex
+      {
+         value = "19";
+         type = "int";
+      }
+   }
    element pawn_0
    {
       datum _sortIndex
       {
          value = "17";
+         type = "int";
+      }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
+      }
+   }
+   element queen_0
+   {
+      datum _sortIndex
+      {
+         value = "21";
          type = "int";
       }
    }
@@ -260,6 +297,11 @@
       {
          value = "18";
          type = "int";
+      }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
       }
    }
    element sys
@@ -284,7 +326,7 @@
  <parameter name="hideFromIPCatalog" value="false" />
  <parameter name="lockedInterfaceDefinition" value="" />
  <parameter name="maxAdditionalLatency" value="1" />
- <parameter name="projectName" value="de1-system.qpf" />
+ <parameter name="projectName">MyComputer_Verilog.qpf</parameter>
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="0" />
  <parameter name="testBenchDutName" value="" />
@@ -1143,8 +1185,48 @@
   <parameter name="gui_refclk" value="50.0" />
   <parameter name="other_boards" value="None" />
  </module>
+ <module name="bishop_0" kind="bishop" version="1.0" enabled="1" />
+ <module name="king_0" kind="king" version="1.0" enabled="1" />
+ <module name="knight_0" kind="knight" version="1.0" enabled="1" />
  <module name="pawn_0" kind="pawn" version="1.0" enabled="1" />
+ <module name="queen_0" kind="queen" version="1.0" enabled="1" />
  <module name="rook_0" kind="rook" version="1.0" enabled="1" />
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="knight_0.avalon_master"
+   end="SDRAM.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="king_0.avalon_master"
+   end="SDRAM.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="queen_0.avalon_master"
+   end="SDRAM.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="bishop_0.avalon_master"
+   end="SDRAM.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
  <connection
    kind="avalon"
    version="19.1"
@@ -1278,6 +1360,42 @@
    end="rook_0.slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x2080" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="knight_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x20c0" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="king_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x2100" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="queen_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00022140" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="bishop_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x2180" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1417,6 +1535,42 @@
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
+   kind="avalon"
+   version="19.1"
+   start="JTAG_To_FPGA_Bridge.master"
+   end="knight_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0xff2020c0" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="JTAG_To_FPGA_Bridge.master"
+   end="king_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0xff202100" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="JTAG_To_FPGA_Bridge.master"
+   end="queen_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0xff202140" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="JTAG_To_FPGA_Bridge.master"
+   end="bishop_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0xff202180" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
    kind="clock"
    version="19.1"
    start="System_PLL.sys_clk"
@@ -1497,6 +1651,26 @@
    version="19.1"
    start="System_PLL.sys_clk"
    end="rook_0.clock" />
+ <connection
+   kind="clock"
+   version="19.1"
+   start="System_PLL.sys_clk"
+   end="knight_0.clock" />
+ <connection
+   kind="clock"
+   version="19.1"
+   start="System_PLL.sys_clk"
+   end="king_0.clock" />
+ <connection
+   kind="clock"
+   version="19.1"
+   start="System_PLL.sys_clk"
+   end="queen_0.clock" />
+ <connection
+   kind="clock"
+   version="19.1"
+   start="System_PLL.sys_clk"
+   end="bishop_0.clock" />
  <connection
    kind="clock"
    version="19.1"
@@ -1635,6 +1809,26 @@
  <connection
    kind="reset"
    version="19.1"
+   start="ARM_A9_HPS.h2f_reset"
+   end="knight_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="19.1"
+   start="ARM_A9_HPS.h2f_reset"
+   end="king_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="19.1"
+   start="ARM_A9_HPS.h2f_reset"
+   end="queen_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="19.1"
+   start="ARM_A9_HPS.h2f_reset"
+   end="bishop_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="19.1"
    start="System_PLL.reset_source"
    end="JTAG_To_HPS_Bridge.clk_reset" />
  <connection
@@ -1717,6 +1911,26 @@
    version="19.1"
    start="System_PLL.reset_source"
    end="rook_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="19.1"
+   start="System_PLL.reset_source"
+   end="knight_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="19.1"
+   start="System_PLL.reset_source"
+   end="king_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="19.1"
+   start="System_PLL.reset_source"
+   end="queen_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="19.1"
+   start="System_PLL.reset_source"
+   end="bishop_0.reset_sink" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.enableEccProtection" value="FALSE" />
  <interconnectRequirement for="$system" name="qsys_mm.insertDefaultSlave" value="FALSE" />
