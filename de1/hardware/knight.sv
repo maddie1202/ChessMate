@@ -142,7 +142,6 @@ module knight(input logic clk, input logic rst_n,
     end
 
     // x_offsets,  y_offsets, dest_xs, dest_ys, move_valid, forward
-    integer move_i;
     always@ (posedge clk) begin
         if (~rst_n || state == WAIT) begin
             x_offsets = {`NUM_MOVES_KNIGHT{8'hFF}};
