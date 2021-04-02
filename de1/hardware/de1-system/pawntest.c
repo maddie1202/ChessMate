@@ -3,10 +3,10 @@
 
 #define pawn_base (volatile int *) 0xFF202040
 #define rook_base (volatile int *) 0xFF202080
-#define bishop_base (volatile int *) 0xFF2020C0 
-#define knight_base (volatile int *) 0xFF202100 
+#define knight_base (volatile int *) 0xFF2020C0 
+#define king_base (volatile int *) 0xFF202100
 #define queen_base (volatile int *) 0xFF202140 
-#define king_base (volatile int *) 0xFF202180 
+#define bishop_base (volatile int *) 0xFF202180
 
 #define sdram_base (volatile int *) 0xC0000000
 
@@ -84,9 +84,9 @@ int main()
         // *(sdram_base + i) = pawn_board[i / 8][i % 8];
         // *(sdram_base + i) = rook_board[i / 8][i % 8];
         // *(sdram_base + i) = bishop_board[i / 8][i % 8];
-        *(sdram_base + i) = knight_board[i / 8][i % 8];
+        // *(sdram_base + i) = knight_board[i / 8][i % 8];
         // *(sdram_base + i) = queen_board[i / 8][i % 8];
-        // *(sdram_base + i) = king_board[i / 8][i % 8];
+        *(sdram_base + i) = king_board[i / 8][i % 8];
     }
     
     // *(pawn_base + 1) = 0; // src
@@ -110,12 +110,12 @@ int main()
     // *bishop_base = 0; // start the module
     // int count = *bishop_base; // expect 9
 
-    *(knight_base + 1) = 0; // src
-    *(knight_base + 2) = 64*4; // dest
-    *(knight_base + 3) = 1; // x = 1 for knight
-    *(knight_base + 4) = 0; // y = 0 for knight
-    *knight_base = 0; // start the module
-    int count = *knight_base; // expect 2
+    // *(knight_base + 1) = 0; // src
+    // *(knight_base + 2) = 64*4; // dest
+    // *(knight_base + 3) = 1; // x = 1 for knight
+    // *(knight_base + 4) = 0; // y = 0 for knight
+    // *knight_base = 0; // start the module
+    // int count = *knight_base; // expect 2
 
     // *(queen_base + 1) = 0; // src
     // *(queen_base + 2) = 64*4; // dest
@@ -124,12 +124,12 @@ int main()
     // *queen_base = 0; // start the module
     // int count = *queen_base; // expect 14
 
-    // *(king_base + 1) = 0; // src
-    // *(king_base + 2) = 64*4; // dest
-    // *(king_base + 3) = 3; // x = 4 for king
-    // *(king_base + 4) = 3; // y = 1 for king
-    // *king_base = 0; // start the module
-    // int count = *king_base; // expect 8
+    *(king_base + 1) = 0; // src
+    *(king_base + 2) = 64*4; // dest
+    *(king_base + 3) = 4; // x = 4 for king
+    *(king_base + 4) = 1; // y = 1 for king
+    *king_base = 0; // start the module
+    int count = *king_base; // expect 8
 
     printf("board count: %d\n", count);
 

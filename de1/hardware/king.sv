@@ -1,4 +1,4 @@
-`define NUM_MOVES_KING 4
+`define NUM_MOVES_KING 8
 `define EMPTY_KING 8'sd0
 
 module king(input logic clk, input logic rst_n,
@@ -142,7 +142,6 @@ module king(input logic clk, input logic rst_n,
     end
 
     // x_offsets,  y_offsets, dest_xs, dest_ys, move_valid, forward
-    integer move_i;
     always@ (posedge clk) begin
         if (~rst_n) begin
             x_offsets = {`NUM_MOVES_KING{8'hFF}};

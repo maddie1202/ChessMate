@@ -198,7 +198,7 @@ module tb_pawn();
         forever begin
             #5;
             if (master_write) begin
-                write_mem[master_address] = master_writedata;
+                write_mem[master_address / 4] = master_writedata;
             end else if (master_read) begin
                 master_readdata = read_mem[master_address];
             end 

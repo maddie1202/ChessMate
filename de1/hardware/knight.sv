@@ -1,4 +1,4 @@
-`define NUM_MOVES_KNIGHT 4
+`define NUM_MOVES_KNIGHT 8
 `define EMPTY_KNGIHT 8'sd0
 
 module knight(input logic clk, input logic rst_n,
@@ -142,7 +142,6 @@ module knight(input logic clk, input logic rst_n,
     end
 
     // x_offsets,  y_offsets, dest_xs, dest_ys, move_valid, forward
-    integer move_i;
     always@ (posedge clk) begin
         if (~rst_n || state == WAIT) begin
             x_offsets = {`NUM_MOVES_KNIGHT{8'hFF}};
@@ -154,7 +153,7 @@ module knight(input logic clk, input logic rst_n,
         end else if (state == COMP_DEST_XYS) begin
             forward = src_is_white ? 8'sd1 : -8'sd1;
             x_offsets = {8'sd1, -8'sd1, 8'sd1, -8'sd1, 8'sd2, -8'sd2, 8'sd2, -8'sd2};
-            y_offsets = {8'sd2, 8'sd2, -8'sd2, -8'sd2, 8'sd1, 8'sd1, 8'sd1, -8'sd1};
+            y_offsets = {8'sd2, 8'sd2, -8'sd2, -8'sd2, 8'sd1, 8'sd1, -8'sd1, -8'sd1};
             
             for (move_i = 0; move_i < `NUM_MOVES_KNIGHT; move_i++) begin
                 dest_xs[move_i * 8 +: 8] = src_x + x_offsets[move_i * 8 +: 8];
@@ -168,7 +167,7 @@ module knight(input logic clk, input logic rst_n,
                 check_val_x = dest_xs[move_i * 8 +: 8];
                 check_val_y = dest_ys[move_i * 8 +: 8];
                 move_valid[move_i] = check_val_x >= 8'sd0 &&  
-                    check_val_y >= 8'sd0;
+                    check_val_y >= 8'sd0 && check_val_x < 8'sd8 && check_val_y < 8'sd8;
             end
         end else if (state == CHECK_DEST_PCS) begin
             for (move_i = 0; move_i < `NUM_MOVES_KNIGHT; move_i++) begin

@@ -173,7 +173,7 @@ module tb_king();
         // write to address 0 to start
         slave_write = 1;
         slave_address = 4'd0;
-        #10;
+        #20;
         wait(slave_waitrequest == 0);
         
         // read from address 0 to wait for completion
@@ -198,9 +198,9 @@ module tb_king();
         forever begin
             #5;
             if (master_write) begin
-                write_mem[master_address] = master_writedata;
+                write_mem[master_address / 4] = master_writedata;
             end else if (master_read) begin
-                master_readdata = read_mem[master_address];
+                master_readdata = read_mem[master_address / 4];
             end 
         end
     end
