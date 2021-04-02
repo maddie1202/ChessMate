@@ -15,6 +15,7 @@ de1/hardware/pawn-project
 *.csv
 *.qws
 #*.tcl
+*.rbf
 *.tcl~
 *.sopcinfo
 *.qsf.bak
