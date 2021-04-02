@@ -121,14 +121,14 @@ module bishop(input logic clk, input logic rst_n,
                 // decide whether or not to add mv: do it if square is empty or has enemy piece
                 ADD_FRMV: begin
                     // if taking enemy or empty square, prep to write move
-                    if (signed'(tmp_y) <= signed'(8'd7) & signed'(tmp_x) <= signed'(8'd7) &(tmp_colour != colour | tmp_colour == `EMPTY)) begin
+                    if ((signed'(tmp_y) <= signed'(8'd7)) & (signed'(tmp_x) <= signed'(8'd7)) & (tmp_colour != colour | tmp_colour == `EMPTY)) begin
                         count = 8'd0;
                         board_offset = 8'd0;
                         board_count = board_count + 1'd1;
                         done_direction = tmp_colour != `EMPTY;
                     end
 
-                    state = (tmp_colour == colour) | (signed'(tmp_y) > signed'(8'd7)) ? MV_FR : EDIT_FR; // if sq had friendly piece (or not on board), done in this direction
+                    state = (tmp_colour == colour) | (signed'(tmp_y) > signed'(8'd7)) | (signed'(tmp_x) > signed'(8'd7)) ? PREP_BR : EDIT_FR; // if sq had friendly piece (or not on board), done in this direction
                 end
 
                 // decide what goes in the square
@@ -187,7 +187,7 @@ module bishop(input logic clk, input logic rst_n,
                         done_direction = tmp_colour != `EMPTY;
                     end
 
-                    state = (tmp_colour == colour) | (signed'(tmp_y) < signed'(8'd0)) ? PREP_FL : EDIT_BR; // if sq had friendly piece, done in this direction
+                    state = (tmp_colour == colour) | (signed'(tmp_y) < signed'(8'd0)) | (signed'(tmp_x) > signed'(8'd7)) ? PREP_FL : EDIT_BR; // if sq had friendly piece, done in this direction
                 end
 
                 // decide what goes in the square
@@ -246,7 +246,7 @@ module bishop(input logic clk, input logic rst_n,
                         done_direction = tmp_colour != `EMPTY;
                     end
 
-                    state = (tmp_colour == colour) | (signed'(tmp_x) < signed'(8'd0)) ? PREP_BL : EDIT_FL; // if sq had friendly piece, done in this direction
+                    state = (tmp_colour == colour) | (signed'(tmp_x) < signed'(8'd0)) | (signed'(tmp_y) > signed'(8'd7)) ? PREP_BL : EDIT_FL; // if sq had friendly piece, done in this direction
                 end
 
                 // decide what goes in the square
@@ -305,7 +305,7 @@ module bishop(input logic clk, input logic rst_n,
                         done_direction = tmp_colour != `EMPTY;
                     end
 
-                    state = (tmp_colour == colour) | (signed'(tmp_x) > signed'(8'd7)) ? FINISH : EDIT_BL; // if sq had friendly piece, done in this direction
+                    state = (tmp_colour == colour) | (signed'(tmp_x) < signed'(8'd0)) | (signed'(tmp_y) < signed'(8'd0)) ? FINISH : EDIT_BL; // if sq had friendly piece, done in this direction
                 end
 
                 // decide what goes in the square

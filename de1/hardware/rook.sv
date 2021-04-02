@@ -62,7 +62,7 @@ module rook(input logic clk, input logic rst_n,
 
                     state = slave_write ? RD_ARGS : WAIT; // wait until cpu tries to write to addr0 (meaning they are done writing params)
                 end
-                
+
                 // if cpu is writing, receive and save params
                 RD_ARGS: begin
                     slave_waitrequest = 1'd1;
@@ -127,7 +127,7 @@ module rook(input logic clk, input logic rst_n,
                         done_direction = tmp_colour != `EMPTY;
                     end
 
-                    state = (tmp_colour == colour) | (signed'(tmp_y) > signed'(8'd7)) ? MV_F : EDIT_F; // if sq had friendly piece (or not on board), done in this direction
+                    state = (tmp_colour == colour) | (signed'(tmp_y) > signed'(8'd7)) ? PREP_B : EDIT_F; // if sq had friendly piece (or not on board), done in this direction
                 end
 
                 // decide what goes in the square
