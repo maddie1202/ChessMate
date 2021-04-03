@@ -7,11 +7,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -19,17 +19,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.ResultReceiver;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -46,6 +42,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.chessiegame.components.Move;
 import com.example.chessiegame.components.Piece;
 import com.example.chessiegame.components.Tile;
+import com.example.chessiegame.services.BluetoothService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -53,17 +50,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.lang.Integer.*;
 
 public class ChessScreen extends AppCompatActivity implements View.OnDragListener, View.OnTouchListener {
 
     private static final int REQUEST_ENABLE_BT = 0;
     private static final int REQUEST_DISCOVER_BT = 1;
     BluetoothAdapter mBlueAdapter;
+    BTReceiver btReceiver;
     TextView paired_devices;
     boolean err;
 
@@ -113,6 +109,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         paired_devices = (TextView) findViewById(R.id.paired_devices);
+        btReceiver = new BTReceiver(new Handler());
         err = false;
 
         queue = Volley.newRequestQueue(this);
@@ -151,11 +148,15 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 startActivityForResult(discover, REQUEST_DISCOVER_BT);
                 showToast("Bluetooth is discoverable");
 
-                Set<BluetoothDevice> devices = mBlueAdapter.getBondedDevices();
-                String paired = "";
-
-                for (BluetoothDevice device : devices) {
-                    showToast("Connected to " + device.getName());
+                BluetoothDevice device = mBlueAdapter.getRemoteDevice("20:17:01:09:52:49");
+                if (device != null) {
+                    Intent btIntent = new Intent(this, BluetoothService.class);
+                    btIntent.putExtra("btDevice", device);
+                    btIntent.putExtra("btReceiver", btReceiver);
+                    startService(btIntent);
+                    //stopService(new Intent(this, BluetoothService.class)); --> to stop service
+                } else {
+                    showToast("Encountered an error");
                 }
 
             } else {
@@ -533,6 +534,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 return true;
 
             case DragEvent.ACTION_DRAG_EXITED:
+
+            case DragEvent.ACTION_DRAG_ENDED:
+                // Turns off any color tinting
                 // Re-sets the color tint to blue. Returns true; the return value is ignored.
                 // view.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
                 //It will clear a color filter .
@@ -560,19 +564,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 owner.removeView(vw); //remove the dragged view
                 //caste the view into LinearLayout as our drag acceptable layout is LinearLayout
                 CardView container = (CardView) v;
-                container.addView(vw);//Add the dragged view
-                vw.setVisibility(View.VISIBLE);//finally set Visibility to VISIBLE
-                // Returns true. DragEvent.getResult() will return true.
-                return true;
+                container.addView(vw); //Add the dragged view
+                vw.setVisibility(View.VISIBLE); //finally set Visibility to VISIBLE
 
-            case DragEvent.ACTION_DRAG_ENDED:
-                // Turns off any color tinting
-                v.getBackground().clearColorFilter();
-                // Invalidates the view to force a redraw
-                v.invalidate();
-                // Does a getResult(), and displays what happened.
+                // TODO: after validation, convert board to byte array and send intent to BluetoothService
+
                 return true;
-            // An unknown action type was received.
             default:
                 Log.e("DragDrop Example", "Unknown action type received by OnDragListener.");
                 break;
@@ -600,6 +597,28 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     private void showToast(String msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    public class BTReceiver extends ResultReceiver {
+
+        /**
+         * Create a new ResultReceive to receive results.  Your
+         * {@link #onReceiveResult} method will be called from the thread running
+         * <var>handler</var> if given, or from an arbitrary thread if null.
+         *
+         * @param handler
+         */
+        public BTReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            super.onReceiveResult(resultCode, resultData);
+
+            // resultData is the chessAI info
+            // TODO: extract fields, store into local vars, and render AI move on board
+        }
     }
 
 }
