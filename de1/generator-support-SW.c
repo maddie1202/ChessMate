@@ -26,7 +26,7 @@ void destroy_move_list(move_list_t *move_list)
     free(move_list);
 }
 
-static void add_move_to_list(move_list_t* move_list, board_t *board, char piece, int x, int y)
+void add_move_to_list(move_list_t* move_list, board_t *board, char piece, int x, int y)
 {
     move_list->moves[move_list->num_moves] = copy_board(board);
     move_piece(move_list->moves[move_list->num_moves], piece, x, y);
@@ -34,7 +34,7 @@ static void add_move_to_list(move_list_t* move_list, board_t *board, char piece,
 }
 
 // returns 0 if empty, 1 if there was a piece at (x, y)
-static int check_move(board_t *board, int x, int y, char piece, move_list_t *moves)
+int check_move(board_t *board, int x, int y, char piece, move_list_t *moves)
 {
     // get colour of piece to be moved
     char colour = get_colour(piece);
