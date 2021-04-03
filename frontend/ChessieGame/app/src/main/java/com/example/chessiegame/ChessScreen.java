@@ -149,11 +149,14 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 showToast("Bluetooth is discoverable");
 
                 BluetoothDevice device = mBlueAdapter.getRemoteDevice("20:17:01:09:52:49");
+                showToast(device.getName());
+
                 if (device != null) {
-                    Intent btIntent = new Intent(this, BluetoothService.class);
+                    Intent btIntent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
                     btIntent.putExtra("btDevice", device);
                     btIntent.putExtra("btReceiver", btReceiver);
                     startService(btIntent);
+                    showToast("Started Bluetooth Service");
                     //stopService(new Intent(this, BluetoothService.class)); --> to stop service
                 } else {
                     showToast("Encountered an error");
@@ -235,7 +238,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
-                    // TODO: parse gameID from response
                     Log.d("ChessScreen", "Successfully posted game");
                     JSONObject res = (JSONObject) response;
                     try {
@@ -276,13 +278,17 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
-    //Method to get the tiles[][] and transform it to a list of char
-    int[][] boardformat(){
+    //Method to get the tiles[][] and transform it to a 2D array of ints
+    int[][] boardformat() {
         int[][] board = new int[8][8];
 
         for (int i = 0; i < cols ; i ++) {
             for (int j = 0; j < rows; j++) {
-                board [i][j] = tiles[i][j].getPiece().id;
+                if (tiles[i][j].getPiece() == null) {
+                    board[i][j] = 0;
+                } else {
+                    board[i][j] = tiles[i][j].getPiece().id;
+                }
             }
         }
 
@@ -551,7 +557,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 // Gets the text data from the item.
                 String dragData = item.getText().toString();
                 // Displays a message containing the dragged data.
-                Toast.makeText(this, "Dragged data is " + dragData, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Dragged data is " + dragData, Toast.LENGTH_SHORT).show();
                 // Turns off any color tints
                 v.getBackground().clearColorFilter();
                 // Invalidates the view to force a redraw
@@ -618,6 +624,22 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
             // resultData is the chessAI info
             // TODO: extract fields, store into local vars, and render AI move on board
+            /* From DE1:
+                bool start_game_ack; (0th word)
+                bool game-over; (1st word)
+                bool white_wins; (2nd word)
+                bool wrook0_moved; (3rd word)
+                bool wrook1_moved; (4th word)
+                bool brook0_moved; (5th word)
+                bool brook1_moved; (6th word)
+                bool wking_moved; (7th word)
+                bool bking_moved; (8th word)
+                int ai_move[8][8]; (9th - 72nd words)
+                int num_player_moves; (73rd word)
+                int possible_player_moves[86][8][8]; (74th to 5578th words)
+             */
+            byte[] data = resultData.getByteArray("readData");
+
         }
     }
 

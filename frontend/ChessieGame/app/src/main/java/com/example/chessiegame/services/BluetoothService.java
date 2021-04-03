@@ -7,7 +7,9 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.ResultReceiver;
 import android.os.SystemClock;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -24,11 +26,11 @@ public class BluetoothService extends Service {
     private OutputStream btOutputStream;
     private InputStream btInputStream;
     private BluetoothDevice btDevice;
-    private ChessScreen.BTReceiver btReceiver;
+    private ResultReceiver btReceiver;
     BluetoothSocket btSocket;
     private final UUID btUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BTThread btThread;
-    private boolean started;
+    private boolean started = false;
 
     public BluetoothService() {
     }
@@ -41,7 +43,7 @@ public class BluetoothService extends Service {
 
     @Override
     public void onCreate() {
-        Toast.makeText(this, "The new Service was Created", Toast.LENGTH_LONG).show();
+        Log.d("Bluetooth Service", "Service Created");
         started = false;
     }
 
@@ -54,7 +56,7 @@ public class BluetoothService extends Service {
             started = true;
             btDevice = intent.getExtras().getParcelable("btDevice"); // not null
             btReceiver = intent.getExtras().getParcelable("btReceiver");
-            Toast.makeText(this, " Service Started", Toast.LENGTH_LONG).show();
+            Log.d("Bluetooth Service", "Service Started");
 
             // initialize IO Streams to null
             btOutputStream = null;
@@ -65,6 +67,7 @@ public class BluetoothService extends Service {
                 btSocket = btDevice.createRfcommSocketToServiceRecord(btUUID);
                 btSocket.connect();
             } catch (IOException e) {
+                Log.d("Bluetooth Service", "Bluetooth Connection Failed");
                 e.printStackTrace();
             }
 
@@ -72,9 +75,10 @@ public class BluetoothService extends Service {
                 btThread = new BTThread(btReceiver);
                 btThread.start();
             } else {
-                Toast.makeText(this, "Bluetooth Connection Failed", Toast.LENGTH_LONG).show();
+                Log.d("Bluetooth Service", "Bluetooth Connection Failed");
             }
         } else { // data was sent to the running service
+            Log.d("Bluetooth Service", "Data sent to running service");
             if (btThread != null) {
                 byte[] data = intent.getExtras().getByteArray("userMove");
                 btThread.write(data);
@@ -86,14 +90,13 @@ public class BluetoothService extends Service {
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
-
+        Log.d("Bluetooth Service", "Service Destroyed");
     }
 
     public class BTThread extends Thread {
-        ChessScreen.BTReceiver btReceiver;
+        ResultReceiver btReceiver;
 
-        public BTThread(ChessScreen.BTReceiver btReceiver) {
+        public BTThread(ResultReceiver btReceiver) {
             this.btReceiver = btReceiver;
 
             try {
@@ -105,7 +108,7 @@ public class BluetoothService extends Service {
         }
 
         public void run() {
-            byte[] buffer = new byte[1024];  // buffer store for the stream
+            byte[] buffer = new byte[12000];  // buffer store for the stream
             int bytes; // bytes returned from read()
 
             while (true) {
@@ -113,14 +116,15 @@ public class BluetoothService extends Service {
                     // Read from the InputStream
                     bytes = btInputStream.available();
                     if (bytes > 0) {
-                        buffer = new byte[1024];
+                        buffer = new byte[12000];
                         SystemClock.sleep(100); //pause and wait for rest of data.
                         bytes = btInputStream.available(); // # of bytes we can read
                         bytes = btInputStream.read(buffer, 0, bytes); // put data in buffer
 
                         // send the opponent data back to the chess screen activity
-                        // TODO: convert buffer (byte array) to a Bundle
-                        btReceiver.send(1, null);
+                        Bundle readData = new Bundle();
+                        readData.putByteArray("readData", buffer);
+                        btReceiver.send(1, readData);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

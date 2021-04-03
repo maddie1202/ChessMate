@@ -18,6 +18,9 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".ReplayPastGamesScreen"></activity>
         <activity android:name=".ChessScreen" />
+        <service
+            android:name=".services.BluetoothService"
+            android:exported="false"></service>
         <activity android:name=".HomeActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
