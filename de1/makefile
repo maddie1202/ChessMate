@@ -21,7 +21,6 @@ pawn-upgrade.c \
 	possible-move-generators-SW.c \
 	generator-support-SW.c \
 	ai-move-generator.c \
-	pawn-upgrade.c \
 	-lm
 
 # Test the HW version of the AI

@@ -167,7 +167,7 @@ module king(input logic clk, input logic rst_n,
                 check_val_x = dest_xs[move_i * 8 +: 8];
                 check_val_y = dest_ys[move_i * 8 +: 8];
                 move_valid[move_i] = check_val_x >= 8'sd0 &&  
-                    check_val_y >= 8'sd0;
+                    check_val_y >= 8'sd0 && check_val_x < 8'sd8 && check_val_y < 8'sd8;
             end
         end else if (state == CHECK_DEST_PCS) begin
             for (move_i = 0; move_i < `NUM_MOVES_KING; move_i++) begin
