@@ -70,9 +70,9 @@ void Init_BT(void)
 	// set Divisor latch (LSB and MSB) with correct value for required baud rate
 
 	//Baud rate divisor value = (frequency of BR_clk) / (desired baud rate x 16)
-	int baut_divisor = ()/( *16);
-	*Bluetooth_DivisorLatchLSB = baut_divisor & 0xff;
-	*Bluetooth_DivisorLatchMSB =
+	int baut_divisor = (int) ((50000000)/(38400 *16));
+	*Bluetooth_DivisorLatchLSB = baut_divisor & 0xff; //least significant bit
+	*Bluetooth_DivisorLatchMSB = (baut_divisor >> 8 ) & 0xff ; // most significant bit
 
 	// set bit 7 of Line control register (LCR) back to 0 and
 	*Bluetooth_LineControlReg &= ~(1 << 7)
