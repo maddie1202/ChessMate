@@ -457,6 +457,48 @@ static void pawn_test6()
     free(curr);
 }
 
+static void pawn_test7()
+{
+    board_t curr = {
+            {WROOK0, WKNIGHT0, WBISHOP0, WQUEEN0, WKING,  WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0, WPAWN1,   WPAWN2,   WPAWN3,  WPAWN4, WPAWN5,   EMPTY,    WPAWN7},       
+            {EMPTY,  EMPTY,    EMPTY,    BPAWN3,  EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,   EMPTY,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,  EMPTY,    EMPTY,    EMPTY,   EMPTY,  EMPTY,    WPAWN6,   EMPTY},
+            {BPAWN0, BPAWN1,   BPAWN2,   EMPTY,   BPAWN4, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0, BKNIGHT0, BBISHOP0, BQUEEN0, BKING,  BBISHOP1, BKNIGHT1, BROOK1}
+        };
+
+    move_list_t w_expected;
+    board_t* w_expected_moves[0];
+    w_expected.moves = w_expected_moves;
+    w_expected.num_moves = 0;
+
+    // generate WPAWN3 moves
+    move_list_t *w_actual = generate_pawn_moves(&curr, WPAWN3);
+
+    move_list_t b_expected;
+    board_t* b_expected_moves[0];
+    b_expected.moves = b_expected_moves;
+    b_expected.num_moves = 0;
+
+    // generate BPAWN6 moves
+    move_list_t *b_actual = generate_pawn_moves(&curr, BPAWN6);
+
+    // CMP boards
+    test_result_t w_result = board_list_equals(&w_expected, w_actual);
+    test_result_t b_result = board_list_equals(&b_expected, b_actual);
+
+    // display results
+    print_test_result(w_result, __func__);
+    print_test_result(b_result, __func__);
+
+    // free generated boards
+    destroy_move_list(w_actual);
+    destroy_move_list(b_actual);
+}
+
 /*
  * Run the pawn tests
  */
@@ -469,4 +511,5 @@ void test_pawn_generator()
     pawn_test4();
     pawn_test5();
     pawn_test6();
+    pawn_test7();
 }
