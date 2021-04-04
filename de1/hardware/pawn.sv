@@ -23,7 +23,7 @@ module pawn(input logic clk, input logic rst_n,
 
     logic [31:0] src_board_addr, dest_board_addr, curr_dest_board_addr;
     logic [7:0] src_x, src_y, copy_x, copy_y, home_row;
-    logic signed [7:0] src_pc, forward, copy_pc, check_val, check_val_x, check_val_y;
+    logic signed [7:0] src_pc, forward, copy_pc, check_val, check_val2, check_val_x, check_val_y;
     logic src_is_white;
     integer curr_move, curr_board, move_i, move_j;
 
@@ -179,6 +179,9 @@ module pawn(input logic clk, input logic rst_n,
                 if (move_i > 1) begin
                     if (~((check_val > 8'sd0 && src_pc < 8'sd0) || 
                         (check_val < 8'sd0 && src_pc > 8'sd0))) move_valid[move_i] = 0;
+                end else if (move_i == 1) begin
+                    check_val2 = dest_pcs[0 +: 8];
+                    if (check_val !== `EMPTY_PAWN || check_val2 !== `EMPTY_PAWN) move_valid[move_i] = 0;
                 end else begin            
                     if (check_val !== `EMPTY_PAWN) move_valid[move_i] = 0;        
                 end
