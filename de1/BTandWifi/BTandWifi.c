@@ -52,14 +52,41 @@
 #define FALSE 0
 #define TRUE 1
 
+
+/**************************************************************************
+/* Subroutine to initialise the RS232 Port by writing some data
+** to the internal registers.
+** Call this function at the start of the program before you attempt
+** to read or write to data via the RS232 port
+**
+** Refer to UART data sheet for details of registers and programming
+***************************************************************************/
+
+
 void Init_BT(void)
 {
 	// set bit 7 of Line Control Register to 1, to gain access to the baud rate registers
+	*Bluetooth_LineControlReg |= 1 << 7
 	// set Divisor latch (LSB and MSB) with correct value for required baud rate
+
+	//Baud rate divisor value = (frequency of BR_clk) / (desired baud rate x 16)
+	int baut_divisor = ()/( *16);
+	*Bluetooth_DivisorLatchLSB = baut_divisor & 0xff;
+	*Bluetooth_DivisorLatchMSB =
+
 	// set bit 7 of Line control register (LCR) back to 0 and
+	*Bluetooth_LineControlReg &= ~(1 << 7)
 	// program other bits in (LCR) for 8 bit data, 1 stop bit, no parity etc
+
+	// bit 1-0 : 11 = 8 bits
+	// bit 2 : 0 = 1 stop bit
+	// bit 3 : 0 = no parity
+	*Bluetooth_LineControlReg = 0x03; // 0x03 = 11
 	// Reset the Fifo’s in the FIFO Control Reg by setting bits 1 & 2
+	*Bluetooth_FifoControlReg |= 1 << 1;
+	*Bluetooth_FifoControlReg |= 1 << 2;
 	// Now Clear all bits in the FIFO control registers
+	*Bluetooth_FifoControlReg = *Bluetooth_FifoControlReg ^0x06 // 0x06 = 110
 
 }
 
