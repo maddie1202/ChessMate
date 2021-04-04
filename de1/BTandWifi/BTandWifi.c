@@ -118,6 +118,9 @@ int getcharBT( void )
 int BTTestForReceivedData(void)
 {
 	// if Bluetooth LineStatusReg bit 0 is set to 1
+	if (*Bluetooth_LineStatusReg == *Bluetooth_LineStatusReg | 1 << 0){
+	    return TRUE;
+	}
 	// return TRUE, otherwise return FALSE
 	return FALSE;
 
