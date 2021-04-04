@@ -6,7 +6,8 @@ test/test-ai-move-generator.c \
 $(wildcard test/generator-tests/*.c) \
 game.c \
 possible-move-generators.c \
-ai-move-generator.c
+ai-move-generator.c \
+pawn-upgrade.c \
 
 	gcc -std=c99 -Wall -fsigned-char -g -o bin/runtest \
 	test/test.c \
@@ -17,4 +18,5 @@ ai-move-generator.c
 	game.c \
 	possible-move-generators.c \
 	ai-move-generator.c \
+	pawn-upgrade.c \
 	-lm
