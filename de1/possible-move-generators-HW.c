@@ -13,7 +13,6 @@
 #define king_offset 0x2100
 #define queen_offset 0x2140 
 #define bishop_offset 0x2180
-#define generator_span 0x3F
 
 #define sdram_offset 0xC0000000
 #define sdram_span 0x03FFFFFF
@@ -22,33 +21,64 @@
 #define lw_bridge_span 0x00005000
 
 /* Prototypes for functions used to access physical memory addresses */
-int set_sdram_bridge_virtual(void *lw_virtual, int *lw_fd, void *sdram_virtual, int *sdram_fd);
-void close_sdram_bridge_virtual(void *lw_virtual, int lw_fd, void *sdram_virtual, int sdram_fd);
 int open_physical (int);
 void * map_physical (int, unsigned int, unsigned int);
 void close_physical (int);
 int unmap_physical (void *, unsigned int);
 
-int set_sdram_bridge_virtual(void *lw_virtual, int *lw_fd, void *sdram_virtual, int *sdram_fd)
+/* Generate moves for the given board, generator, and piece located at (x, y) */
+move_list_t *generate_moves(board_t *board, int generator_offset, int x, int y)
 {
-    *lw_fd = -1;
-    *sdram_fd = -1;
+    int lw_fd = -1, sdram_fd = -1;
+    void *lw_virtual, *sdram_virtual;
 
     // Create virtual memory access to the FPGA light-weight bridge
-    if ((*lw_fd = open_physical (*lw_fd)) == -1) return (-1);
-    if ((lw_virtual = map_physical (*lw_fd, lw_bridge_offset, lw_bridge_span)) == NULL) return (-1);
+    if ((lw_fd = open_physical (lw_fd)) == -1) return NULL;
+    if ((lw_virtual = map_physical (lw_fd, lw_bridge_offset, lw_bridge_span)) == NULL) return NULL;
 
     // Create virtual memory access to the SDRAM
-    if ((*sdram_fd = open_physical (*sdram_fd)) == -1) return (-1);
-    if ((sdram_virtual = map_physical (*sdram_fd, sdram_offset, sdram_span)) == NULL) return (-1);
-}
+    if ((sdram_fd = open_physical (sdram_fd)) == -1) return NULL;
+    if ((sdram_virtual = map_physical (sdram_fd, sdram_offset, sdram_span)) == NULL) return NULL;
 
-void close_sdram_bridge_virtual(void *lw_virtual, int lw_fd, void *sdram_virtual, int sdram_fd)
-{
+    if (lw_virtual == NULL || sdram_virtual == NULL) return NULL;
+
+    volatile int *generator_ptr = (unsigned int *) (lw_virtual + generator_offset);
+
+    // put current board into sdram
+    for (int i = 0; i < 64; i++) {
+        *((volatile int*)sdram_virtual + i) = (*board)[i / 8][i % 8];
+    }
+
+    // run HW module
+    *(generator_ptr + 1) = 0; // src
+    *(generator_ptr + 2) = 64 * 4; // dest
+    *(generator_ptr + 3) = x; // x
+    *(generator_ptr + 4) = y; // y
+    *generator_ptr = 0; // start the module
+    int count = *generator_ptr;
+
+    move_list_t *moves = create_move_list(count);
+
+    // Copy moves into a move list
+    for (int i = 0; i < count; i++) {
+        board_t *move = malloc(sizeof(board_t));
+        int move_start = (i + 1) * 64; // move starts after src board & prev moves in SDRAM
+
+        for (int j = 0; j < 64; j++) {
+            (*move)[j / 8][j % 8] = *((volatile int*)sdram_virtual + move_start + j);
+        }
+
+        moves->moves[i] = move;
+        move = NULL;
+    }
+    moves->num_moves = count;
+
     unmap_physical (lw_virtual, lw_bridge_span);
     close_physical (lw_fd);
     unmap_physical (sdram_virtual, sdram_span);
     close_physical (sdram_fd);
+
+    return moves;
 }
 
 move_list_t *generate_pawn_moves(board_t *board, char pawn)
@@ -58,54 +88,17 @@ move_list_t *generate_pawn_moves(board_t *board, char pawn)
     int src_x = -1, src_y = -1;
     if (!find_piece(board, pawn, &src_x, &src_y)) return NULL;
 
-    int lw_fd, sdram_fd;
-    void *lw_virtual, *sdram_virtual;
-    if (set_sdram_bridge_virtual(lw_virtual, &lw_fd, sdram_virtual, &sdram_fd) == -1) return NULL;
-
-    volatile int *pawn_ptr = (unsigned int *) (lw_virtual + pawn_offset);
-
-    // put current board into sdram
-    for (int i = 0; i < 64; i++) {
-        *((volatile int*)sdram_virtual + i) = (*board)[i / 8][i % 8];
-    }
-
-    // run HW module
-    *(pawn_ptr + 1) = 0; // src
-    *(pawn_ptr + 2) = 64 * 4; // dest
-    *(pawn_ptr + 3) = src_x; // x
-    *(pawn_ptr + 4) = src_y; // y
-    *pawn_ptr = 0; // start the module
-    int count = *pawn_ptr;
-
-    move_list_t *moves = create_move_list(count);
-
-    // Copy moves into a move list
-    for (int i = 0; i < count; i++) {
-        board_t *move = malloc(sizeof(board_t));
-        int move_start = (i + 1) * 64 * 4; // move starts after src board & prev moves
-
-        for (int j = 0; j < 64; j++) {
-            (*move)[i / 8][i % 8] = *((volatile int*)sdram_virtual + move_start + j);
-        }
-
-        moves->moves[i] = move;
-        move = NULL;
-    }
-
-    close_sdram_bridge_virtual(lw_virtual, lw_fd, sdram_virtual, sdram_fd);
-
-    return moves;
+    return generate_moves(board, pawn_offset, src_x, src_y);
 }
 
 move_list_t *generate_rook_moves(board_t *board, char rook)
 {
     if (board == NULL || !is_rook(rook)) return NULL;
     
-    // find board position on board and colour of piece
     int rook_x = -1, rook_y = -1;
     if (!find_piece(board, rook, &rook_x, &rook_y)) return NULL;
 
-    return NULL;
+    return generate_moves(board, rook_offset, rook_x, rook_y);
 }
 
 move_list_t *generate_knight_moves(board_t *board, char knight)
@@ -115,29 +108,27 @@ move_list_t *generate_knight_moves(board_t *board, char knight)
     int src_x = -1, src_y = -1;
     if (!find_piece(board, knight, &src_x, &src_y)) return NULL;
 
-    return NULL;
+    return generate_moves(board, knight_offset, src_x, src_y);
 }
 
 move_list_t *generate_bishop_moves(board_t *board, char bishop) 
 {
     if (board == NULL || !is_bishop(bishop)) return NULL;
     
-    // find board position on board and colour of piece
     int bishop_x = -1, bishop_y = -1;
     if (!find_piece(board, bishop, &bishop_x, &bishop_y)) return NULL;
 
-    return NULL;
+    return generate_moves(board, bishop_offset, bishop_x, bishop_y);
 }
 
 move_list_t *generate_queen_moves(board_t *board, char queen) 
 {
     if (board == NULL || !is_queen(queen)) return NULL;
     
-    // find board position on board and colour of piece
     int queen_x = -1, queen_y = -1;
     if (!find_piece(board, queen, &queen_x, &queen_y)) return NULL;
 
-    return NULL;
+    return generate_moves(board, queen_offset, queen_x, queen_y);
 }
 
 move_list_t *generate_king_moves(board_t *board, char king)
@@ -147,7 +138,7 @@ move_list_t *generate_king_moves(board_t *board, char king)
     int src_x = -1, src_y = -1;
     if (!find_piece(board, king, &src_x, &src_y)) return NULL;
 
-    return NULL;
+    return generate_moves(board, king_offset, src_x, src_y);
 }
 
 /* Open /dev/mem to give access to physical addresses */
