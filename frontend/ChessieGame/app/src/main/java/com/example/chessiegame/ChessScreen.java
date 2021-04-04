@@ -171,6 +171,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         timerTextView.setTextSize(20);
         timerTextView.setTextColor(Color.BLACK);
 
+        String btTest = "Bluetooth Test";
+        Intent bti = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
+        // MUST send byte[] data to bluetooth service using "userMove" tag
+        bti.putExtra("userMove", btTest.getBytes());
+        startService(bti);
+
         /*
 
         Button b = (Button) findViewById(R.id.button);
@@ -639,6 +645,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 int possible_player_moves[86][8][8]; (74th to 5578th words)
              */
             byte[] data = resultData.getByteArray("readData");
+            Log.d("ChessScreen", "Chess screen received: " + new String(data));
 
         }
     }

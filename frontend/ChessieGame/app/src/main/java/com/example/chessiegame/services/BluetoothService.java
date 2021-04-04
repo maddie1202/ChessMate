@@ -72,8 +72,10 @@ public class BluetoothService extends Service {
             }
 
             if (btSocket.isConnected()) {
+                Log.d("Bluetooth Service", "Bluetooth Socket is connected");
                 btThread = new BTThread(btReceiver);
                 btThread.start();
+
             } else {
                 Log.d("Bluetooth Service", "Bluetooth Connection Failed");
             }
@@ -81,7 +83,16 @@ public class BluetoothService extends Service {
             Log.d("Bluetooth Service", "Data sent to running service");
             if (btThread != null) {
                 byte[] data = intent.getExtras().getByteArray("userMove");
+                assert data != null;
+                Log.d("Bluetooth Service", "Received user move: " + new String(data));
                 btThread.write(data);
+                Log.d("Bluetooth Service", "User move sent to btThread");
+
+                // test send back message
+                /*Bundle readData = new Bundle();
+                readData.putByteArray("readData", data);
+                Log.d("Bluetooth Service", "Sending move back to the chessscreen");
+                btReceiver.send(1, readData);*/
             }
         }
 
