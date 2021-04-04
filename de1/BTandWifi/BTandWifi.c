@@ -106,8 +106,10 @@ int putcharBT(char c)
 int getcharBT( void )
 {
 	// wait for Data Ready bit (0) of line status register to be '1'
+	while (*Bluetooth_LineStatusReg != (*Bluetooth_LineStatusReg | 1 << 0));
 	// read and return new character from ReceiverFiFo register
-	return 0;
+	return (int) *Bluetooth_ReceiverFifo;
+
 }
 
 // the following function polls the UART to determine if any character
