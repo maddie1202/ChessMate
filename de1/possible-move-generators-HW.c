@@ -81,6 +81,46 @@ move_list_t *generate_moves(board_t *board, int generator_offset, int x, int y)
     return moves;
 }
 
+/*
+ * Upgrades the pawn on the board to a rook, knight, bishop and queen.
+ * If a specific upgrade wasn't selected, defaults to queen.
+ * Alters move_list directly.
+ */
+static move_list_t* upgrade_pawns(move_list_t *move_list, char pawn)
+{
+    move_list_t *upgraded_move_list = create_move_list(12); // max 12 moves for a pawn
+
+    char colour = get_colour(pawn);
+
+    for (int i = 0; i < move_list->num_moves; i++) {
+        int dest_x = -1, dest_y = -1;
+        if (!find_piece(move_list->moves[i], pawn, &dest_x, &dest_y)) return NULL;
+
+        if ((colour == WHITE && (dest_y == 7)) || (colour == BLACK && (dest_y == 0))) {
+            char rook = colour == WHITE ? pawn + 10 : pawn - 10;
+            add_move_to_list(upgraded_move_list, move_list->moves[i], pawn, dest_x, dest_y);
+            (*upgraded_move_list->moves[upgraded_move_list->num_moves - 1])[dest_y][dest_x] = rook;
+
+            char knight = colour == WHITE ? pawn + 20 : pawn - 20;
+            add_move_to_list(upgraded_move_list, move_list->moves[i], pawn, dest_x, dest_y);
+            (*upgraded_move_list->moves[upgraded_move_list->num_moves - 1])[dest_y][dest_x] = knight;
+
+            char bishop = colour == WHITE ? pawn + 30 : pawn -30;
+            add_move_to_list(upgraded_move_list, move_list->moves[i], pawn, dest_x, dest_y);
+            (*upgraded_move_list->moves[upgraded_move_list->num_moves - 1])[dest_y][dest_x] = bishop;
+
+            char queen = colour == WHITE ? pawn + 39 : pawn - 39;
+            add_move_to_list(upgraded_move_list, move_list->moves[i], pawn, dest_x, dest_y);
+            (*upgraded_move_list->moves[upgraded_move_list->num_moves - 1])[dest_y][dest_x] = queen;
+        } else {
+            add_move_to_list(upgraded_move_list, move_list->moves[i], pawn, dest_x, dest_y);
+        }
+    }
+
+    destroy_move_list(move_list);
+    return upgraded_move_list;
+}
+
 move_list_t *generate_pawn_moves(board_t *board, char pawn)
 {
     if (board == NULL || !is_pawn(pawn)) return NULL;
@@ -88,7 +128,9 @@ move_list_t *generate_pawn_moves(board_t *board, char pawn)
     int src_x = -1, src_y = -1;
     if (!find_piece(board, pawn, &src_x, &src_y)) return NULL;
 
-    return generate_moves(board, pawn_offset, src_x, src_y);
+    move_list_t *moves = generate_moves(board, pawn_offset, src_x, src_y);
+
+    return upgrade_pawns(moves, pawn);
 }
 
 move_list_t *generate_rook_moves(board_t *board, char rook)
