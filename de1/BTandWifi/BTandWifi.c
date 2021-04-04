@@ -94,10 +94,13 @@ void Init_BT(void)
 int putcharBT(char c)
 {
 	// wait for Transmitter Holding Register bit (5) of line status register to be '1‘
+    while (*Bluetooth_LineStatusReg != (*Bluetooth_LineStatusReg | 1 << 5));
 	// indicating we can write to the device
+
 	// write character to Transmitter fifo register
+	*Bluetooth_TransmitterFifo = c;
 	// return the character we printed
-	return 0;
+	return c;
 }
 
 int getcharBT( void )
