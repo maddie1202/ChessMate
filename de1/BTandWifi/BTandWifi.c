@@ -49,8 +49,24 @@
 #define Bluetooth_DivisorLatchLSB 				(*(volatile unsigned char *)(0xFF210220))
 #define Bluetooth_DivisorLatchMSB 				(*(volatile unsigned char *)(0xFF210222))
 
+#define Wifi_ReceiverFifo        			(*(volatile unsigned char *)(0xFF210210))
+#define Wifi_TransmitterFifo     			(*(volatile unsigned char *)(0xFF210210))
+#define Wifi_InterruptEnableReg  			(*(volatile unsigned char *)(0xFF210212))
+#define Wifi_InterruptIdentificationReg 	(*(volatile unsigned char *)(0xFF210214))
+#define Wifi_FifoControlReg 				(*(volatile unsigned char *)(0xFF210214))
+#define Wifi_LineControlReg 				(*(volatile unsigned char *)(0xFF210216))
+#define Wifi_ModemControlReg 				(*(volatile unsigned char *)(0xFF210218))
+#define Wifi_LineStatusReg 				    (*(volatile unsigned char *)(0xFF21021A))
+#define Wifi_ModemStatusReg 				(*(volatile unsigned char *)(0xFF21021C))
+#define Wifi_ScratchReg 					(*(volatile unsigned char *)(0xFF21021E))
+#define Wifi_DivisorLatchLSB 				(*(volatile unsigned char *)(0xFF210210))
+#define Wifi_DivisorLatchMSB 				(*(volatile unsigned char *)(0xFF210212))
+
+
 #define FALSE 0
 #define TRUE 1
+
+
 
 
 /**************************************************************************
@@ -66,27 +82,27 @@
 void Init_BT(void)
 {
 	// set bit 7 of Line Control Register to 1, to gain access to the baud rate registers
-	*Bluetooth_LineControlReg |= 1 << 7
+	Bluetooth_LineControlReg |= 1 << 7
 	// set Divisor latch (LSB and MSB) with correct value for required baud rate
 
 	//Baud rate divisor value = (frequency of BR_clk) / (desired baud rate x 16)
 	int baut_divisor = (int) ((50000000)/(38400 *16));
-	*Bluetooth_DivisorLatchLSB = baut_divisor & 0xff; //least significant bit
-	*Bluetooth_DivisorLatchMSB = (baut_divisor >> 8 ) & 0xff ; // most significant bit
+	Bluetooth_DivisorLatchLSB = baut_divisor & 0xff; //least significant bit
+	Bluetooth_DivisorLatchMSB = (baut_divisor >> 8 ) & 0xff ; // most significant bit
 
 	// set bit 7 of Line control register (LCR) back to 0 and
-	*Bluetooth_LineControlReg &= ~(1 << 7)
+	Bluetooth_LineControlReg &= ~(1 << 7)
 	// program other bits in (LCR) for 8 bit data, 1 stop bit, no parity etc
 
 	// bit 1-0 : 11 = 8 bits
 	// bit 2 : 0 = 1 stop bit
 	// bit 3 : 0 = no parity
-	*Bluetooth_LineControlReg = 0x03; // 0x03 = 11
+    Bluetooth_LineControlReg = 0x03; // 0x03 = 11
 	// Reset the Fifo’s in the FIFO Control Reg by setting bits 1 & 2
-	*Bluetooth_FifoControlReg |= 1 << 1;
-	*Bluetooth_FifoControlReg |= 1 << 2;
+	Bluetooth_FifoControlReg |= 1 << 1;
+	Bluetooth_FifoControlReg |= 1 << 2;
 	// Now Clear all bits in the FIFO control registers
-	*Bluetooth_FifoControlReg = *Bluetooth_FifoControlReg ^0x06 // 0x06 = 110
+	Bluetooth_FifoControlReg = Bluetooth_FifoControlReg^0x06 // 0x06 = 110
 
 }
 
@@ -94,11 +110,11 @@ void Init_BT(void)
 int putcharBT(char c)
 {
 	// wait for Transmitter Holding Register bit (5) of line status register to be '1‘
-    while (*Bluetooth_LineStatusReg != (*Bluetooth_LineStatusReg | 1 << 5));
+    while (Bluetooth_LineStatusReg != (Bluetooth_LineStatusReg | 1 << 5));
 	// indicating we can write to the device
 
 	// write character to Transmitter fifo register
-	*Bluetooth_TransmitterFifo = c;
+	Bluetooth_TransmitterFifo = c;
 	// return the character we printed
 	return c;
 }
@@ -106,9 +122,9 @@ int putcharBT(char c)
 int getcharBT( void )
 {
 	// wait for Data Ready bit (0) of line status register to be '1'
-	while (*Bluetooth_LineStatusReg != (*Bluetooth_LineStatusReg | 1 << 0));
+	while (Bluetooth_LineStatusReg != (Bluetooth_LineStatusReg | 1 << 0));
 	// read and return new character from ReceiverFiFo register
-	return (int) *Bluetooth_ReceiverFifo;
+	return (int) Bluetooth_ReceiverFifo;
 
 }
 
@@ -118,7 +134,7 @@ int getcharBT( void )
 int BTTestForReceivedData(void)
 {
 	// if Bluetooth LineStatusReg bit 0 is set to 1
-	if (*Bluetooth_LineStatusReg == *Bluetooth_LineStatusReg | 1 << 0){
+	if (Bluetooth_LineStatusReg == Bluetooth_LineStatusReg | 1 << 0){
 	    return TRUE;
 	}
 	// return TRUE, otherwise return FALSE
@@ -143,12 +159,19 @@ void sendMessageBT(char * str) {
 // flush the BT UART receive buffer by removing any unread characters
 void BT_Flush( void ){
 	// while bit 0 of Line Status Register == ‘1’ (i.e. data available)
-	while (*Bluetooth_LineStatusReg == *Bluetooth_LineStatusReg | 1 << 0){
+	while (Bluetooth_LineStatusReg == Bluetooth_LineStatusReg | 1 << 0){
 	   int temp = *Bluetooth_ReceiverFifo;
 	}
 	// read unwanted char out of FIFO receive bufferreturn;
 	// no more characters, so return
 	return;
+}
+
+
+//Wifi functions
+
+void Init_WF(void){
+
 }
 
 void main(void)
