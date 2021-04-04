@@ -143,8 +143,12 @@ void sendMessageBT(char * str) {
 // flush the BT UART receive buffer by removing any unread characters
 void BT_Flush( void ){
 	// while bit 0 of Line Status Register == ‘1’ (i.e. data available)
+	while (*Bluetooth_LineStatusReg == *Bluetooth_LineStatusReg | 1 << 0){
+	   int temp = *Bluetooth_ReceiverFifo;
+	}
 	// read unwanted char out of FIFO receive bufferreturn;
 	// no more characters, so return
+	return;
 }
 
 void main(void)
