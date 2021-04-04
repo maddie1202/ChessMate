@@ -146,41 +146,41 @@ module tb_pawn();
         slave_write = 1;
         slave_address = 4'd1;
         slave_writedata = 32'd0;
-        #11;
+        #20;
         wait(slave_waitrequest == 0);
 
         // write destination board address
         slave_write = 1;
         slave_address = 4'd2;
         slave_writedata = 32'd0;
-        #11;
+        #20;
         wait(slave_waitrequest == 0);
 
         // write x coordinate of piece to generate for
         slave_write = 1;
         slave_address = 4'd3;
         slave_writedata = 32'd2;
-        #11;
+        #20;
         wait(slave_waitrequest == 0);
 
         // write y coordinate of piece to generate for
         slave_write = 1;
         slave_address = 4'd4;
         slave_writedata = 32'd1;
-        #11;
+        #20;
         wait(slave_waitrequest == 0);
 
         // write to address 0 to start
         slave_write = 1;
         slave_address = 4'd0;
-        #11;
+        #20;
         // wait(slave_waitrequest == 0);
 
         // read from address 0 to wait for completion
         slave_write = 0;
         slave_read = 1;
         slave_address = 4'd0;
-        #11;
+        #20;
         wait(slave_waitrequest == 0);
     endtask
 
@@ -200,15 +200,15 @@ module tb_pawn();
             if (master_write) begin
                 write_mem[master_address / 4] = master_writedata;
             end else if (master_read) begin
-                master_readdata = read_mem[master_address];
+                master_readdata = read_mem[master_address / 4];
             end 
         end
     end
 
     // initialize initial board and expected boards
-    initial $readmemh ("./pawn-test-board.memh", read_mem);
-    initial $readmemh ("./pawn-expected1.memh", expected[0]);
-    initial $readmemh ("./pawn-expected2.memh", expected[1]);
+    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\initial-boards\\pawn-test-board.memh", read_mem);
+    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\pawn-expected1.memh", expected[0]);
+    initial $readmemh ("C:\\Users\\madel\\cpen391\\ChessMate\\de1\\hardware\\testbenches\\reference-boards\\pawn-expected2.memh", expected[1]);
 
     task board_equals(input int base, input int expected_i, output logic match);
         for (int i = 0; i < 64; i++) begin

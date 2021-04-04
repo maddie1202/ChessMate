@@ -169,6 +169,10 @@ module pawn(input logic clk, input logic rst_n,
                 move_valid[move_i] = check_val_x >= 8'sd0 &&  
                     check_val_y >= 8'sd0;
             end
+
+            // if (src_y !== home_row) begin
+            //     move_valid[1] = 0;
+            // end
         end else if (state == CHECK_DEST_PCS) begin
             for (move_i = 0; move_i < `NUM_MOVES_PAWN; move_i++) begin
                 check_val = dest_pcs[move_i * 8 +: 8];
