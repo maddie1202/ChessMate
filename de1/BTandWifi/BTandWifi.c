@@ -258,17 +258,29 @@ void Wifi_Flush( void ){
 
 void main(void)
 {
-    int switches ;
+    Init_BT();
+
+
 	printf("Hello from the CPEN 391 System\n");
 
     while(1)    {
-        switches = *SWITCHES ;
-        *LEDS = switches;
-        *HEX0_1 = switches;
-        *HEX2_3 = switches;
-        *HEX4_5 = switches;
 
-        printf("Switches = %x\n", switches) ;
-        printf("Buttons = %x\n", *PUSHBUTTONS) ;
+        char* moves;
+        int counter = 0;
+        while(1){
+
+             if(counter == 86)
+                 break;
+            if(BTTestForReceivedData()){
+
+                int data = getcharBT();
+                *moves = data;
+                moves += 4;
+                count++;
+
+
+            }
+
+        }
     }
 }
