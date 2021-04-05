@@ -6,42 +6,11 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include "include/game.h"
-
-#define pawn_offset 0x2040
-#define rook_offset 0x2080
-#define knight_offset 0x20C0 
-#define king_offset 0x2100
-#define queen_offset 0x2140 
-#define bishop_offset 0x2180
-
-#define sdram_offset 0xC0000000
-#define sdram_span 0x03FFFFFF
-
-#define lw_bridge_offset 0xFF200000
-#define lw_bridge_span 0x00005000
-
-/* Prototypes for functions used to access physical memory addresses */
-int open_physical (int);
-void * map_physical (int, unsigned int, unsigned int);
-void close_physical (int);
-int unmap_physical (void *, unsigned int);
+#include "include/HW.h"
 
 /* Generate moves for the given board, generator, and piece located at (x, y) */
 move_list_t *generate_moves(board_t *board, int generator_offset, int x, int y)
 {
-    int lw_fd = -1, sdram_fd = -1;
-    void *lw_virtual, *sdram_virtual;
-
-    // Create virtual memory access to the FPGA light-weight bridge
-    if ((lw_fd = open_physical (lw_fd)) == -1) return NULL;
-    if ((lw_virtual = map_physical (lw_fd, lw_bridge_offset, lw_bridge_span)) == NULL) return NULL;
-
-    // Create virtual memory access to the SDRAM
-    if ((sdram_fd = open_physical (sdram_fd)) == -1) return NULL;
-    if ((sdram_virtual = map_physical (sdram_fd, sdram_offset, sdram_span)) == NULL) return NULL;
-
-    if (lw_virtual == NULL || sdram_virtual == NULL) return NULL;
-
     volatile int *generator_ptr = (unsigned int *) (lw_virtual + generator_offset);
 
     // put current board into sdram
@@ -72,11 +41,6 @@ move_list_t *generate_moves(board_t *board, int generator_offset, int x, int y)
         move = NULL;
     }
     moves->num_moves = count;
-
-    unmap_physical (lw_virtual, lw_bridge_span);
-    close_physical (lw_fd);
-    unmap_physical (sdram_virtual, sdram_span);
-    close_physical (sdram_fd);
 
     return moves;
 }

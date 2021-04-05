@@ -9,7 +9,6 @@ game.c \
 possible-move-generators-SW.c \
 generator-support-SW.c \
 ai-move-generator.c \
-pawn-upgrade.c \
 
 	gcc -std=c99 -Wall -fsigned-char -g -o bin/runtestSW \
 	test/test.c \
