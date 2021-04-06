@@ -86,7 +86,7 @@ Game.getAll = (userID, result) => {
 //update game with gameID and game details
 Game.updateById = (gameID, game, result) => {
     sql.query(
-        "UPDATE Game SET difficulty = " + game.difficulty+ ", timeleft = "+ game.timeleft " WHERE gameID = " + gameID,
+        "UPDATE Game SET timeleft = "+ game.timeleft+ ", difficulty = " + game.difficulty +  "WHERE gameID = " + gameID,
         (err, res) => {
             if(err) {
                 console.log("error: ", err);
