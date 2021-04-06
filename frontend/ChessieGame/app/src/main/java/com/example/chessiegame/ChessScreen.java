@@ -2,7 +2,6 @@ package com.example.chessiegame;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
@@ -11,25 +10,18 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.ResultReceiver;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -43,6 +35,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.chessiegame.components.BoardMap;
 import com.example.chessiegame.components.Move;
 import com.example.chessiegame.components.Piece;
 import com.example.chessiegame.components.Tile;
@@ -53,17 +46,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.lang.Integer.*;
 
 public class ChessScreen extends AppCompatActivity implements View.OnDragListener, View.OnTouchListener {
 
     private static final int REQUEST_ENABLE_BT = 0;
     private static final int REQUEST_DISCOVER_BT = 1;
     BluetoothAdapter mBlueAdapter;
+    BTReceiver btReceiver;
     TextView paired_devices;
     boolean err;
 
@@ -72,15 +64,34 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     private RequestQueue queue;
 
     public TableLayout chessBoard;
+    private BoardMap imageMap;
     public Tile[][] tiles;
-    public char[] prevGame;
+    public int[][] nextState; // incoming board layout
     public int gameID;
     private final int rows = 8;
     private final int cols = 8;
+    private final int word = 4;
 
     private boolean startNewGame;
     public String boardString;
+    private boolean newGameFlag;
+    private boolean resumeGameFlag;
+    private boolean pauseGameFlag;
 
+    boolean start_game_ack = false;
+    boolean game_over = false;
+    boolean white_wins = false;
+    boolean wrook0_moved = false;
+    boolean wrook1_moved = false;
+    boolean brook0_moved = false;
+    boolean brook1_moved = false;
+    boolean wking_moved = false;
+    boolean bking_moved = false;
+    int num_player_moves;
+
+
+    //TODO: notes
+    // on resume, send the player's last move (second most recent board in DB) and send to DE1 to get possible moves
     TextView timerTextView;
     long startTime = 0;
 
@@ -111,6 +122,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         paired_devices = (TextView) findViewById(R.id.paired_devices);
+        btReceiver = new BTReceiver(new Handler());
         err = false;
 
         queue = Volley.newRequestQueue(this);
@@ -120,12 +132,22 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         gameID = getIntent().getIntExtra("gameID", 0);
         boardString = getIntent().getStringExtra("boardString");
         tiles = new Tile[rows][cols];
+        nextState = new int[rows][cols];
         chessBoard = findViewById(R.id.chess);
+        imageMap = new BoardMap(this);
+
+        newGameFlag = false;
+        resumeGameFlag = false;
+        pauseGameFlag = false;
 
         startNewGame = getIntent().getBooleanExtra("newGame", true);
         if (startNewGame) { // get the most recent game and its gamestate
+            newGameFlag = true;
             int difficulty = getIntent().getIntExtra("difficulty", 1);
+            // TODO: change uid to user.getUID() later
             postNewGame("xQYSsLmZ8JU6jCNL1kL7g7QcDqE3", difficulty);
+        } else {
+            resumeGameFlag = true;
         }
 
         initChessboard(startNewGame, "");
@@ -149,11 +171,18 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 startActivityForResult(discover, REQUEST_DISCOVER_BT);
                 showToast("Bluetooth is discoverable");
 
-                Set<BluetoothDevice> devices = mBlueAdapter.getBondedDevices();
-                String paired = "";
+                BluetoothDevice device = mBlueAdapter.getRemoteDevice("20:17:01:09:52:49");
+                showToast(device.getName());
 
-                for (BluetoothDevice device : devices) {
-                    showToast("Connected to " + device.getName());
+                if (device != null) {
+                    Intent btIntent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
+                    btIntent.putExtra("btDevice", device);
+                    btIntent.putExtra("btReceiver", btReceiver);
+                    startService(btIntent);
+                    showToast("Started Bluetooth Service");
+                    //stopService(new Intent(this, BluetoothService.class)); --> to stop service
+                } else {
+                    showToast("Encountered an error");
                 }
 
             } else {
@@ -162,6 +191,14 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         }
 
         timerTextView = (TextView) findViewById(R.id.timerTextView);
+        timerTextView.setTextSize(20);
+        timerTextView.setTextColor(Color.BLACK);
+
+        String btTest = "Bluetooth Test";
+        Intent bti = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
+        // MUST send byte[] data to bluetooth service using "userMove" tag
+        bti.putExtra("userMove", btTest.getBytes());
+        startService(bti);
 
         /*
 
@@ -194,14 +231,22 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 int minutes = seconds / 60;
                 seconds = seconds % 60;
 
-                timerTextView.setText(String.format("%d:%02d", minutes, seconds));
+                timerTextView.setText(String.format("Time Remaining: %d:%02d", minutes, seconds));
             }
 
             public void onFinish() {
-                timerTextView.setText("Over! You loose");
+                timerTextView.setText("Over! You lost");
+                updateGameResult(user.getUid(), gameID, 0); // update game with you lost
+                Handler h = new Handler();
+                Runnable r = new Runnable() {
+                    public void run() {
+                        Intent intent = new Intent(getApplicationContext(), HomeScreen.class);
+                        startActivity(intent);
+                    }
+                };
+                h.postDelayed(r,10000); // after 10 seconds, automatically go back to home
             }
         }.start();
-
 
     }
 
@@ -217,8 +262,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
      */
 
-
-
+    /**
+     * Posts a new game with specified difficulty to current user
+     */
     public void postNewGame(String uid, int difficulty) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makegame";
         JSONObject postData = new JSONObject();
@@ -230,7 +276,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
-                    // TODO: parse gameID from response
                     Log.d("ChessScreen", "Successfully posted game");
                     JSONObject res = (JSONObject) response;
                     try {
@@ -248,6 +293,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         queue.add(jsonObjectRequest);
     }
 
+    /**
+     * Posts a new game result with ID gameID
+     */
     public void postNewGameResult(String uid, int gameID) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/postresult";
         JSONObject postData = new JSONObject();
@@ -255,6 +303,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             postData.put("userID", uid);
             postData.put("gameID", gameID);
             postData.put("result", -1);
+            //TODO: initialize time remaining
+            //postData.put("timeleft", 600000);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -262,22 +312,53 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
                     Log.d("ChessScreen", "Successfully posted game result");
-                    boardToString(); // post the initialized chessboard
+                    boardToStringAndPost(); // post the initialized chessboard
                 }, error -> {
             Log.d("ChessScreen", error.toString());
         });
 
         queue.add(jsonObjectRequest);
-
     }
 
-    //Method to get the tiles[][] and transform it to a list of char
-    char[][] boardformat(){
-        char[][] board = new char[8][8];
+    /**
+     * Updates the game result in the DB
+     */
+    public void updateGameResult(String uid, int gameID, int result) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/postresult";
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("userID", uid);
+            postData.put("gameID", gameID);
+            postData.put("result", result); // 0 for lose game, 1 for win game
+            //TODO: post time remaining
+            //postData.put("timeleft", 0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
+                response -> {
+                    Log.d("ChessScreen", "Successfully updated game result");
+                }, error -> {
+            Log.d("ChessScreen", error.toString());
+        });
+
+        queue.add(jsonObjectRequest);
+    }
+
+    /**
+     * Method to get the tiles[][] and transform it to a 2D array of ints
+     */
+    int[][] boardToIntArray() {
+        int[][] board = new int[rows][cols];
 
         for (int i = 0; i < cols ; i ++) {
             for (int j = 0; j < rows; j++) {
-                board [i][j] = tiles[i][j].getPiece().id;
+                if (tiles[i][j].getPiece() == null) {
+                    board[i][j] = 0;
+                } else {
+                    board[i][j] = tiles[i][j].getPiece().id;
+                }
             }
         }
 
@@ -290,7 +371,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     boolean isMoveValid(List<Character> move_list, Move pmove){
 
         Piece p = mockMove(pmove);
-        char[][] presentBoard = boardformat();
+        int[][] presentBoard = boardToIntArray();
         if (move_list.contains(presentBoard)){
             return true;
         }
@@ -299,27 +380,29 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         return false;
     }
 
-    //Get our present board and make it as a string
-    public String boardToString() {
-        char[] boardArray = new char[rows * cols];
+    /**
+     * Converts the current board into a String and send to the DB
+     */
+    public String boardToStringAndPost() {
+        int[] boardArray = new int[rows * cols];
+        StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < rows ; i ++) {
             for (int j = 0; j < cols; j++) {
                 if (tiles[i][j].getPiece() == null) {
-                    boardArray[i * rows + j] = (char) 0;
+                    sb.append(0);
                 } else {
-                    boardArray[i * rows + j] = tiles[i][j].getPiece().id;
+                    sb.append(tiles[i][j].getPiece().id);
                 }
+                sb.append(" ");
             }
         }
 
-        String boardMoves = boardArray.toString();
-
-        // TODO: Fix POST board - probably a timing issue
+        // boardMoves contains piece IDs each separated by a space
+        String boardMoves = sb.toString();
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makeboard";
         JSONObject postData = new JSONObject();
         try {
-            postData.put("boardID", 1);
             postData.put("placements", boardMoves);
             postData.put("gameID", gameID);
             postData.put("sequenceNum", 1);
@@ -399,69 +482,70 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 if (newGame) {
                     //Pawn placement
                     if (i == 1) {
-                        p = new Piece(this, i, j, "wpawn", (char) (j + 1));
-                        p.setImageResource(R.drawable.wpawn);
-                    } else if (i == 6) {
-                        p = new Piece(this, i, j, "wpawn", (char) (-1 * j - 1));
+                        p = new Piece(this, i, j, "bpawn", (-1 * j - 1));
                         p.setImageResource(R.drawable.bpawn);
+                    } else if (i == 6) {
+                        p = new Piece(this, i, j, "wpawn", (j + 1));
+                        p.setImageResource(R.drawable.wpawn);
                     }
                     //Rook
                     else if (j == 7 && i == 7) {
-                        p = new Piece(this, i, j, "brook", (char) -10);
-                        p.setImageResource(R.drawable.brook);
+                        p = new Piece(this, i, j, "wrook", 10);
+                        p.setImageResource(R.drawable.wrook);
                     } else if (j == 0 && i == 7) {
-                        p = new Piece(this, i, j, "brook", (char) -9);
-                        p.setImageResource(R.drawable.brook);
+                        p = new Piece(this, i, j, "wrook", 9);
+                        p.setImageResource(R.drawable.wrook);
                     } else if (j == 7 && i == 0) {
-                        p = new Piece(this, i, j, "wrook", (char) 10);
-                        p.setImageResource(R.drawable.wrook);
+                        p = new Piece(this, i, j, "brook", -10);
+                        p.setImageResource(R.drawable.brook);
                     } else if (j == 0 && i == 0) {
-                        p = new Piece(this, i, j, "wrook", (char) 9);
-                        p.setImageResource(R.drawable.wrook);
+                        p = new Piece(this, i, j, "brook", -9);
+                        p.setImageResource(R.drawable.brook);
+
                     }
                     //Knights
                     else if (j == 6 && i == 7) {
-                        p = new Piece(this, i, j, "bknight", (char) -20);
-                        p.setImageResource(R.drawable.bknight);
+                        p = new Piece(this, i, j, "wknight", 20);
+                        p.setImageResource(R.drawable.wknight);
                     } else if (j == 1 && i == 7) {
-                        p = new Piece(this, i, j, "bknight", (char) -19);
-                        p.setImageResource(R.drawable.bknight);
+                        p = new Piece(this, i, j, "wknight", 19);
+                        p.setImageResource(R.drawable.wknight);
                     } else if (j == 6 && i == 0) {
-                        p = new Piece(this, i, j, "wknight", (char) 20);
-                        p.setImageResource(R.drawable.wknight);
+                        p = new Piece(this, i, j, "bknight", -20);
+                        p.setImageResource(R.drawable.bknight);
                     } else if (j == 1 && i == 0) {
-                        p = new Piece(this, i, j, "wknight", (char) 19);
-                        p.setImageResource(R.drawable.wknight);
+                        p = new Piece(this, i, j, "bknight", -19);
+                        p.setImageResource(R.drawable.bknight);
                     }
                     //Bishops
                     else if (j == 5 && i == 7) {
-                        p = new Piece(this, i, j, "bbishop", (char) -30);
-                        p.setImageResource(R.drawable.bbishop);
+                        p = new Piece(this, i, j, "wbishop", 30);
+                        p.setImageResource(R.drawable.wbishop);
                     } else if (j == 2 && i == 7) {
-                        p = new Piece(this, i, j, "bbishop", (char) -29);
-                        p.setImageResource(R.drawable.bbishop);
+                        p = new Piece(this, i, j, "wbishop", 29);
+                        p.setImageResource(R.drawable.wbishop);
                     } else if (j == 5 && i == 0) {
-                        p = new Piece(this, i, j, "wbishop", (char) 30);
-                        p.setImageResource(R.drawable.wbishop);
+                        p = new Piece(this, i, j, "bbishop", -30);
+                        p.setImageResource(R.drawable.bbishop);
                     } else if (j == 2 && i == 0) {
-                        p = new Piece(this, i, j, "wbishop", (char) 29);
-                        p.setImageResource(R.drawable.wbishop);
+                        p = new Piece(this, i, j, "bbishop", -29);
+                        p.setImageResource(R.drawable.bbishop);
                     }
                     //Queen
                     else if (j == 4 && i == 7) {
-                        p = new Piece(this, i, j, "bqueen", (char) -39);
-                        p.setImageResource(R.drawable.bqueen);
-                    } else if (j == 4 && i == 0) {
-                        p = new Piece(this, i, j, "wqueen", (char) 39);
+                        p = new Piece(this, i, j, "wqueen", 39);
                         p.setImageResource(R.drawable.wqueen);
+                    } else if (j == 4 && i == 0) {
+                        p = new Piece(this, i, j, "bqueen", -39);
+                        p.setImageResource(R.drawable.bqueen);
                     }
-                    //Queen
+                    //King
                     else if (j == 3 && i == 7) {
-                        p = new Piece(this, i, j, "bking", (char) -48);
-                        p.setImageResource(R.drawable.bking);
-                    } else if (j == 3 && i == 0) {
-                        p = new Piece(this, i, j, "wking", (char) 48);
+                        p = new Piece(this, i, j, "wking", 48);
                         p.setImageResource(R.drawable.wking);
+                    } else if (j == 3 && i == 0) {
+                        p = new Piece(this, i, j, "bking", -48);
+                        p.setImageResource(R.drawable.bking);
                     }
                 } else { // TODO: assign layout based on prev game state
                     Log.d("ChessScreen", "In progress");
@@ -505,14 +589,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             case DragEvent.ACTION_DRAG_STARTED:
                 // Determines if this View can accept the dragged data
                 if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-                    // if you want to apply color when drag started to your view you can uncomment below lines
-                    // to give any color tint to the View to indicate that it can accept data.
-                    // v.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
-                    // Invalidate the view to force a redraw in the new tint
-                    //  v.invalidate();
-                    // returns true to indicate that the View can accept the dragged data.
                     return true;
                 }
+
                 // Returns false. During the current drag and drop operation, this View will
                 // not receive events again until ACTION_DRAG_ENDED is sent.
                 return false;
@@ -529,21 +608,15 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 return true;
 
             case DragEvent.ACTION_DRAG_EXITED:
-                // Re-sets the color tint to blue. Returns true; the return value is ignored.
-                // view.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
-                //It will clear a color filter .
+
+            case DragEvent.ACTION_DRAG_ENDED:
+                // Turns off any color tinting
                 v.getBackground().clearColorFilter();
                 // Invalidate the view to force a redraw in the new tint
                 v.invalidate();
                 return true;
 
             case DragEvent.ACTION_DROP:
-                // Gets the item containing the dragged data
-                ClipData.Item item = event.getClipData().getItemAt(0);
-                // Gets the text data from the item.
-                String dragData = item.getText().toString();
-                // Displays a message containing the dragged data.
-                Toast.makeText(this, "Dragged data is " + dragData, Toast.LENGTH_SHORT).show();
                 // Turns off any color tints
                 v.getBackground().clearColorFilter();
                 // Invalidates the view to force a redraw
@@ -551,24 +624,54 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
                 //TODO IS MOVE VALID??? CHECK
 
+                // the view that was dropped
                 View vw = (View) event.getLocalState();
+                Piece p = (Piece) vw;
+                Log.d("ChessScreen", "Dropped piece: " + p.name);
+
+                wrook0_moved = false;
+                wrook1_moved = false;
+                brook0_moved = false;
+                brook1_moved = false;
+                wking_moved = false;
+                bking_moved = false;
+
+                if (p.id == 9) wrook0_moved = true;
+                else if (p.id == 10) wrook1_moved = true;
+                else if (p.id == -9) brook0_moved = true;
+                else if (p.id == -10) brook1_moved = true;
+                else if (p.id == 48) wking_moved = true;
+                else if (p.id == -48) bking_moved = true;
+
                 ViewGroup owner = (ViewGroup) vw.getParent();
                 owner.removeView(vw); //remove the dragged view
-                //caste the view into LinearLayout as our drag acceptable layout is LinearLayout
-                CardView container = (CardView) v;
-                container.addView(vw);//Add the dragged view
-                vw.setVisibility(View.VISIBLE);//finally set Visibility to VISIBLE
-                // Returns true. DragEvent.getResult() will return true.
-                return true;
 
-            case DragEvent.ACTION_DRAG_ENDED:
-                // Turns off any color tinting
-                v.getBackground().clearColorFilter();
-                // Invalidates the view to force a redraw
-                v.invalidate();
-                // Does a getResult(), and displays what happened.
+                // TODO: if a piece eats another piece, kick out the old one
+                // start updating tiles[][] with new arrangement
+                Tile t = (Tile) v;
+                int c = t.id % 8;
+                int r = t.id / 8;
+                Log.d("ChessScreen", "Dropped on tile: " + t.id);
+
+                // piece stores information on its previous location
+                int prevRow = p.row;
+                int prevCol = p.col;
+                Log.d("ChessScreen", "Piece removed from row: " + prevRow + ", column: " + prevCol);
+                tiles[prevRow][prevCol].removePiece(p); // remove the piece from prev tile
+
+                p.updateCoordinates(r, c); // update p's coordinates
+                Piece tmp = tiles[r][c].getPiece();
+                if (tiles[r][c].hasPiece() && tmp != null) { // check if there was already a piece in the drop view
+                    tiles[r][c].removePiece(tmp);
+                }
+
+                tiles[r][c].setPiece(p); // drop p in its new location
+                vw.setVisibility(View.VISIBLE); //finally set Visibility to VISIBLE
+
+                // sends the player move to the BTService and makes a POST request to db
+                sendPlayerMoveBT();
+
                 return true;
-            // An unknown action type was received.
             default:
                 Log.e("DragDrop Example", "Unknown action type received by OnDragListener.");
                 break;
@@ -596,6 +699,222 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     private void showToast(String msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Posts the player move to the DB and send player data to the BT module
+     * ---> Assumes that the player's move has already been validated
+     * bool start_game; -> set only when starting a new game
+     * bool pause_game; -> 0 for false, 1 for true
+     * bool resume_game;
+     * bool wrook0_moved;
+     * bool wrook1_moved;
+     * bool brook0_moved;
+     * bool brook1_moved;
+     * bool wking_moved;
+     * bool bking_moved;
+     * int playebyte[] wrook0 = wrook0_moved ? intToBytes(1) : intToBytes(0);r_move[8][8]; -> words 36 to 291
+     * Total length of byte array: 292 bytes
+     */
+    byte[] userMove = new byte[292];
+    private void sendPlayerMoveBT() {
+        boardToStringAndPost(); // sends board to the db
+        Intent intent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
+
+        // newGame flag
+        byte[] newGame = new byte[word];
+        if (newGameFlag) {
+            newGame = intToBytes(1);
+            newGameFlag = false; // only send this as true once
+        } else { newGame = intToBytes(0); }
+        fillUserDataArray(newGame, 0, 3);
+
+        // pauseGame flag
+        byte[] pauseGame = new byte[word];
+        if (pauseGameFlag) {
+            pauseGame = intToBytes(1);
+            pauseGameFlag = false; // only send this as true once
+        } else { pauseGame = intToBytes(0); }
+        fillUserDataArray(pauseGame, 4, 7);
+
+        // resumeGame flag
+        byte[] resumeGame = new byte[word];
+        if (resumeGameFlag) {
+            resumeGame = intToBytes(1);
+            resumeGameFlag = false; // only send this as true once
+        } else { resumeGame = intToBytes(0); }
+        fillUserDataArray(resumeGame, 8, 11);
+
+        // set pieces
+        byte[] wrook0 = wrook0_moved ? intToBytes(1) : intToBytes(0);
+        byte[] wrook1 = wrook0_moved ? intToBytes(1) : intToBytes(0);
+        byte[] brook0 = wrook0_moved ? intToBytes(1) : intToBytes(0);
+        byte[] brook1 = wrook0_moved ? intToBytes(1) : intToBytes(0);
+        byte[] wking = wrook0_moved ? intToBytes(1) : intToBytes(0);
+        byte[] bking = wrook0_moved ? intToBytes(1) : intToBytes(0);
+
+        fillUserDataArray(wrook0, 12, 15);
+        fillUserDataArray(wrook1, 16, 19);
+        fillUserDataArray(brook0, 20, 23);
+        fillUserDataArray(brook1, 24, 27);
+        fillUserDataArray(wking, 28, 31);
+        fillUserDataArray(bking, 32, 35);
+
+        // parse chessboard (tiles[][]) into userMove array
+        int[][] pieceGrid = boardToIntArray();
+        int index = 36;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                fillUserDataArray(intToBytes(pieceGrid[i][j]), index, index + 3);
+                index += 4;
+            }
+        }
+
+        intent.putExtra("userMove", userMove);
+        startService(intent);
+    }
+
+    /**
+     * Populates the byte array to be sent to BT from index start to end (inclusive)
+     * Input: data - the byte data to be put in the userMove array
+     * Input: start - the index at which to start filling userMove array
+     * Input: end - the index to which the userMove array will be populated
+     */
+    private void fillUserDataArray(byte[] data, int start, int end) {
+        int j = 0;
+        for (int i = start; i < end + 1; i++) {
+            userMove[i] = data[j];
+            j++;
+        }
+    }
+
+    /**
+     * Converts an integer into a word
+     */
+    private byte[] intToBytes( final int i ) {
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        bb.putInt(i);
+        return bb.array();
+    }
+
+    /**
+     * Renders the opponent's move on the chess board
+     * -> checks for differences to the current tiles[][] layout and applies them
+     */
+    private void renderOpponentMove() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                Piece p = tiles[i][j].getPiece();
+                Tile t = tiles[i][j];
+                int newPieceID = nextState[i][j];
+
+                if (t.hasPiece() && p != null) { // there was a already piece on that square
+                    if (newPieceID == 0) { // piece gets replaced with a blank
+                        t.removePiece(p);
+                    } else if (newPieceID != p.id) { // nextState[i][j] is not 0
+                        // if the new board is not the same as the current board
+                        t.removePiece(p);
+                        Piece pc = new Piece(this, i, j, "Piece", newPieceID);
+                        t.setPiece(pc);
+                        Log.d("Chess Screen", "NewPieceID is " + String.valueOf(newPieceID));
+                        pc.setImageResource(imageMap.get(newPieceID));
+                    }
+                } else { // no piece was on that square
+                    if (newPieceID != 0) { // the square on new board has a piece
+                        Piece pc = new Piece(this, i, j, "Piece", newPieceID);
+                        t.setPiece(pc);
+                        Log.d("Chess Screen", "NewPieceID is " + String.valueOf(newPieceID));
+                        pc.setImageResource(imageMap.get(newPieceID));
+                    }
+                }
+            }
+        }
+    }
+
+    public class BTReceiver extends ResultReceiver {
+
+        /**
+         * Create a new ResultReceive to receive results.  Your
+         * {@link #onReceiveResult} method will be called from the thread running
+         * <var>handler</var> if given, or from an arbitrary thread if null.
+         *
+         * @param handler
+         */
+        public BTReceiver(Handler handler) {
+            super(handler);
+        }
+
+        /**
+         * Receives info from DE1 in byte array format then:
+         * - verifies that it has all the data it is expecting
+         * - extracts fields and stores into local variables
+         * - repackages the valid user moves into a map structure (TOOD)
+         * - parses the AI move to an int[][] of piece IDs
+         * - applies the AI move to the chessboard
+         */
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            super.onReceiveResult(resultCode, resultData);
+            /* From DE1:
+                bool start_game_ack; (0th word) -> 4 bytes
+                bool game-over; (1st word)
+                bool white_wins; (2nd word)
+                bool wrook0_moved; (3rd word)
+                bool wrook1_moved; (4th word)
+                bool brook0_moved; (5th word)
+                bool brook1_moved; (6th word)
+                bool wking_moved; (7th word)
+                bool bking_moved; (8th word)
+                int ai_move[8][8]; (9th - 72nd words)
+                int num_player_moves; (73rd word)
+                int possible_player_moves[86][8][8]; (74th to 5578th words)
+             */
+            byte[] data = resultData.getByteArray("readData");
+            Log.d("ChessScreen", "Chess screen received data");
+
+            if (data.length >= 300) {
+                start_game_ack = fourByteToBoolean(Arrays.copyOfRange(data, 0, 3));
+                game_over = fourByteToBoolean(Arrays.copyOfRange(data, 4, 7));
+                white_wins = fourByteToBoolean(Arrays.copyOfRange(data, 8, 11));
+                wrook0_moved = fourByteToBoolean(Arrays.copyOfRange(data, 12, 15));
+                wrook1_moved = fourByteToBoolean(Arrays.copyOfRange(data, 16, 19));
+                brook0_moved = fourByteToBoolean(Arrays.copyOfRange(data, 20, 23));
+                brook1_moved = fourByteToBoolean(Arrays.copyOfRange(data, 24, 27));
+                wking_moved = fourByteToBoolean(Arrays.copyOfRange(data, 28, 31));
+                bking_moved = fourByteToBoolean(Arrays.copyOfRange(data, 32, 35));
+
+                // parse ai move from byte array to int[][] board layout
+                int index = 36;
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        nextState[i][j] = fourByteToInt(Arrays.copyOfRange(data, index, index + 3));
+                        index = index + 4;
+                    }
+                }
+
+                // index = 292 at this point
+                renderOpponentMove(); // render the ai move on the gameboard
+                num_player_moves = fourByteToInt(Arrays.copyOfRange(data, 292, 295));
+
+                // TODO: parse possible player moves
+            }
+
+        }
+
+        /**
+         * Helper function: Merges the value of 2 bytes into a boolean
+         */
+        public boolean fourByteToBoolean(byte[] arr) {
+            return ByteBuffer.wrap(arr).getInt() != 0;
+        }
+
+        /**
+         * Helper function: Merges the value of 2 bytes into an integer
+         */
+        public int fourByteToInt(byte[] arr) {
+            return ByteBuffer.wrap(arr).getInt();
+        }
+
     }
 
 }

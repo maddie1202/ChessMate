@@ -13,18 +13,21 @@ import androidx.cardview.widget.CardView;
 public class Tile extends CardView {
     // represents an tile on the chessboard
     public Paint tileColor; // black = 0, white = 1
-    public int highlighted; // false = 0, highlighted = 1
     public Piece piece = null; // null if no piece currently on tile
     public final int col ;
     public final int row;
     public Rect square;
     public TextView drop;
+    public int id;
 
     public Tile(Context context, int x, int y) {
         super(context);
         this.row = x;
         this.col = y;
         this.tileColor = new Paint();
+        this.piece = null;
+        this.id = (8 * x) + y; // an int between 0 and 63
+
         //Determining the color of the tile
         if ((x + y) %2 == 0){
             tileColor.setColor(Color.WHITE);
@@ -60,6 +63,10 @@ public class Tile extends CardView {
         return col;
     }
 
+    public boolean hasPiece() {
+        return piece != null;
+    }
+
     public Piece getPiece() {return piece;}
 
     public void setPiece(Piece p) {
@@ -67,18 +74,10 @@ public class Tile extends CardView {
         this.addView(p);
     }
 
-    public void removePiece(Piece p) {
+    public void removePiece(Piece p) { // removes the piece from the view and nullifies it
         this.piece = null;
         this.removeView(p);
     }
 
-
-    //public int setImage() {
-
-        //square.
-   // }
-
-
-        // TODO: write more class functions
 
 }
