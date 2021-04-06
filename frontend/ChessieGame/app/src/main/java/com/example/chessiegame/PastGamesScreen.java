@@ -263,7 +263,7 @@ public class PastGamesScreen extends Fragment {
                     try {
                         JSONArray arr = new JSONArray(response);
                         // TODO: sort arr by increasing boardID, get string placements in that order, map to int array
-                        // TODO: figure out decoding of boards
+                        // TODO: figure out decoding of boards, delete invalid placements from the db
                         for (int i = 0; i < arr.length(); i++) {
                             JSONObject board = arr.getJSONObject(i);
 
