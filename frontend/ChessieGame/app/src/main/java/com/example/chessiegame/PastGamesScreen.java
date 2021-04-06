@@ -62,6 +62,7 @@ public class PastGamesScreen extends Fragment {
     private RequestQueue queue;
     private ArrayList<Integer> gameIDList;
     private ArrayList<PastGame> gameList;
+    private HashMap<Integer, Integer[][]> boards;
     private final Map<String, String> monthMap = new HashMap<String, String>() {{
         put("01", "January");
         put("02", "February");
@@ -78,6 +79,7 @@ public class PastGamesScreen extends Fragment {
     }};
 
     TableLayout gameTable;
+    private final int size = 8;
     private int tableHeight;
     private int tableWidth;
 
@@ -127,6 +129,7 @@ public class PastGamesScreen extends Fragment {
         user = mAuth.getCurrentUser();
         gameList = new ArrayList<>();
         gameIDList = new ArrayList<>();
+        boards = new HashMap<>();
 
         //TODO: change this back to user.getUid() for final - leave this for now
         fetchPastGames("xQYSsLmZ8JU6jCNL1kL7g7QcDqE3");
@@ -262,11 +265,26 @@ public class PastGamesScreen extends Fragment {
                         // TODO: sort arr by increasing boardID, get string placements in that order, map to int array
                         // TODO: figure out decoding of boards
                         for (int i = 0; i < arr.length(); i++) {
-                            JSONObject elem = arr.getJSONObject(i);
+                            JSONObject board = arr.getJSONObject(i);
+
+                            // parse the board
+                            String placements = String.valueOf(board.get("placements"));
+                            String[] boardString = placements.split("\\s+");
+                            Integer[][] pieces = new Integer[size][size];
+                            int boardID = Integer.parseInt(board.get("boardID").toString());
+
+                            for (int j = 0; j < size; j++) {
+                                for (int k = 0; k < size; k++) {
+                                    pieces[j][k] = Integer.parseInt(boardString[j * size + k]);
+                                }
+                            }
+
+                            boards.put(boardID, pieces);
                         }
 
                         Intent intent = new Intent(getActivity(), ReplayPastGamesScreen.class);
                         intent.putExtra("gameID", gameID);
+                        intent.putExtra("boards", boards);
                         startActivity(intent);
                     } catch (JSONException e) {
                         e.printStackTrace();

@@ -20,6 +20,7 @@ import com.example.chessiegame.components.Tile;
 import com.example.chessiegame.components.BoardMap;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,7 +38,8 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
     private BoardMap imageMap;
     private Context context;
 
-    private ArrayList<Integer[][]> boards;
+    private HashMap<Integer, Integer[][]> boards;
+    private HashMap<Integer, Integer[][]> gameBoards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,8 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
 
         backArrow = findViewById(R.id.arrow_back);
         gameID = getIntent().getIntExtra("gameID", 0);
+        gameBoards = (HashMap<Integer, Integer[][]>) getIntent().getSerializableExtra("boards");
+        gameID = 116; // hardcode it for now
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,7 +62,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         imageMap = new BoardMap(this);
         tiles = new Tile[rows][cols];
         chessBoard = findViewById(R.id.chess);
-        boards = new ArrayList<Integer[][]>();
+        boards = new HashMap<>();
         mockBoards();
 
         initChessboard();
@@ -83,7 +87,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
     }
 
     public void mockBoards() {
-        boards.add(new Integer[][]{
+        boards.put(0, new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {-1, -2, -3, -4, -5, -6, -7, -8},
                 {0, 0, 0, 0, 0, 0, 0, 0},
@@ -93,7 +97,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                 {1, 2, 3, 4, 5, 6, 7, 8},
                 {9, 19, 29, 48, 39, 30, 20, 10}
         });
-        boards.add(new Integer[][]{
+        boards.put(1, new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {-1, -2, -3, -4, -5, -6, -7, -8},
                 {0, 0, 0, 0, 0, 0, 0, 0},
@@ -103,7 +107,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                 {1, 2, 3, 4, 0, 6, 7, 8},
                 {9, 19, 29, 48, 39, 30, 20, 10}
         });
-        boards.add(new Integer[][]{
+        boards.put(2, new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {-1, -2, 0, -4, -5, -6, -7, -8},
                 {0, 0, -3, 0, 0, 0, 0, 0},
@@ -113,7 +117,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                 {1, 2, 3, 4, 0, 6, 7, 8},
                 {9, 19, 29, 48, 39, 30, 20, 10}
         });
-        boards.add(new Integer[][]{
+        boards.put(3, new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {-1, -2, 0, -4, -5, -6, -7, -8},
                 {0, 0, -3, 0, 0, 0, 0, 0},
@@ -123,7 +127,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                 {1, 2, 3, 4, 0, 6, 7, 0},
                 {9, 19, 29, 48, 39, 30, 20, 10}
         });
-        boards.add(new Integer[][]{
+        boards.put(4, new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {0, -2, 0, -4, -5, -6, -7, -8},
                 {0, 0, -3, 0, 0, 0, 0, 0},
@@ -133,7 +137,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                 {1, 2, 3, 4, 0, 6, 7, 0},
                 {9, 19, 29, 48, 39, 30, 20, 10}
         });
-        boards.add(new Integer[][]{
+        boards.put(5, new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {0, -2, 0, -4, -5, -6, -7, -8},
                 {0, 0, -3, 0, 0, 0, 0, 0},
@@ -143,7 +147,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                 {1, 2, 3, 4, 0, 6, 7, 0},
                 {9, 19, 29, 48, 39, 30, 20, 0}
         });
-        boards.add(new Integer[][]{
+        boards.put(6, new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {0, -2, 0, 0, -5, -6, -7, -8},
                 {0, 0, -3, -4, 0, 0, 0, 0},
@@ -153,7 +157,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                 {1, 2, 3, 4, 0, 6, 7, 0},
                 {9, 19, 29, 48, 39, 30, 20, 0}
         });
-        boards.add(new Integer[][]{
+        boards.put(7, new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {0, -2, 0, 0, -5, -6, -7, -8},
                 {0, 0, -3, -4, 0, 0, 0, 0},
@@ -163,7 +167,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                 {1, 2, 3, 4, 0, 6, 7, 0},
                 {9, 19, 29, 48, 39, 30, 20, 0}
         });
-        boards.add(new Integer[][]{
+        boards.put(8, new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
                 {0, -2, 0, 0, -5, -6, -7, -8},
                 {0, 0, -3, 0, 0, 0, 0, 0},
@@ -281,10 +285,12 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
 
     public void replayGame() {
         int length = boards.size();
+        ArrayList<Integer> keys = new ArrayList<>(boards.keySet());
+        Collections.sort(keys);
 
         Handler h = new Handler();
         for(int index = 0; index < length; index++) {
-            Integer[][] b = boards.get(index);
+            Integer[][] b = boards.get(keys.get(index));
             h.postDelayed(new Runnable() {
                 public void run() {
                     for (int i = 0; i < rows; i++) {

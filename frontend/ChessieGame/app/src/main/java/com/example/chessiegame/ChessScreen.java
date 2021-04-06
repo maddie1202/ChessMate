@@ -39,6 +39,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.chessiegame.components.BoardMap;
 import com.example.chessiegame.components.Move;
 import com.example.chessiegame.components.Piece;
 import com.example.chessiegame.components.Tile;
@@ -51,7 +52,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ChessScreen extends AppCompatActivity implements View.OnDragListener, View.OnTouchListener {
@@ -68,14 +71,31 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     private RequestQueue queue;
 
     public TableLayout chessBoard;
+    private BoardMap imageMap;
     public Tile[][] tiles;
-    public char[] prevGame;
+    public int[][] nextState; // incoming board layout
     public int gameID;
     private final int rows = 8;
     private final int cols = 8;
+    private final int word = 4;
 
     private boolean startNewGame;
     public String boardString;
+    private boolean newGameFlag;
+    private boolean resumeGameFlag;
+    private boolean pauseGameFlag;
+
+    boolean start_game_ack;
+    boolean game_over;
+    boolean white_wins;
+    boolean wrook0_moved;
+    boolean wrook1_moved;
+    boolean brook0_moved;
+    boolean brook1_moved;
+    boolean wking_moved;
+    boolean bking_moved;
+    int num_player_moves;
+
 
     //TODO: notes
     // on resume, send the player's last move (second most recent board in DB) and send to DE1 to get possible moves
@@ -119,12 +139,22 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         gameID = getIntent().getIntExtra("gameID", 0);
         boardString = getIntent().getStringExtra("boardString");
         tiles = new Tile[rows][cols];
+        nextState = new int[rows][cols];
         chessBoard = findViewById(R.id.chess);
+        imageMap = new BoardMap(this);
+
+        newGameFlag = false;
+        resumeGameFlag = false;
+        pauseGameFlag = false;
 
         startNewGame = getIntent().getBooleanExtra("newGame", true);
         if (startNewGame) { // get the most recent game and its gamestate
+            newGameFlag = true;
             int difficulty = getIntent().getIntExtra("difficulty", 1);
+            // TODO: change uid to user.getUID() later
             postNewGame("xQYSsLmZ8JU6jCNL1kL7g7QcDqE3", difficulty);
+        } else {
+            resumeGameFlag = true;
         }
 
         initChessboard(startNewGame, "");
@@ -216,7 +246,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             }
         }.start();
 
-
     }
 
     /*
@@ -230,8 +259,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     }
 
      */
-
-
 
     public void postNewGame(String uid, int difficulty) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makegame";
@@ -297,7 +324,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 }
             }
         }
-
         return board;
     }
 
@@ -316,7 +342,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         return false;
     }
 
-    //Get our present board and make it as a string
+    /**
+     * Converts the current board into a String and send to the DB
+     */
     public String boardToString() {
         int[] boardArray = new int[rows * cols];
 
@@ -330,11 +358,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             }
         }
 
-        String boardMoves = boardArray.toString();
+        // TODO: fix formatting for boardMoves string - should be piece IDs separated by space
+        String boardMoves = Arrays.toString(boardArray);
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makeboard";
         JSONObject postData = new JSONObject();
         try {
-            postData.put("boardID", 1);
             postData.put("placements", boardMoves);
             postData.put("gameID", gameID);
             postData.put("sequenceNum", 1);
@@ -522,12 +550,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             case DragEvent.ACTION_DRAG_STARTED:
                 // Determines if this View can accept the dragged data
                 if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-                    // if you want to apply color when drag started to your view you can uncomment below lines
-                    // to give any color tint to the View to indicate that it can accept data.
-                    // v.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
-                    // Invalidate the view to force a redraw in the new tint
-                    //  v.invalidate();
-                    // returns true to indicate that the View can accept the dragged data.
                     return true;
                 }
                 // Returns false. During the current drag and drop operation, this View will
@@ -549,21 +571,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
             case DragEvent.ACTION_DRAG_ENDED:
                 // Turns off any color tinting
-                // Re-sets the color tint to blue. Returns true; the return value is ignored.
-                // view.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
-                //It will clear a color filter .
                 v.getBackground().clearColorFilter();
                 // Invalidate the view to force a redraw in the new tint
                 v.invalidate();
                 return true;
 
             case DragEvent.ACTION_DROP:
-                // Gets the item containing the dragged data
-                ClipData.Item item = event.getClipData().getItemAt(0);
-                // Gets the text data from the item.
-                String dragData = item.getText().toString();
-                // Displays a message containing the dragged data.
-                //Toast.makeText(this, "Dragged data is " + dragData, Toast.LENGTH_SHORT).show();
                 // Turns off any color tints
                 v.getBackground().clearColorFilter();
                 // Invalidates the view to force a redraw
@@ -579,7 +592,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 container.addView(vw); //Add the dragged view
                 vw.setVisibility(View.VISIBLE); //finally set Visibility to VISIBLE
 
-                // TODO: after validation, convert board to byte array and send intent to BluetoothService
+                // sends the player move to the BTService and makes a POST request to db
+                sendPlayerMoveBT();
 
                 return true;
             default:
@@ -611,6 +625,98 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Assumes that the player's move has already been validated
+     * bool start_game; -> set only when starting a new game
+     * bool pause_game; -> 0 for false, 1 for true
+     * bool resume_game;
+     * bool wrook0_moved;
+     * bool wrook1_moved;
+     * bool brook0_moved;
+     * bool brook1_moved;
+     * bool wking_moved;
+     * bool bking_moved;
+     * int player_move[8][8];
+     * Total length of byte array: 292 bytes
+     */
+    private void sendPlayerMoveBT() {
+        // TODO: after validation, convert tile IDs to byte array and send intent to BluetoothService
+        boardToString(); // sends board to the db
+        Intent intent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
+        byte[] player_move = new byte[rows * cols * 4];
+        byte[] userMove = new byte[292];
+
+        // newGame flag
+        byte[] newGame = new byte[word];
+        if (newGameFlag) {
+            newGame = intToBytes(1);
+            newGameFlag = false; // only send this as true once
+        } else { newGame = intToBytes(0); }
+
+        for (int i = 0; i < newGame.length; i++) {
+            userMove[i] = newGame[i];
+        }
+
+        // pauseGame flag
+        byte[] pauseGame = new byte[word];
+        if (pauseGameFlag) {
+            pauseGame = intToBytes(1);
+            pauseGameFlag = false; // only send this as true once
+        } else { pauseGame = intToBytes(0); }
+
+        int j = 0;
+        for (int i = 4; i < 7; i++) {
+            userMove[i] = pauseGame[j];
+            j++;
+        }
+
+
+
+    }
+
+    /**
+     * Converts an integer into a word
+     */
+    private byte[] intToBytes( final int i ) {
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        bb.putInt(i);
+        return bb.array();
+    }
+
+    /**
+     * Renders the opponent's move on the chess board
+     * -> checks for differences to the current tiles[][] layout and applies them
+     */
+    private void renderOpponentMove() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                Piece p = tiles[i][j].getPiece();
+                Tile t = tiles[i][j];
+                int newPieceID = nextState[i][j];
+
+                if (t.hasPiece() && p != null) { // there was a already piece on that square
+                    if (newPieceID == 0) { // piece gets replaced with a blank
+                        t.removePiece(p);
+                    } else if (newPieceID != p.id) { // nextState[i][j] is not 0
+                        // if the new board is not the same as the current board
+                        t.removePiece(p);
+                        Piece pc = new Piece(this, i, j, "Piece", newPieceID);
+                        t.setPiece(pc);
+                        Log.d("Chess Screen", "NewPieceID is " + String.valueOf(newPieceID));
+                        pc.setImageResource(imageMap.get(newPieceID));
+                    }
+                } else { // no piece was on that square
+                    if (newPieceID != 0) { // the square on new board has a piece
+                        Piece pc = new Piece(this, i, j, "Piece", newPieceID);
+                        t.setPiece(pc);
+                        Log.d("Chess Screen", "NewPieceID is " + String.valueOf(newPieceID));
+                        pc.setImageResource(imageMap.get(newPieceID));
+                    }
+                }
+            }
+        }
+    }
+
     public class BTReceiver extends ResultReceiver {
 
         /**
@@ -624,14 +730,19 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             super(handler);
         }
 
+        /**
+         * Receives info from DE1 in byte array format then:
+         * - verifies that it has all the data it is expecting
+         * - extracts fields and stores into local variables
+         * - repackages the valid user moves into a map structure (TOOD)
+         * - parses the AI move to an int[][] of piece IDs
+         * - applies the AI move to the chessboard
+         */
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             super.onReceiveResult(resultCode, resultData);
-
-            // resultData is the chessAI info
-            // TODO: extract fields, store into local vars, and render AI move on board
             /* From DE1:
-                bool start_game_ack; (0th word)
+                bool start_game_ack; (0th word) -> 4 bytes
                 bool game-over; (1st word)
                 bool white_wins; (2nd word)
                 bool wrook0_moved; (3rd word)
@@ -647,7 +758,51 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             byte[] data = resultData.getByteArray("readData");
             Log.d("ChessScreen", "Chess screen received: " + new String(data));
 
+            if (data.length >= 300) {
+                start_game_ack = fourByteToBoolean(Arrays.copyOfRange(data, 0, 3));
+                game_over = fourByteToBoolean(Arrays.copyOfRange(data, 4, 7));
+                white_wins = fourByteToBoolean(Arrays.copyOfRange(data, 8, 11));
+                wrook0_moved = fourByteToBoolean(Arrays.copyOfRange(data, 12, 15));
+                wrook1_moved = fourByteToBoolean(Arrays.copyOfRange(data, 16, 19));
+                brook0_moved = fourByteToBoolean(Arrays.copyOfRange(data, 20, 23));
+                brook1_moved = fourByteToBoolean(Arrays.copyOfRange(data, 24, 27));
+                wking_moved = fourByteToBoolean(Arrays.copyOfRange(data, 28, 31));
+                bking_moved = fourByteToBoolean(Arrays.copyOfRange(data, 32, 35));
+
+                // parse ai move from byte array to int[][] board layout
+                int index = 36;
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        nextState[i][j] = fourByteToInt(Arrays.copyOfRange(data, index, index + 3));
+                        index = index + 4;
+                    }
+                }
+
+                // index = 292 at this point
+                renderOpponentMove(); // render the ai move on the gameboard
+                num_player_moves = fourByteToInt(Arrays.copyOfRange(data, 292, 295));
+
+                // TODO: parse possible player moves
+            }
+
         }
+
+        /**
+         * Helper function: Merges the value of 2 bytes into a boolean
+         */
+        public boolean fourByteToBoolean(byte[] arr) {
+            return ByteBuffer.wrap(arr).getInt() != 0;
+            //return ((b1 << 8) | (b2 & 0xFF)) != 0;
+        }
+
+        /**
+         * Helper function: Merges the value of 2 bytes into an integer
+         */
+        public int fourByteToInt(byte[] arr) {
+            return ByteBuffer.wrap(arr).getInt();
+           // return ((b1 << 8) | (b2 & 0xFF));
+        }
+
     }
 
 }
