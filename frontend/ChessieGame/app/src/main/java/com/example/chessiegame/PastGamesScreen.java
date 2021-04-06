@@ -268,7 +268,7 @@ public class PastGamesScreen extends Fragment {
                             JSONObject board = arr.getJSONObject(i);
 
                             // parse the board
-                            String placements = String.valueOf(board.get("placements"));
+                            String placements = board.get("placements").toString();
                             String[] boardString = placements.split("\\s+");
                             Integer[][] pieces = new Integer[size][size];
                             int boardID = Integer.parseInt(board.get("boardID").toString());

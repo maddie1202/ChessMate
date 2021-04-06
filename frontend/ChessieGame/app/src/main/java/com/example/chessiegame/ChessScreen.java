@@ -2,20 +2,16 @@ package com.example.chessiegame;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -43,7 +39,6 @@ import com.example.chessiegame.components.BoardMap;
 import com.example.chessiegame.components.Move;
 import com.example.chessiegame.components.Piece;
 import com.example.chessiegame.components.Tile;
-import com.example.chessiegame.services.BluetoothService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -51,9 +46,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -243,6 +236,15 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
             public void onFinish() {
                 timerTextView.setText("Over! You lost");
+                updateGameResult(user.getUid(), gameID, 0); // update game with you lost
+                Handler h = new Handler();
+                Runnable r = new Runnable() {
+                    public void run() {
+                        Intent intent = new Intent(getApplicationContext(), HomeScreen.class);
+                        startActivity(intent);
+                    }
+                };
+                h.postDelayed(r,10000); // after 10 seconds, automatically go back to home
             }
         }.start();
 
@@ -316,7 +318,32 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         });
 
         queue.add(jsonObjectRequest);
+    }
 
+    /**
+     * Updates the game result in the DB
+     */
+    public void updateGameResult(String uid, int gameID, int result) {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/postresult";
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("userID", uid);
+            postData.put("gameID", gameID);
+            postData.put("result", result); // 0 for lose game, 1 for win game
+            //TODO: post time remaining
+            //postData.put("timeleft", 0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
+                response -> {
+                    Log.d("ChessScreen", "Successfully updated game result");
+                }, error -> {
+            Log.d("ChessScreen", error.toString());
+        });
+
+        queue.add(jsonObjectRequest);
     }
 
     /**
@@ -618,10 +645,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
                 ViewGroup owner = (ViewGroup) vw.getParent();
                 owner.removeView(vw); //remove the dragged view
-                //CardView container = (CardView) v;
-                //container.addView(vw); //Add the dragged view
 
-                //TODO: update tiles[][] array with new placement
+                // TODO: if a piece eats another piece, kick out the old one
+                // start updating tiles[][] with new arrangement
                 Tile t = (Tile) v;
                 int c = t.id % 8;
                 int r = t.id / 8;
@@ -634,6 +660,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 tiles[prevRow][prevCol].removePiece(p); // remove the piece from prev tile
 
                 p.updateCoordinates(r, c); // update p's coordinates
+                Piece tmp = tiles[r][c].getPiece();
+                if (tiles[r][c].hasPiece() && tmp != null) { // check if there was already a piece in the drop view
+                    tiles[r][c].removePiece(tmp);
+                }
+
                 tiles[r][c].setPiece(p); // drop p in its new location
                 vw.setVisibility(View.VISIBLE); //finally set Visibility to VISIBLE
 
@@ -875,7 +906,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
          */
         public boolean fourByteToBoolean(byte[] arr) {
             return ByteBuffer.wrap(arr).getInt() != 0;
-            //return ((b1 << 8) | (b2 & 0xFF)) != 0;
         }
 
         /**
@@ -883,7 +913,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
          */
         public int fourByteToInt(byte[] arr) {
             return ByteBuffer.wrap(arr).getInt();
-           // return ((b1 << 8) | (b2 & 0xFF));
         }
 
     }
