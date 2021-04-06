@@ -5,7 +5,7 @@ exports.findOne = (req,res) => {
     const gameID = req.params.gameID;
 
     console.log("gameID = " + gameID + " in controller");
-    
+
     Game.findById(gameID, (err, data) => {
         if (err) {
               if (err.kind === "not_found") {
@@ -47,7 +47,8 @@ exports.create = (req,res) => {
 
       // Create a Game
       const newGame = new Game({
-        difficulty: req.body.difficulty
+        difficulty: req.body.difficulty,
+        timeleft: req.body.timeleft
       });
 
       // Save Game in the database
@@ -71,10 +72,12 @@ exports.update = (req,res) => {
       }
 
       const gameID = req.body.gameID;
+
       // Create a Game
       const game = new Game({
           gameID: req.body.gameID,
-          difficulty: req.body.difficulty
+          difficulty: req.body.difficulty,
+          timeleft: req.body.timeleft
       });
 
       Game.updateById(gameID, game, (err, data) => {
