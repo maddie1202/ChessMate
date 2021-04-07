@@ -145,7 +145,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             newGameFlag = true;
             int difficulty = getIntent().getIntExtra("difficulty", 1);
             // TODO: change uid to user.getUID() later
-            postNewGame("xQYSsLmZ8JU6jCNL1kL7g7QcDqE3", difficulty);
+            postNewGame(user.getUid(), difficulty);
         } else {
             resumeGameFlag = true;
         }
@@ -270,6 +270,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         JSONObject postData = new JSONObject();
         try {
             postData.put("difficulty", difficulty);
+            postData.put("timeleft", 600000);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -303,11 +304,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             postData.put("userID", uid);
             postData.put("gameID", gameID);
             postData.put("result", -1);
-            //TODO: initialize time remaining
-            //postData.put("timeleft", 600000);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        Log.d("ChessScreen", "Posting result for " + gameID);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
@@ -331,7 +332,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             postData.put("gameID", gameID);
             postData.put("result", result); // 0 for lose game, 1 for win game
             //TODO: post time remaining
-            //postData.put("timeleft", 0);
+            postData.put("timeleft", 0);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -132,7 +132,7 @@ public class PastGamesScreen extends Fragment {
         boards = new HashMap<>();
 
         //TODO: change this back to user.getUid() for final - leave this for now
-        fetchPastGames("xQYSsLmZ8JU6jCNL1kL7g7QcDqE3");
+        fetchPastGames("G2OqGHBvFogJrA56TaawC6WcUt72");
 
         return v;
     }
@@ -255,6 +255,9 @@ public class PastGamesScreen extends Fragment {
         }
     }
 
+    /**
+     * Fetches the boards for the selected game, then navigates to the ReplayPastGamesScreen
+     */
     public void fetchGameBoards(int gameID) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgame/" + gameID;
 

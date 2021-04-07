@@ -284,13 +284,13 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
     }
 
     public void replayGame() {
-        int length = boards.size();
-        ArrayList<Integer> keys = new ArrayList<>(boards.keySet());
+        int length = gameBoards.size();
+        ArrayList<Integer> keys = new ArrayList<>(gameBoards.keySet());
         Collections.sort(keys);
 
         Handler h = new Handler();
         for(int index = 0; index < length; index++) {
-            Integer[][] b = boards.get(keys.get(index));
+            Integer[][] b = gameBoards.get(keys.get(index));
             h.postDelayed(new Runnable() {
                 public void run() {
                     for (int i = 0; i < rows; i++) {
