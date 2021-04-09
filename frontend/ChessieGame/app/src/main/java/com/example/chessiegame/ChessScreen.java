@@ -643,6 +643,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 int ai_move[8][8]; (9th - 72nd words)
                 int num_player_moves; (73rd word)
                 int possible_player_moves[86][8][8]; (74th to 5578th words)
+
+                Total: ~12000 bytes
              */
             byte[] data = resultData.getByteArray("readData");
             Log.d("ChessScreen", "Chess screen received: " + new String(data));

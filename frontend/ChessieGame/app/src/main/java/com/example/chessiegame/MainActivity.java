@@ -91,6 +91,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.imageView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent( v.getContext(), HomeActivity.class);
+                startActivity( intent );
+            }
+        });
+
         FacebookSdk.sdkInitialize(MainActivity.this);
         callbackManager = CallbackManager.Factory.create();
         facebookLogin();
