@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "687858811033-46h5q73jj38f3v8d1dr5febg4i5ee7k9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chessiegame",
+            "certificate_hash": "9aeb3a077cb647f58da4acdc111aa249357d2464"
+          }
+        },
+        {
+          "client_id": "687858811033-sga3ol4npvsu1afo1o8kr5jauf7r1mc0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chessiegame",
+            "certificate_hash": "b8ade8c831c8482015ca71e9a9e76e0edc9a1d24"
+          }
+        },
+        {
           "client_id": "687858811033-bnu1iink9mre00vd4ku4ds0avir67ig2.apps.googleusercontent.com",
           "client_type": 3
         }
