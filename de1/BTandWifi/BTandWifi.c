@@ -67,8 +67,6 @@
 #define TRUE 1
 
 
-
-
 /**************************************************************************
 /* Subroutine to initialise the RS232 Port by writing some data
 ** to the internal registers.
@@ -83,9 +81,12 @@ void Init_BT(void)
 {
 	printf("InitBT start\n");
 	// set bit 7 of Line Control Register to 1, to gain access to the baud rate registers
-	Bluetooth_LineControlReg |= 1 << 7;
+	//Bluetooth_LineControlReg |= 1 << 7;
+	printf("Executed first statement of InitBT\n");
+	//*BT_LineControlReg = 0x80;
+	Bluetooth_LineControlReg = 0x80;
 	// set Divisor latch (LSB and MSB) with correct value for required baud rate
-
+	printf("Executed second statement of InitBT\n");
 	//Baud rate divisor value = (frequency of BR_clk) / (desired baud rate x 16)
 	int baut_divisor = (int) ((50000000)/(38400 *16));
 	Bluetooth_DivisorLatchLSB = baut_divisor & 0xff; //least significant bit
@@ -269,12 +270,12 @@ void main(void)
 
 	printf("Hello from the CPEN 391 System 2\n");
 
-    while(1)    {
+    while(1) {
 
 		printf("first loop\n");
         char* moves;
         int counter = 0;
-        while(1){
+        while(1) {
 
 		printf("second loop\n");
              if(counter == 86)
@@ -287,9 +288,9 @@ void main(void)
                 moves += 4;
                 counter++;
 
-
             }
 
         }
+
     }
 }
