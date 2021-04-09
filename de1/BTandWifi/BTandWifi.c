@@ -67,8 +67,6 @@
 #define TRUE 1
 
 
-
-
 /**************************************************************************
 /* Subroutine to initialise the RS232 Port by writing some data
 ** to the internal registers.
@@ -81,17 +79,21 @@
 
 void Init_BT(void)
 {
+	printf("InitBT start\n");
 	// set bit 7 of Line Control Register to 1, to gain access to the baud rate registers
-	Bluetooth_LineControlReg |= 1 << 7
+	//Bluetooth_LineControlReg |= 1 << 7;
+	printf("Executed first statement of InitBT\n");
+	//*BT_LineControlReg = 0x80;
+	Bluetooth_LineControlReg = 0x80;
 	// set Divisor latch (LSB and MSB) with correct value for required baud rate
-
+	printf("Executed second statement of InitBT\n");
 	//Baud rate divisor value = (frequency of BR_clk) / (desired baud rate x 16)
 	int baut_divisor = (int) ((50000000)/(38400 *16));
 	Bluetooth_DivisorLatchLSB = baut_divisor & 0xff; //least significant bit
 	Bluetooth_DivisorLatchMSB = (baut_divisor >> 8 ) & 0xff ; // most significant bit
 
 	// set bit 7 of Line control register (LCR) back to 0 and
-	Bluetooth_LineControlReg &= ~(1 << 7)
+	Bluetooth_LineControlReg &= ~(1 << 7);
 	// program other bits in (LCR) for 8 bit data, 1 stop bit, no parity etc
 
 	// bit 1-0 : 11 = 8 bits
@@ -102,7 +104,8 @@ void Init_BT(void)
 	Bluetooth_FifoControlReg |= 1 << 1;
 	Bluetooth_FifoControlReg |= 1 << 2;
 	// Now Clear all bits in the FIFO control registers
-	Bluetooth_FifoControlReg = Bluetooth_FifoControlReg^0x06 // 0x06 = 110
+	Bluetooth_FifoControlReg = Bluetooth_FifoControlReg^0x06; // 0x06 = 110
+	printf("InitBT end\n");
 
 }
 
@@ -133,13 +136,15 @@ int getcharBT( void )
 // to see if one is available to read from the FIFO
 int BTTestForReceivedData(void)
 {
+	printf("BTT Test start\n");
 	// if Bluetooth LineStatusReg bit 0 is set to 1
-	if (Bluetooth_LineStatusReg == Bluetooth_LineStatusReg | 1 << 0){
+	if (Bluetooth_LineStatusReg == (Bluetooth_LineStatusReg | 1 << 0)){
+		printf("BTT Test end true\n");
 	    return TRUE;
 	}
 	// return TRUE, otherwise return FALSE
+	printf("BTT Test end false\n");
 	return FALSE;
-
 }
 
 
@@ -160,7 +165,7 @@ void sendMessageBT(char * str) {
 void BT_Flush( void ){
 	// while bit 0 of Line Status Register == ‘1’ (i.e. data available)
 	int temp = 0;
-	while (Bluetooth_LineStatusReg == Bluetooth_LineStatusReg | 1 << 0){
+	while (Bluetooth_LineStatusReg == (Bluetooth_LineStatusReg | 1 << 0)){
 	   temp = Bluetooth_ReceiverFifo;
 	}
 	// read unwanted char out of FIFO receive bufferreturn;
@@ -173,7 +178,7 @@ void BT_Flush( void ){
 
 void Init_Wifi(void){
         // set bit 7 of Line Control Register to 1, to gain access to the baud rate registers
-    	Wifi_LineControlReg |= 1 << 7
+    	Wifi_LineControlReg |= 1 << 7;
     	// set Divisor latch (LSB and MSB) with correct value for required baud rate
 
     	//Baud rate divisor value = (frequency of BR_clk) / (desired baud rate x 16)
@@ -182,7 +187,7 @@ void Init_Wifi(void){
     	Wifi_DivisorLatchMSB = (baut_divisor >> 8 ) & 0xff ; // most significant bit
 
     	// set bit 7 of Line control register (LCR) back to 0 and
-    	Wifi_LineControlReg &= ~(1 << 7)
+    	Wifi_LineControlReg &= ~(1 << 7);
     	// program other bits in (LCR) for 8 bit data, 1 stop bit, no parity etc
 
     	// bit 1-0 : 11 = 8 bits
@@ -193,7 +198,7 @@ void Init_Wifi(void){
     	Wifi_FifoControlReg |= 1 << 1;
     	Wifi_FifoControlReg |= 1 << 2;
     	// Now Clear all bits in the FIFO control registers
-    	Wifi_FifoControlReg = Wifi_FifoControlReg ^0x06 // 0x06 = 110
+    	Wifi_FifoControlReg = Wifi_FifoControlReg ^0x06; // 0x06 = 110
 
 }
 
@@ -223,7 +228,7 @@ int getcharWifi( void )
 int WifiTestForReceivedData(void)
 {
 	// if Bluetooth LineStatusReg bit 0 is set to 1
-	if (Wifi_LineStatusReg == Wifi_LineStatusReg | 1 << 0){
+	if (Wifi_LineStatusReg == (Wifi_LineStatusReg | 1 << 0)){
 	    return TRUE;
 	}
 	// return TRUE, otherwise return FALSE
@@ -247,8 +252,8 @@ void sendMessageWifi(char * str) {
 void Wifi_Flush( void ){
 	// while bit 0 of Line Status Register == ‘1’ (i.e. data available)
 	int temp = 0;
-	while (Wifi_LineStatusReg == Wifi_LineStatusReg | 1 << 0){
-	   emp = Wifi_ReceiverFifo;
+	while (Wifi_LineStatusReg == (Wifi_LineStatusReg | 1 << 0)){
+	   temp = Wifi_ReceiverFifo;
 	}
 	// read unwanted char out of FIFO receive bufferreturn;
 	// no more characters, so return
@@ -258,17 +263,34 @@ void Wifi_Flush( void ){
 
 void main(void)
 {
-    int switches ;
-	printf("Hello from the CPEN 391 System\n");
+	printf("Hello from the CPEN 391 System 1\n");
 
-    while(1)    {
-        switches = *SWITCHES ;
-        *LEDS = switches;
-        *HEX0_1 = switches;
-        *HEX2_3 = switches;
-        *HEX4_5 = switches;
+    Init_BT();
 
-        printf("Switches = %x\n", switches) ;
-        printf("Buttons = %x\n", *PUSHBUTTONS) ;
+
+	printf("Hello from the CPEN 391 System 2\n");
+
+    while(1) {
+
+		printf("first loop\n");
+        char* moves;
+        int counter = 0;
+        while(1) {
+
+		printf("second loop\n");
+             if(counter == 86)
+                 break;
+            if(BTTestForReceivedData()){
+
+				printf("BTTtestforreceive");
+                int data = getcharBT();
+                *moves = data;
+                moves += 4;
+                counter++;
+
+            }
+
+        }
+
     }
 }

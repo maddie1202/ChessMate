@@ -127,8 +127,8 @@ public class BluetoothService extends Service {
                     // Read from the InputStream
                     bytes = btInputStream.available();
                     if (bytes > 0) {
-                        buffer = new byte[12000];
-                        SystemClock.sleep(100); //pause and wait for rest of data.
+                        buffer = new byte[12000]; // TODO: make this number bigger later
+                        SystemClock.sleep(100); // pause and wait for rest of data.
                         bytes = btInputStream.available(); // # of bytes we can read
                         bytes = btInputStream.read(buffer, 0, bytes); // put data in buffer
 

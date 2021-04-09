@@ -42,4 +42,9 @@ public class Piece extends androidx.appcompat.widget.AppCompatImageView {
 
     public String getName(){ return name;}
 
+    public void updateCoordinates(int row, int col) {
+        this.col = col;
+        this.row = row;
+    }
+
 }

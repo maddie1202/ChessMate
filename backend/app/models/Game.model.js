@@ -22,11 +22,12 @@ const board = require("../controllers/board.controller.js");
 const Game = function(game){
     this.gameID = game.gameID;
     this.difficulty = game.difficulty;
+    this.timeleft = game.timeleft;
 };
 
 Game.create = (newGame, result) => {
-    const attributes = "difficulty";
-    const values = ""+ newGame.difficulty + "";
+    const attributes = "difficulty, timeleft";
+    const values = ""+ newGame.difficulty + ", "+ newGame.timeleft;
     sql.query("INSERT INTO Game(" + attributes + ") VALUES(" + values + ")", (err, res) => {
         if(err){
             console.log("error: ", err);
@@ -85,7 +86,7 @@ Game.getAll = (userID, result) => {
 //update game with gameID and game details
 Game.updateById = (gameID, game, result) => {
     sql.query(
-        "UPDATE Game SET difficulty = " + game.difficulty+ " WHERE gameID = " + gameID,
+        "UPDATE Game SET timeleft = "+ game.timeleft+ ", difficulty = " + game.difficulty +  " WHERE gameID = " + gameID,
         (err, res) => {
             if(err) {
                 console.log("error: ", err);

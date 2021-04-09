@@ -14,6 +14,7 @@ CREATE TABLE Game(
     gameID int NOT NULL AUTO_INCREMENT,
     startDateTime datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     difficulty int,
+    timeleft int,
     PRIMARY KEY (gameID)
 );
 
@@ -67,7 +68,6 @@ INSERT INTO Board(boardID, placements, gameID, sequenceNumber)
     VALUES(1, '1 2 3 4 5', 1, 1);
 INSERT INTO Board(boardID, placements, gameID, sequenceNumber)
     VALUES(2, '5 6 7 8', 1, 2);
-
 INSERT INTO Board(boardID, placements, gameID, sequenceNumber)
     VALUES(3, '11 22 33 44 55', 2, 1);
 INSERT INTO Board(boardID, placements, gameID, sequenceNumber)
@@ -81,5 +81,14 @@ INSERT INTO GoalsLookup(goalID, gameCount, gameDifficulty)
     VALUES(1, 1, 1);
 INSERT INTO GoalsLookup(goalID, gameCount, gameDifficulty)
     VALUES(2, 2, 1);
-    
+INSERT INTO GoalsLookup(goalID, gameCount, gameDifficulty)
+    VALUES(3, 1, 2);
+INSERT INTO GoalsLookup(goalID, gameCount, gameDifficulty)
+    VALUES(4, 2, 2);
+INSERT INTO GoalsLookup(goalID, gameCount, gameDifficulty)
+    VALUES(5, 1, 3);
+INSERT INTO GoalsLookup(goalID, gameCount, gameDifficulty)
+    VALUES(6, 2, 3);
+INSERT INTO GoalsLookup(goalID, gameCount, gameDifficulty)
+    VALUES(7, 3, 3);
 /*********************************************************/
