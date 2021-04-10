@@ -10,6 +10,10 @@ typedef struct move_list {
 
 move_list_t *create_move_list(int size);
 void destroy_move_list(move_list_t *move_list);
+void add_move_to_list(move_list_t* move_list, board_t *board, char piece, int x, int y);
+
+void add_move_to_list(move_list_t* move_list, board_t *board, char piece, int x, int y);
+int check_move(board_t *board, int x, int y, char piece, move_list_t *moves);
 
 move_list_t *generate_pawn_moves(board_t *board, char pawn);
 move_list_t *generate_rook_moves(board_t *board, char rook);
