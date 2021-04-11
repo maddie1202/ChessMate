@@ -171,9 +171,8 @@ public class HomeScreen extends Fragment {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject j = jsonArray.getJSONObject(i);
                             // get the max sequenceNumber to find the most recent board
-                            // TODO: change sequenceNum -> boardID after DB is changed
                             if ((int) j.get("boardID") > maxNum) {
-                                maxNum = (int) j.get("sequenceNumber");
+                                maxNum = (int) j.get("boardID");
                                 boardString = (String) j.get("placements");
                             }
                         }
@@ -202,14 +201,16 @@ public class HomeScreen extends Fragment {
                         JSONArray arr = new JSONArray(response);
                         JSONObject res = (JSONObject) arr.get(0);
 
-                        // finally navigate to the chess screen
-                        Intent intent = new Intent(getActivity(), ChessScreen.class);
+                        // finally navigate to Resume Game PopUp
+                        Intent intent = new Intent(getActivity(), ResumeGamePopUp.class);
                         intent.putExtra("gameID", gameID);
-                        intent.putExtra("newGame", false);
-                        intent.putExtra("boardString", boardString);
+                        int[][] layout = parseBoard(boardString);
+
+                        intent.putExtra("resumedLayout", layout);
                         intent.putExtra("difficulty", (int) res.get("difficulty"));
                         startActivity(intent);
-                        Log.d("ChessScreen", response);
+
+                        Log.d("HomeScreen", response);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -222,9 +223,16 @@ public class HomeScreen extends Fragment {
         queue.add(stringRequest);
     }
 
-    private void showToast(String msg){
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    public int[][] parseBoard(String b) {
+        int[][] layout = new int[8][8];
+
+        // TODO: parse game board
+
+        return layout;
     }
 
+    private void showToast(String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
 
 }
