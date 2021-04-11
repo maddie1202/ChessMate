@@ -35,7 +35,8 @@ CREATE TABLE Results(
 	result int,
 	PRIMARY KEY(userID, gameID),
 	FOREIGN KEY (userID) REFERENCES User (userID) ON DELETE CASCADE,
-	FOREIGN KEY (gameID) REFERENCES Game (gameID) ON DELETE CASCADE
+	FOREIGN KEY (gameID) REFERENCES Game (gameID) ON DELETE CASCADE,
+	UNIQUE(gameID)
 );
 
 /* GoalsLookup(goalID, gameCount, gameDifficulty) */

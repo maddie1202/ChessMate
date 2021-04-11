@@ -7,7 +7,7 @@ const Move =function(move){
 //Add a possible move
 Move.create = (move, result) => {
     const attributes = "placements";
-    const values = move;
+    const values = "\'"+move+"\'";
     sql.query("INSERT INTO Move(" + attributes + ") VALUES(" + values + ")", (err, res) => {
         if(err){
             console.log("error: ", err);
