@@ -64,7 +64,7 @@ Game.findById = (gameID, result) => {
 //app.get("/getlatestgame/:userID", game.findLatest);
 // get game details
 Game.findLatest = (userID, result) => {
-    sql.query("SELECT * FROM Game g, Results r WHERE r.gameID = g.gameID AND r.userID=" + userID + "AND startDateTime = MAX(startDateTime) AND r.result <> 1 AND r.result <> -1 GROUP BY userID", (err, res) => {
+    sql.query("SELECT g.gameID FROM Game g, Results r WHERE r.gameID = g.gameID AND r.userID=\'" + userID + "\'AND r.result<>1 AND r.result<>-1 AND g.startDateTime >= ALL( SELECT Game.startDateTime FROM Game, Results WHERE Game.gameID = Results.gameID and userID \'= "+ userID + "\' AND result <> 1 AND r.result <> -1", (err, res) => {
         if(err){
             console.log("error from db: ", err);
             result(err, null);
