@@ -126,14 +126,15 @@ public class HomeScreen extends Fragment {
             public void onClick(View v) {
                 //TODO: change back to userid
                 getLatestGame("G2OqGHBvFogJrA56TaawC6WcUt72");
-                Intent intent = new Intent(getActivity(), ResumeGamePopUp.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
             }
         });
         return v;
     }
 
+    /**
+     * Gets the user's most recent UNFINISHED game in the database
+     * Calls getLatestBoard
+     */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void getLatestGame(String uid) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + uid;
@@ -170,6 +171,10 @@ public class HomeScreen extends Fragment {
         queue.add(stringRequest);
     }
 
+    /**
+     * Gets the most recent board for the game with gameID
+     * Calls getGameDetails
+     */
     public void getLatestBoard(int gameID) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgame/" + gameID;
 
@@ -202,6 +207,11 @@ public class HomeScreen extends Fragment {
         queue.add(stringRequest);
     }
 
+    /**
+     * - Gets the difficulty of the most recent unfinished game
+     * - Parses the most recent board into a 2D int array
+     * - Navigates to the Resume Game Popup
+     */
     public void getGameDetails(int gameID) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgamedetails/" + gameID;
 
@@ -215,6 +225,7 @@ public class HomeScreen extends Fragment {
                         // finally navigate to Resume Game PopUp
                         Intent intent = new Intent(getActivity(), ResumeGamePopUp.class);
                         intent.putExtra("gameID", gameID);
+                        Log.d("HomeScreen", "Resume game layout is: " + boardString);
                         int[][] layout = parseBoard(boardString);
 
                         intent.putExtra("resumedLayout", layout);
@@ -237,10 +248,12 @@ public class HomeScreen extends Fragment {
     public int[][] parseBoard(String b) {
         int[][] layout = new int[size][size];
         String[] boardString = b.split("\\s+");
+        Log.d("HomeScreen", "boardString length is: " + boardString.length);
 
         for (int j = 0; j < size; j++) {
             for (int k = 0; k < size; k++) {
                 layout[j][k] = Integer.parseInt(boardString[j * size + k]);
+                Log.d("HomeScreen", "Piece ID is: " + layout[j][k]);
             }
         }
 

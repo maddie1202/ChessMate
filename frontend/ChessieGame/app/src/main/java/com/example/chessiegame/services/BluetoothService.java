@@ -108,7 +108,7 @@ public class BluetoothService extends Service {
             if (btThread != null) {
                 byte[] data = intent.getExtras().getByteArray("userMove");
                 assert data != null;
-                Log.d("Bluetooth Service", "Received user move: " + new String(data));
+                //Log.d("Bluetooth Service", "Received user move: " + new String(data));
                 btThread.write(data);
                 Log.d("Bluetooth Service", "User move sent to btThread");
 

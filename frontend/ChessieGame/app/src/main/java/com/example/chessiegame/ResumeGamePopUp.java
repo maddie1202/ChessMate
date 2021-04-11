@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -74,7 +75,7 @@ public class ResumeGamePopUp extends Activity {
         Intent intent = new Intent(ResumeGamePopUp.this, ChessScreen.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.putExtra("gameID", gameID);
-        //intent.putExtra("resumedLayout", layout);
+        intent.putExtra("resumedLayout", layout);
         intent.putExtra("newGame", false);
         intent.putExtra("difficulty", difficulty);
         startActivity(intent);

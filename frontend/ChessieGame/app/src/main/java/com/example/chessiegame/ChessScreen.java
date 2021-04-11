@@ -66,7 +66,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     private static final int REQUEST_DISCOVER_BT = 1;
     BluetoothAdapter mBlueAdapter;
     BTReceiver btReceiver;
-    TextView paired_devices;
     boolean err;
 
     private FirebaseAuth mAuth;
@@ -132,7 +131,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         setContentView(R.layout.activity_chess_screen);
 
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
-        paired_devices = (TextView) findViewById(R.id.paired_devices);
         btReceiver = new BTReceiver(new Handler());
         err = false;
 
@@ -401,21 +399,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         return board;
     }
 
-
-    //Takes a list with all possible moves that a player can make, the move that player wants to make
-    //Returns if the move is valid or not
-    boolean isMoveValid(List<Character> move_list, Move pmove){
-
-        Piece p = mockMove(pmove);
-        int[][] presentBoard = boardToIntArray();
-        if (move_list.contains(presentBoard)){
-            return true;
-        }
-
-        undoMove(pmove, p);
-        return false;
-    }
-
     /**
      * Converts the current board into a String and send to the DB
      */
@@ -460,31 +443,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         queue.add(jsonObjectRequest);
 
         return boardMoves;
-    }
-
-    //Apply a move to our board
-    void applyMoveToBoard(Move move){
-        Piece empty = new Piece (this, move.getInit_row(), move.getInit_col(), "empty", (char) 0);
-        tiles[move.getInit_col()][move.getInit_row()].setPiece(empty);
-        tiles[move.getDest_col()][move.getDest_row()].setPiece(move.getPiece());
-    }
-
-    //Mock how the board would be if we applied the move
-    //Returns the piece that was on the tile that we put our piece
-    Piece mockMove(Move move){
-        Piece empty = new Piece (this, move.getInit_row(), move.getInit_col(), "empty", (char) 0);
-        tiles[move.getInit_col()][move.getInit_row()].setPiece(empty);
-        Piece ret = tiles[move.getDest_col()][move.getDest_row()].getPiece();
-        tiles[move.getDest_col()][move.getDest_row()].setPiece(move.getPiece());
-        return ret;
-    }
-
-
-    void undoMove(Move move, Piece p){
-        //Set the intial piece back to its intial positions
-        tiles[move.getInit_col()][move.getInit_row()].setPiece(move.getPiece());
-        //Set the piece that used to be in the board back to its positions
-        tiles[move.getDest_col()][move.getDest_row()].setPiece(p);
     }
 
     public void initChessboard(boolean newGame, int[][] resumedLayout) {
@@ -588,6 +546,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     if (resumedLayout[i][j] != 0) { // there is a piece on this tile
                         int id = resumedLayout[i][j];
                         p = new Piece(this, i, j, "", id);
+                        Log.d("ChessScreen", "Piece ID is: " + id);
                         p.setImageResource(imageMap.get(id));
                     }
                 }
