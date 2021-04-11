@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,11 +15,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChessieGame"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ReplayPastGamesScreen"></activity>
+        <activity android:name=".ResumeGamePopUp"></activity>
+        <activity android:name=".ReplayPastGamesScreen" />
         <activity android:name=".ChessScreen" />
+
         <service
             android:name=".services.BluetoothService"
-            android:exported="false"></service>
+            android:exported="false" />
+
         <activity android:name=".HomeActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -35,9 +37,7 @@
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-
-
+            android:value="@string/facebook_app_id" />
     </application>
 
 </manifest>

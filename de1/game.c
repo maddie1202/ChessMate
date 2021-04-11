@@ -71,10 +71,10 @@ game_t *init_game()
     return game;
 }
 
-void init_and_set_game()
-{
-    current_game = init_game();
-}
+// void init_and_set_game()
+// {
+//     current_game = init_game();
+// }
 
 game_t *copy_game_replace_board(game_t *old_game, board_t *new_board)
 {
@@ -89,11 +89,6 @@ game_t *copy_game_replace_board(game_t *old_game, board_t *new_board)
     game->brook1_has_moved = old_game->brook1_has_moved;
 
     return game;
-}
-
-void destroy_board()
-{
-    if (current_game != NULL) free(current_game);
 }
 
 void destroy_game(game_t *game)

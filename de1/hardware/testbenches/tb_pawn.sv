@@ -167,14 +167,14 @@ module tb_pawn();
         slave_write = 1;
         slave_address = 4'd4;
         slave_writedata = 32'd1;
-        #10;
+        #20;
         wait(slave_waitrequest == 0);
 
         // write to address 0 to start
         slave_write = 1;
         slave_address = 4'd0;
         #20;
-        wait(slave_waitrequest == 0);
+        // wait(slave_waitrequest == 0);
 
         // read from address 0 to wait for completion
         slave_write = 0;
@@ -198,9 +198,9 @@ module tb_pawn();
         forever begin
             #5;
             if (master_write) begin
-                write_mem[master_address] = master_writedata;
+                write_mem[master_address / 4] = master_writedata;
             end else if (master_read) begin
-                master_readdata = read_mem[master_address];
+                master_readdata = read_mem[master_address / 4];
             end 
         end
     end

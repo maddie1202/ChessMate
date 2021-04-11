@@ -36,7 +36,7 @@ public class BoardMap {
             imageMap.put(i, R.drawable.wqueen); // wqueen
         }
 
-        imageMap.put(48, 700035); // wking
+        imageMap.put(48, R.drawable.wking); // wking
 
         for (int i = -1; i > -9; i--) {
             imageMap.put(i, R.drawable.bpawn); // bpawn

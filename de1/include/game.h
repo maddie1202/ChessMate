@@ -148,12 +148,11 @@ extern char bbishops[NUM_BISHOPS];
 extern char wqueens[NUM_QUEENS];
 extern char bqueens[NUM_QUEENS];
 
-game_t* current_game;
+//game_t* current_game;
 
 board_t* init_board();
-void init_and_set_board();
+//void init_and_set_board();
 board_t* copy_board(board_t* original);
-void destroy_board();
 game_t *init_game();
 game_t *copy_game_replace_board(game_t *old_game, board_t *new_board);
 void destroy_game(game_t *game);

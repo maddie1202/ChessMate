@@ -1,5 +1,6 @@
 package com.example.chessiegame;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -7,11 +8,16 @@ import android.os.Bundle;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +37,8 @@ import org.json.JSONObject;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link HomeScreen#newInstance} factory method to
@@ -45,12 +53,12 @@ public class HomeScreen extends Fragment {
     private String mParam1;
     private String mParam2;
 
-
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private RequestQueue queue;
     private int gameID;
     public String boardString;
+    private final int size = 8;
 
     public int id;
     private Button start;
@@ -85,6 +93,7 @@ public class HomeScreen extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
@@ -92,9 +101,7 @@ public class HomeScreen extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         id = container.getId();
-
         View v = inflater.inflate(R.layout.fragment_home_screen, container, false);
-
         start = v.findViewById(R.id.start_new_game);
         resume = v.findViewById(R.id.resume_previous);
 
@@ -103,26 +110,31 @@ public class HomeScreen extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
+
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(getActivity(), PopDifficulty.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
             }
         });
-
         resume.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
-                getLatestGame(user.getUid());
+                //TODO: change back to userid
+                getLatestGame("G2OqGHBvFogJrA56TaawC6WcUt72");
             }
         });
-
         return v;
     }
 
+    /**
+     * Gets the user's most recent UNFINISHED game in the database
+     * Calls getLatestBoard
+     */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void getLatestGame(String uid) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + uid;
@@ -159,6 +171,10 @@ public class HomeScreen extends Fragment {
         queue.add(stringRequest);
     }
 
+    /**
+     * Gets the most recent board for the game with gameID
+     * Calls getGameDetails
+     */
     public void getLatestBoard(int gameID) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgame/" + gameID;
 
@@ -171,9 +187,8 @@ public class HomeScreen extends Fragment {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject j = jsonArray.getJSONObject(i);
                             // get the max sequenceNumber to find the most recent board
-                            // TODO: change sequenceNum -> boardID after DB is changed
-                            if ((int) j.get("sequenceNumber") > maxNum) {
-                                maxNum = (int) j.get("sequenceNumber");
+                            if ((int) j.get("boardID") > maxNum) {
+                                maxNum = (int) j.get("boardID");
                                 boardString = (String) j.get("placements");
                             }
                         }
@@ -192,6 +207,11 @@ public class HomeScreen extends Fragment {
         queue.add(stringRequest);
     }
 
+    /**
+     * - Gets the difficulty of the most recent unfinished game
+     * - Parses the most recent board into a 2D int array
+     * - Navigates to the Resume Game Popup
+     */
     public void getGameDetails(int gameID) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgamedetails/" + gameID;
 
@@ -202,14 +222,17 @@ public class HomeScreen extends Fragment {
                         JSONArray arr = new JSONArray(response);
                         JSONObject res = (JSONObject) arr.get(0);
 
-                        // finally navigate to the chess screen
-                        Intent intent = new Intent(getActivity(), ChessScreen.class);
+                        // finally navigate to Resume Game PopUp
+                        Intent intent = new Intent(getActivity(), ResumeGamePopUp.class);
                         intent.putExtra("gameID", gameID);
-                        intent.putExtra("newGame", false);
-                        intent.putExtra("boardString", boardString);
+                        Log.d("HomeScreen", "Resume game layout is: " + boardString);
+                        int[][] layout = parseBoard(boardString);
+
+                        intent.putExtra("resumedLayout", layout);
                         intent.putExtra("difficulty", (int) res.get("difficulty"));
                         startActivity(intent);
-                        Log.d("ChessScreen", response);
+
+                        Log.d("HomeScreen", response);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -222,9 +245,23 @@ public class HomeScreen extends Fragment {
         queue.add(stringRequest);
     }
 
-    private void showToast(String msg){
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    public int[][] parseBoard(String b) {
+        int[][] layout = new int[size][size];
+        String[] boardString = b.split("\\s+");
+        Log.d("HomeScreen", "boardString length is: " + boardString.length);
+
+        for (int j = 0; j < size; j++) {
+            for (int k = 0; k < size; k++) {
+                layout[j][k] = Integer.parseInt(boardString[j * size + k]);
+                Log.d("HomeScreen", "Piece ID is: " + layout[j][k]);
+            }
+        }
+
+        return layout;
     }
 
+    private void showToast(String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
 
 }
