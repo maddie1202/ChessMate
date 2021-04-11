@@ -18,10 +18,15 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -194,6 +199,15 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         bti.putExtra("userMove", btTest.getBytes());
         startService(bti);
 
+
+        Button pause = (Button) findViewById(R.id.pause_button);
+        pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onButtonShowPopUp(view);
+            }
+        });
+
         /*
 
         Button b = (Button) findViewById(R.id.button);
@@ -243,6 +257,28 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         }.start();
 
     }
+
+    public void onButtonShowPopUp(View view){
+
+        // inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.pause_game, null);
+
+        ImageButton closeButton3 = (ImageButton) findViewById(R.id.close_button2);
+
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // show the popup window
+        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+    }
+
 
     /*
 
