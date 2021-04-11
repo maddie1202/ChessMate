@@ -33,6 +33,7 @@ void play_game()
                 break;
             case WAIT_MOVE: 
                 printf("WAIT_MOVE\n");
+                printf("%d\n", game_id);
                 if (receive_move(game, game_id)) {
                     state = SEND_MOVE;
                 } else if (pause_game()) {
