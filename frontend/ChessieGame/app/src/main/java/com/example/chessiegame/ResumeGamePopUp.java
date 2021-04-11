@@ -25,6 +25,7 @@ public class ResumeGamePopUp extends AppCompatActivity {
         Intent intent = new Intent(getActivity(), ChessScreen.class);
         intent.putExtra("gameID", gameID);
         intent.putExtra("resumedLayout", layout);
+        intent.putExtra("newGame", false);
         intent.putExtra("difficulty", difficulty);
         startActivity(intent);
         */

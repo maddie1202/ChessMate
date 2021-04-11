@@ -51,6 +51,7 @@ public class HomeScreen extends Fragment {
     private RequestQueue queue;
     private int gameID;
     public String boardString;
+    private final int size = 8;
 
     public int id;
     private Button start;
@@ -224,9 +225,14 @@ public class HomeScreen extends Fragment {
     }
 
     public int[][] parseBoard(String b) {
-        int[][] layout = new int[8][8];
+        int[][] layout = new int[size][size];
+        String[] boardString = b.split("\\s+");
 
-        // TODO: parse game board
+        for (int j = 0; j < size; j++) {
+            for (int k = 0; k < size; k++) {
+                layout[j][k] = Integer.parseInt(boardString[j * size + k]);
+            }
+        }
 
         return layout;
     }
