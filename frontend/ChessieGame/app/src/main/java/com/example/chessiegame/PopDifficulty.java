@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -109,6 +110,9 @@ public class PopDifficulty extends Activity {
                         skill = difficulty;
 
                         // TODO: prompt user to enter gameID on switches and key with textViews
+
+                       TextView game = (TextView)findViewById(R.id.gameID);
+                       game.setText("The game id is " + gameID);
                         // they will then press the start button on app to begin the game
 
                     } catch (JSONException e) {
