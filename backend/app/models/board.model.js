@@ -85,7 +85,7 @@ Board.findById = (boardID, result) => {
 //Retrive latest board with gameID
 //app.get("/getlatestboard/:gameID", board.findLatest);
 Board.findLatest = (gameID, result) => {
-    sql.query("SELECT * FROM Board WHERE gameID = " + gameID + "AND sequenceNumber = MAX(sequenceNumber) GROUP BY gameID", (err, res) => {
+    sql.query("SELECT * FROM Board WHERE gameID = " + gameID + " AND sequenceNumber >= ALL (SELECT MAX(sequenceNumber) FROM Board WHERE gameID = " + gameID + "GROUP BY gameID)", (err, res) => {
         if(err) {
             console.log("error: ", err);
             result(null, err);
