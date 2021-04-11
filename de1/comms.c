@@ -27,6 +27,7 @@ bool start_new_game(int *game_id)
 
     if (PBreleases == KEY0) {
         *game_id = *switches_addr;
+        *pb_edgecapture_addr = 0;
         return true;
     } 
 
@@ -35,6 +36,14 @@ bool start_new_game(int *game_id)
 
 bool resume_old_game(game_t *game, int *game_id)
 {
+    long PBreleases = *pb_edgecapture_addr;
+
+    if (PBreleases == KEY2) {
+        *game_id = *switches_addr;
+        *pb_edgecapture_addr = 0;
+        return true;
+    } 
+
     return false;
 }
 
