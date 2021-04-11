@@ -216,7 +216,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
          */
 
-
         new CountDownTimer(600000, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -641,7 +640,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 ViewGroup owner = (ViewGroup) vw.getParent();
                 owner.removeView(vw); //remove the dragged view
 
-                // TODO: if a piece eats another piece, kick out the old one
                 // start updating tiles[][] with new arrangement
                 Tile t = (Tile) v;
                 int c = t.id % 8;

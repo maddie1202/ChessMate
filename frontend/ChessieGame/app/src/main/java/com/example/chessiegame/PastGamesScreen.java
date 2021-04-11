@@ -132,7 +132,7 @@ public class PastGamesScreen extends Fragment {
         boards = new HashMap<>();
 
         //TODO: change this back to user.getUid() for final - leave this for now
-        fetchPastGames("G2OqGHBvFogJrA56TaawC6WcUt72");
+        fetchPastGames(user.getUid());
 
         return v;
     }
