@@ -25,7 +25,8 @@ CREATE TABLE Board(
     gameID int NOT NULL,
     sequenceNumber int NOT NULL,
     PRIMARY KEY (boardID),
-    FOREIGN KEY (gameID) REFERENCES Game (gameID) ON DELETE CASCADE
+    FOREIGN KEY (gameID) REFERENCES Game (gameID) ON DELETE CASCADE,
+    UNIQUE(gameID, sequenceNumber)
 );
 
 /* Results(userID, gameID, result) */
