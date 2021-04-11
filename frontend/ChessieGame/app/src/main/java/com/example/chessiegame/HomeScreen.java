@@ -181,7 +181,11 @@ public class HomeScreen extends Fragment {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                  */
-                onButtonShowPopUp(v);
+               // onButtonShowPopUp(v);
+
+                Intent intent = new Intent(getActivity(), PopDifficulty.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
             }
         });
         return v;
