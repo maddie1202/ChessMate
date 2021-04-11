@@ -60,3 +60,5 @@ Move.removeAll = (result) => {
         result(null, res);
     });
 };
+
+module.exports = Move;
