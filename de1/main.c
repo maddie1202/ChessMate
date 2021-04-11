@@ -23,7 +23,7 @@ void play_game()
 
         switch (state) {
             case WAIT_GAME: 
-                printf("WAIT_GAME\N");
+                printf("WAIT_GAME\n");
                 if (start_new_game(&game_id)) {
                     send_ack_start_game();
                     state = WAIT_MOVE;
@@ -32,7 +32,7 @@ void play_game()
                 }
                 break;
             case WAIT_MOVE: 
-                printf("WAIT_MOVE\N");
+                printf("WAIT_MOVE\n");
                 if (receive_move(game, game_id)) {
                     state = SEND_MOVE;
                 } else if (pause_game()) {
@@ -40,7 +40,7 @@ void play_game()
                 }
                 break;
             case SEND_MOVE:
-                printf("SEND_MOVE\N");
+                printf("SEND_MOVE\n");
                 game->board = generate_ai_move(game, BLACK, 3);
                 move_list_t *possible_player_moves = generate_all_moves(game, WHITE);
 
