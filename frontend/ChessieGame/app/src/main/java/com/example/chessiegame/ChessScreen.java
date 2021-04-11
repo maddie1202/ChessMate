@@ -200,14 +200,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         startService(bti);
 
 
-        Button pause = (Button) findViewById(R.id.pause_button);
-        pause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onButtonShowPopUp(view);
-            }
-        });
-
         /*
 
         Button b = (Button) findViewById(R.id.button);
@@ -229,7 +221,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         });
 
          */
-
 
         new CountDownTimer(600000, 1000) {
 
@@ -256,7 +247,16 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             }
         }.start();
 
+        Button pause = (Button) findViewById(R.id.pause_button);
+        pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onButtonShowPopUp(view);
+            }
+        });
+
     }
+
 
     public void onButtonShowPopUp(View view){
 
@@ -271,7 +271,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         boolean focusable = true; // lets taps outside the popup also dismiss it
-        PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+        PopupWindow popupWindow = new PopupWindow(popupView, width, 2*(height)/3, focusable);
 
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window tolken

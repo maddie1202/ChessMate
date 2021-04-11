@@ -8,12 +8,14 @@ import android.os.Bundle;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -63,8 +65,10 @@ public class HomeScreen extends Fragment {
     private Button start;
     private Button resume;
 
-    PopupWindow popUpStart;
+    //PopupWindow popUpStart;
 
+    public int difficulty;
+    public int[][] layout;
 
     public HomeScreen() {
         // Required empty public constructor
@@ -97,6 +101,25 @@ public class HomeScreen extends Fragment {
         }
 
 
+        /*
+        DisplayMetrics dm = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+        getActivity().getWindow().setLayout((int) (width*.9), (int) (height*.9));
+         */
+
+    }
+
+    private void navigateToChess(int gameID, int difficulty) {
+        Intent intent = new Intent(getContext(), ChessScreen.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        intent.putExtra("gameID", gameID);
+        intent.putExtra("resumedLayout", layout);
+        intent.putExtra("newGame", false);
+        intent.putExtra("difficulty", difficulty);
+        startActivity(intent);
+        getActivity().overridePendingTransition(0,0);
     }
 
     @Override
@@ -104,9 +127,7 @@ public class HomeScreen extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         id = container.getId();
-
         View v = inflater.inflate(R.layout.fragment_home_screen, container, false);
-
         start = v.findViewById(R.id.start_new_game);
         resume = v.findViewById(R.id.resume_previous);
 
@@ -115,8 +136,7 @@ public class HomeScreen extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
-
-        popUpStart = new PopupWindow(getContext());
+       // popUpStart = new PopupWindow(getContext());
 
         /*
         LinearLayout layout = new LinearLayout(getContext());
@@ -161,11 +181,9 @@ public class HomeScreen extends Fragment {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                  */
-
                 onButtonShowPopUp(v);
             }
         });
-
         return v;
     }
 
@@ -176,7 +194,7 @@ public class HomeScreen extends Fragment {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.fragment_difficulty_set, null);
+        View popupView = inflater.inflate(R.layout.activity_resume_game_pop_up, null);
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -187,6 +205,36 @@ public class HomeScreen extends Fragment {
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window tolken
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+
+        /*
+        gameID = getActivity().getIntent().getIntExtra("gameID", 0);
+        difficulty = getActivity().getIntent().getIntExtra("difficulty", 0);
+        layout = (int[][]) getActivity().getIntent().getSerializableExtra("resumedLayout");
+
+        ImageButton closeButton2 = (ImageButton) getActivity().findViewById(R.id.close_button2);
+        Button startGame = (Button) getActivity().findViewById(R.id.start_button2);
+
+        closeButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                getActivity().overridePendingTransition(0,0);
+            }
+        });
+
+        startGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (gameID != -1 && difficulty != -1) {
+                    navigateToChess(gameID, difficulty);
+                }
+            }
+        });
+
+         */
     }
 
 
