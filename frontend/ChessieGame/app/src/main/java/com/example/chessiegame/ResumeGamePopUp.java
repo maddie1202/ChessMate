@@ -1,7 +1,5 @@
 package com.example.chessiegame;
 
-
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +15,7 @@ public class ResumeGamePopUp extends Activity {
     public int gameID;
     public int difficulty;
     public int[][] layout;
+    public int sequenceNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,17 +32,9 @@ public class ResumeGamePopUp extends Activity {
         gameID = getIntent().getIntExtra("gameID", 0);
         difficulty = getIntent().getIntExtra("difficulty", 0);
         layout = (int[][]) getIntent().getSerializableExtra("resumedLayout");
+        sequenceNum = getIntent().getIntExtra("sequenceNum", 0);
 
         // TODO: show gameID in binary, get user to set switches, then press KEY2, then press start
-
-        /* When navigating to chessscreen:
-        Intent intent = new Intent(getActivity(), ChessScreen.class);
-        intent.putExtra("gameID", gameID);
-        intent.putExtra("resumedLayout", layout);
-        intent.putExtra("newGame", false);
-        intent.putExtra("difficulty", difficulty);
-        startActivity(intent);
-        */
 
         ImageButton closeButton = (ImageButton) findViewById(R.id.close_button2);
         Button startGame = (Button) findViewById(R.id.start_button2);
@@ -64,8 +55,10 @@ public class ResumeGamePopUp extends Activity {
         startGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (gameID != -1 && difficulty != -1) {
+                if (gameID != 0 && difficulty != 0 && layout.length == 8) {
                     navigateToChess(gameID, difficulty);
+                } else {
+                    Log.d("ResumeGamePopUp", "Unable to resume game");
                 }
             }
         });
@@ -78,6 +71,7 @@ public class ResumeGamePopUp extends Activity {
         intent.putExtra("resumedLayout", layout);
         intent.putExtra("newGame", false);
         intent.putExtra("difficulty", difficulty);
+        intent.putExtra("sequenceNum", sequenceNum);
         startActivity(intent);
         overridePendingTransition(0,0);
     }
