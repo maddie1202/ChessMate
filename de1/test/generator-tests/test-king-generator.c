@@ -268,116 +268,10 @@ static void king_test2()
 }
 
 /* TEST 3: 
- * King is in check and must move
- * Tests both black and white kings
- */
-static void king_test3()
-{
-    board_t curr = {
-            {WROOK0,   WKNIGHT0, EMPTY,  WQUEEN0,   EMPTY,    EMPTY,    WKNIGHT1, WROOK1},
-            {WPAWN0,   EMPTY,    EMPTY,  WPAWN3,   EMPTY,    EMPTY,    WPAWN6,   WPAWN7},       
-            {WBISHOP0, WPAWN1,   WPAWN2, WBISHOP1, EMPTY,    WPAWN5,   EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,    EMPTY,  EMPTY,    WPAWN4,   WKING,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,    BKING,  BPAWN3,   EMPTY,    EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,    BPAWN2, EMPTY,    BBISHOP0, BPAWN5,   BPAWN6,   BBISHOP1},
-            {BPAWN0,   BPAWN1,   EMPTY,  EMPTY,    BPAWN4,   EMPTY,    EMPTY,    BPAWN7},
-            {BROOK0,   BKNIGHT0, EMPTY,  BQUEEN0,   EMPTY,    EMPTY,    BKNIGHT1, BROOK1}
-        };
-
-    // NOTE: WKING can't move to (2, 4), (4, 4), (5, 4), (6, 4), or (6, 3) since it would still be in check    
-
-    // move WKING diagonally from (5, 3) to (6, 2)
-    board_t* w_expected1 = copy_board(&curr);
-    move_piece(w_expected1, WKING, 6, 2);
-
-    move_list_t w_expected;
-    board_t* w_expected_moves[1] = {w_expected1};
-    w_expected.moves = w_expected_moves;
-    w_expected.num_moves = 1;
-
-    // generate WKING moves
-    move_list_t *w_actual = generate_king_moves(&curr, WKING);
-
-    // NOTE: BKING can't move to (3, 5), (3, 3), (2, 3), (1, 3), or (1, 4) since it would still be in check
-
-    // move BKING diagonally from (2, 4) to (1, 5)
-    board_t* b_expected1 = copy_board(&curr);
-    move_piece(b_expected1, BKING, 1, 5);
-
-    move_list_t b_expected;
-    board_t* b_expected_moves[1] = {b_expected1};
-    b_expected.moves = b_expected_moves;
-    b_expected.num_moves = 1;
-
-    // generate BKING moves
-    move_list_t *b_actual = generate_king_moves(&curr, BKING);
-
-    // CMP boards
-    test_result_t w_result = board_list_equals(&w_expected, w_actual);
-    test_result_t b_result = board_list_equals(&b_expected, b_actual);
-
-    // display results
-    print_test_result(w_result, __func__);
-    print_test_result(b_result, __func__);
-
-    // free generated boards
-    free(w_expected1);
-    free(b_expected1);
-    destroy_move_list(w_actual);
-    destroy_move_list(b_actual);
-}
-
-/* TEST 4: 
- * No possible moves (checkmate)
- * Tests both black and white kings
- */
-static void king_test4()
-{
-    board_t curr = {
-            {WROOK0,   WKNIGHT0, EMPTY,  WQUEEN0,   EMPTY,    EMPTY,    WKNIGHT1, WROOK1},
-            {WPAWN0,   EMPTY,    EMPTY,  WPAWN3,   EMPTY,    EMPTY,    EMPTY,    WPAWN7},       
-            {WBISHOP0, WPAWN1,   WPAWN2, WBISHOP1, EMPTY,    WPAWN5,   WPAWN6,   EMPTY},
-            {EMPTY,    EMPTY,    EMPTY,  EMPTY,    WPAWN4,   WKING,    EMPTY,    EMPTY},
-            {EMPTY,    EMPTY,    BKING,  BPAWN3,   EMPTY,    EMPTY,    EMPTY,    EMPTY},
-            {EMPTY,    BPAWN1,   BPAWN2, EMPTY,    BBISHOP0, BPAWN5,   BPAWN6,   BBISHOP1},
-            {BPAWN0,   EMPTY,    EMPTY,  EMPTY,    BPAWN4,   EMPTY,    EMPTY,    BPAWN7},
-            {BROOK0,   BKNIGHT0, EMPTY,  BQUEEN0,   EMPTY,    EMPTY,    BKNIGHT1, BROOK1}
-        };
-
-    move_list_t w_expected;
-    board_t* w_expected_moves[0];
-    w_expected.moves = w_expected_moves;
-    w_expected.num_moves = 0;
-
-    // generate WKING moves
-    move_list_t *w_actual = generate_king_moves(&curr, WKING);
-
-    move_list_t b_expected;
-    board_t* b_expected_moves[0];
-    b_expected.moves = b_expected_moves;
-    b_expected.num_moves = 0;
-
-    // generate BKING moves
-    move_list_t *b_actual = generate_king_moves(&curr, BKING);
-
-    // CMP boards
-    test_result_t w_result = board_list_equals(&w_expected, w_actual);
-    test_result_t b_result = board_list_equals(&b_expected, b_actual);
-
-    // display results
-    print_test_result(w_result, __func__);
-    print_test_result(b_result, __func__);
-
-    // free generated boards
-    destroy_move_list(w_actual);
-    destroy_move_list(b_actual);
-}
-
-/* TEST 5: 
  * Tries to run the king generator on other pieces
  * Tests both black and white kings
  */
-static void king_test5()
+static void king_test3()
 {
     board_t *curr = init_board();
 
@@ -415,8 +309,5 @@ void test_king_generator()
     king_test0();
     king_test1();
     king_test2();
-    // NOTE: the tests below deal with check/checkmate, which haven't been implemented yet
-//     king_test3();
-//     king_test4();
-    king_test5();
+    king_test3();
 }
