@@ -53,7 +53,6 @@ public class HomeScreen extends Fragment {
     private String mParam1;
     private String mParam2;
 
-
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private RequestQueue queue;
@@ -64,11 +63,6 @@ public class HomeScreen extends Fragment {
     public int id;
     private Button start;
     private Button resume;
-
-    //PopupWindow popUpStart;
-
-    public int difficulty;
-    public int[][] layout;
 
     public HomeScreen() {
         // Required empty public constructor
@@ -100,26 +94,6 @@ public class HomeScreen extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
-        /*
-        DisplayMetrics dm = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
-        getActivity().getWindow().setLayout((int) (width*.9), (int) (height*.9));
-         */
-
-    }
-
-    private void navigateToChess(int gameID, int difficulty) {
-        Intent intent = new Intent(getContext(), ChessScreen.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        intent.putExtra("gameID", gameID);
-        intent.putExtra("resumedLayout", layout);
-        intent.putExtra("newGame", false);
-        intent.putExtra("difficulty", difficulty);
-        startActivity(intent);
-        getActivity().overridePendingTransition(0,0);
     }
 
     @Override
@@ -136,14 +110,6 @@ public class HomeScreen extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
-       // popUpStart = new PopupWindow(getContext());
-
-        /*
-        LinearLayout layout = new LinearLayout(getContext());
-        LinearLayout mainLayout = new LinearLayout(getContext());
-        TextView tv = new TextView(getContext());
-
-         */
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,97 +118,21 @@ public class HomeScreen extends Fragment {
                 Intent intent = new Intent(getActivity(), PopDifficulty.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
-
-
-                /*
-                popUpStart.showAtLocation(layout, Gravity.BOTTOM, 10, 10);
-                popUpStart.update(50, 50, 300, 80);
-
-                 */
-
             }
         });
-        /*
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        tv.setText("Hi this is a sample text for popup window");
-        layout.addView(tv, params);
-        popUpStart.setContentView(layout);
-
-         */
         resume.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
-                /*
-                getLatestGame(user.getUid());
+                //TODO: change back to userid
+                getLatestGame("G2OqGHBvFogJrA56TaawC6WcUt72");
                 Intent intent = new Intent(getActivity(), ResumeGamePopUp.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                 */
-               // onButtonShowPopUp(v);
-
-                Intent intent = new Intent(getActivity(), PopDifficulty.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
             }
         });
         return v;
     }
-
-
-
-    public void onButtonShowPopUp(View view){
-
-        // inflate the layout of the popup window
-        LayoutInflater inflater = (LayoutInflater)
-                getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.activity_resume_game_pop_up, null);
-
-        // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-
-        /*
-        gameID = getActivity().getIntent().getIntExtra("gameID", 0);
-        difficulty = getActivity().getIntent().getIntExtra("difficulty", 0);
-        layout = (int[][]) getActivity().getIntent().getSerializableExtra("resumedLayout");
-
-        ImageButton closeButton2 = (ImageButton) getActivity().findViewById(R.id.close_button2);
-        Button startGame = (Button) getActivity().findViewById(R.id.start_button2);
-
-        closeButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                getActivity().overridePendingTransition(0,0);
-            }
-        });
-
-        startGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (gameID != -1 && difficulty != -1) {
-                    navigateToChess(gameID, difficulty);
-                }
-            }
-        });
-
-         */
-    }
-
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void getLatestGame(String uid) {
