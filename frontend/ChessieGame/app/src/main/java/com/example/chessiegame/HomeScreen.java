@@ -118,6 +118,9 @@ public class HomeScreen extends Fragment {
             @Override
             public void onClick(View v) {
                 getLatestGame(user.getUid());
+                Intent intent = new Intent(getActivity(), ResumeGamePopUp.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
             }
         });
 
