@@ -95,7 +95,7 @@ public class PastGamesScreen extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment PastGamesScreen.
      */
-    // TODO: Rename and change types and number of parameters
+
     public static PastGamesScreen newInstance(String param1, String param2) {
         PastGamesScreen fragment = new PastGamesScreen();
         Bundle args = new Bundle();
@@ -131,7 +131,6 @@ public class PastGamesScreen extends Fragment {
         gameIDList = new ArrayList<>();
         boards = new HashMap<>();
 
-        //TODO: change this back to user.getUid() for final - leave this for now
         fetchPastGames(user.getUid());
 
         return v;
@@ -264,9 +263,7 @@ public class PastGamesScreen extends Fragment {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     try {
-                        JSONArray arr = new JSONArray(response);
-                        // TODO: sort arr by increasing boardID, get string placements in that order, map to int array
-                        // TODO: figure out decoding of boards, delete invalid placements from the db
+                        JSONArray arr = new JSONArray(response); // boards are sorted by increasing boardID
                         for (int i = 0; i < arr.length(); i++) {
                             JSONObject board = arr.getJSONObject(i);
 
