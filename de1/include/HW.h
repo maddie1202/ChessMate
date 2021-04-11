@@ -11,6 +11,10 @@
 #define lw_bridge_offset 0xFF200000
 #define lw_bridge_span 0x00005000
 
+#define push_buttons_offset 0x0010
+#define pb_edgecapture_offset 0x001C
+#define leds_offset 0x0020
+
 extern int lw_fd, sdram_fd;
 extern void *lw_virtual, *sdram_virtual;
 

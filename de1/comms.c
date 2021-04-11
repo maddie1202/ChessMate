@@ -1,24 +1,30 @@
 #include "include/comms.h"
 #include "include/game.h"
 #include "include/possible-move-generators.h"
+#include "include/HW.h"
 #include <stdbool.h>
+
+volatile int *pb_edgecapture_addr;
+volatile int *leds_addr;
 
 void init_hardware()
 {
-    *PB_EDGECAPTURE = 0;
+    pb_edgecapture_addr = (volatile int *)(lw_virtual + pb_edgecapture_offset);
+    leds_addr = (volatile int *)(lw_virtual + leds_offset);
+    *pb_edgecapture_addr = 0;
 }
 
 bool start_new_game(int *game_id)
 {
-    long PBreleases = *PB_EDGECAPTURE;
+    long PBreleases = *pb_edgecapture_addr;
 
     // Display the state of the change register on red LEDs
-    *RLEDs = PBreleases;
+    *leds_addr = PBreleases;
     if (PBreleases)
     {
         // Delay, so that we can observe the change on the LEDs
         for (int i = 0; i < 10000000; i++);
-        *PB_EDGECAPTURE = 0; //reset the changes for next round
+        *pb_edgecapture_addr = 0; //reset the changes for next round
     }
 
     return false;

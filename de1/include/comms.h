@@ -2,9 +2,6 @@
 #include "possible-move-generators.h"
 #include <stdbool.h>
 
-#define PB_EDGECAPTURE ((volatile long *) 0xFF200010)
-#define RLEDs ((volatile long *) 0xFF200020)
-
 enum game_state {WAIT_GAME, WAIT_MOVE, SEND_MOVE};
 
 void init_hardware();
