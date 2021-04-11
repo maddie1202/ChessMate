@@ -77,7 +77,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     public Tile[][] tiles;
     public int[][] AIMove; // incoming board layout
     public int gameID;
-    public HashSet<Integer[][]> validMoves; // set of all valid player move boards
+    public HashSet<int[][]> validMoves; // set of all valid player move boards
     private final int rows = 8;
     private final int cols = 8;
     private final int word = 4;
@@ -87,6 +87,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     private boolean newGameFlag;
     private boolean resumeGameFlag;
     private boolean pauseGameFlag;
+    private int gameResult;
+    private int sequenceNum;
 
     boolean start_game_ack = false;
     boolean game_over = false;
@@ -98,7 +100,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     boolean wking_moved = false;
     boolean bking_moved = false;
     int num_player_moves;
-
 
     //TODO: notes
     // on resume, send the player's last move (second most recent board in DB) and send to DE1 to get possible moves
@@ -122,7 +123,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             timerHandler.postDelayed(this, 500);
         }
     };
-
      */
 
     @Override
@@ -139,23 +139,25 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         user = mAuth.getCurrentUser();
 
         gameID = getIntent().getIntExtra("gameID", 0);
-        resumedLayout = new int[rows][cols];
+        resumedLayout = new int[rows][cols]; // layout of game in progress
         resumedLayout = (int[][]) getIntent().getSerializableExtra("resumedLayout");
         tiles = new Tile[rows][cols];
         AIMove = new int[rows][cols];
         chessBoard = findViewById(R.id.chess);
         imageMap = new BoardMap(this);
         validMoves = new HashSet<>();
+        sequenceNum = getIntent().getIntExtra("sequenceNum", 1); // which move we're on
 
         newGameFlag = false;
         resumeGameFlag = false;
         pauseGameFlag = false;
+        gameResult = -1;
 
         startNewGame = getIntent().getBooleanExtra("newGame", true);
-        if (startNewGame) { // get the most recent game and its gamestate
+        if (startNewGame) { // start a new game
             newGameFlag = true;
             postNewGameResult(user.getUid(), gameID);
-        } else {
+        } else { // resume a game in progress
             resumeGameFlag = true;
         }
 
@@ -176,10 +178,22 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 Intent discover = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                 startActivityForResult(discover, REQUEST_DISCOVER_BT);
 
-                BluetoothDevice device = mBlueAdapter.getRemoteDevice("20:17:01:09:52:49");
+                BluetoothDevice device = mBlueAdapter.getRemoteDevice("20:17:01:09:52:49"); // replace MAC address if need
                 showToast("Connected to " + device.getName());
 
-                if (device != null) {
+                // start service even if device not found
+                int targetSeqNum = 0;
+                if (!startNewGame) {
+                    targetSeqNum = sequenceNum; // we want to get the last AI move (the last move by default)
+                }
+                Intent btIntent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
+                btIntent.putExtra("btDevice", device);
+                btIntent.putExtra("btReceiver", btReceiver);
+                btIntent.putExtra("gameID", gameID);
+                btIntent.putExtra("sequenceNum", targetSeqNum);
+                startService(btIntent);
+
+                /*if (device != null) {
                     Intent btIntent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
                     btIntent.putExtra("btDevice", device);
                     btIntent.putExtra("btReceiver", btReceiver);
@@ -188,7 +202,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     //stopService(new Intent(this, BluetoothService.class)); --> to stop service
                 } else {
                     showToast("Encountered a bluetooth error");
-                }
+                }*/
 
             } else {
                 showToast("Encountered a bluetooth error");
@@ -205,9 +219,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         bti.putExtra("userMove", btTest.getBytes());
         startService(bti);
 
-
         /*
-
         Button b = (Button) findViewById(R.id.button);
         b.setText("start");
         b.setOnClickListener(new View.OnClickListener() {
@@ -225,7 +237,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 }
             }
         });
-
          */
 
         new CountDownTimer(600000, 1000) {
@@ -263,7 +274,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
-
     public void onButtonShowPopUp(View view){
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -282,9 +292,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
-
     /*
-
     @Override
     public void onPause() {
         super.onPause();
@@ -292,40 +300,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         Button b = (Button)findViewById(R.id.button);
         b.setText("start");
     }
-
      */
-
-    /**
-     * Posts a new game with specified difficulty to current user
-     */
-    public void postNewGame(String uid, int difficulty) {
-        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makegame";
-        JSONObject postData = new JSONObject();
-        try {
-            postData.put("difficulty", difficulty);
-            postData.put("timeleft", 600000);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
-                response -> {
-                    Log.d("ChessScreen", "Successfully posted game");
-                    JSONObject res = (JSONObject) response;
-                    try {
-                        gameID = Integer.parseInt(res.get("gameID").toString());
-                        postNewGameResult(uid, gameID);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Log.d("ChessScreen", String.valueOf(gameID));
-                }, error -> {
-                    Log.d("ChessScreen", "Failed to post game");
-                });
-
-        queue.add(jsonObjectRequest);
-    }
 
     /**
      * Posts a new game result with ID gameID
@@ -336,7 +311,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         try {
             postData.put("userID", uid);
             postData.put("gameID", gameID);
-            postData.put("result", -1);
+            postData.put("result", gameResult);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -346,7 +321,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
                     Log.d("ChessScreen", "Successfully posted game result");
-                    // boardToStringAndPost(); // post the initialized chessboard
                 }, error -> {
             Log.d("ChessScreen", error.toString());
         });
@@ -403,7 +377,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
      * Converts the current board into a String and send to the DB
      */
     public String boardToStringAndPost() {
-        int[] boardArray = new int[rows * cols];
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < rows ; i ++) {
@@ -424,7 +397,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         try {
             postData.put("placements", boardMoves);
             postData.put("gameID", gameID);
-            postData.put("sequenceNum", 1);
+            postData.put("sequenceNumber", sequenceNum);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -436,6 +409,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
                     Log.d("ChessScreen", "Successfully posted board");
+                    sequenceNum += 2; // increment to next player seqNum, all player sequenceNums are ODD
                 }, error -> {
                     Log.d("ChessScreen", error.toString());
         });
@@ -546,7 +520,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     if (resumedLayout[i][j] != 0) { // there is a piece on this tile
                         int id = resumedLayout[i][j];
                         p = new Piece(this, i, j, "", id);
-                        Log.d("ChessScreen", "Piece ID is: " + id);
                         p.setImageResource(imageMap.get(id));
                     }
                 }
@@ -579,7 +552,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onDrag(View v, DragEvent event) {
         // Defines a variable to store the action type for the incoming event
@@ -659,10 +631,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 }
 
                 tiles[r][c].setPiece(p); // drop p in its new location
-                int[][] tempLayout = boardToIntArray();
-                Integer[][] newLayout = Stream.of(tempLayout) // REQUIRES ANDROID 7, change if doesn't work
-                        .map(array -> IntStream.of(array).boxed().toArray(Integer[]::new))
-                        .toArray(Integer[][]::new);
+                int[][] newLayout = boardToIntArray();
 
                 if (!validMoves.contains(newLayout)) { // MOVE VALIDATION
                     // TODO: reject the move and undo everything, do nothing for now
@@ -683,7 +652,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 else if (p.id == -48) bking_moved = true;
 
                 // sends the player move to the BTService and makes a POST request to db
-                sendPlayerMoveBT();
+                //sendPlayerMoveBT();
+                forwardPlayerMove();
 
                 return true;
             default:
@@ -713,6 +683,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     private void showToast(String msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void forwardPlayerMove() {
+        boardToStringAndPost(); // sends board to the db
+        Intent intent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
+        startService(intent);
     }
 
     /**
@@ -916,9 +892,14 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             } else { // alternate protocol - receive AI move and possible player moves
                 // Log.d("ChessScreen", "Received string from BT: " + Arrays.toString(data)); - test receive string
                 AIMove = (int[][]) resultData.getSerializable("AIMove");
-                validMoves = (HashSet<Integer[][]>) resultData.getSerializable("validMoves");
+                validMoves = (HashSet<int[][]>) resultData.getSerializable("validMoves");
+                gameResult = resultData.getInt("result");
 
-                renderOpponentMove();
+                if (gameResult != 1) {
+                    renderOpponentMove();
+                } else {
+                    updateGameResult(user.getUid(), gameID, gameResult);
+                }
             }
 
         }

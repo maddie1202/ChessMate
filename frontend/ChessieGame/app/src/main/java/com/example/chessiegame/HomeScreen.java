@@ -76,7 +76,6 @@ public class HomeScreen extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment HomeScreen.
      */
-    // TODO: Rename and change types and number of parameters
     public static HomeScreen newInstance(String param1, String param2) {
         HomeScreen fragment = new HomeScreen();
         Bundle args = new Bundle();
@@ -137,19 +136,18 @@ public class HomeScreen extends Fragment {
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void getLatestGame(String uid) {
-        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + uid;
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getlatestgame/" + uid;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     try {
                         JSONArray jsonArray = new JSONArray(response);
-
+                        JSONObject entry = jsonArray.getJSONObject(0);
                         // find the most recent game
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject j = jsonArray.getJSONObject(i);
-                            if ((int) j.get("gameID") > gameID && (int) j.get("result") == -1) {
-                                gameID = (int) j.get("gameID");
-                            }
+                        try {
+                            gameID = (int) entry.get("gameID");
+                        } catch (Exception e) {
+                            Log.d("HomeScreen", "User has no prev games");
                         }
 
                         // get the result of the most recent game
@@ -183,6 +181,7 @@ public class HomeScreen extends Fragment {
                     try {
                         // Gets the board with the highest sequence number from game with gameID to render
                         int maxNum = 0;
+                        int seqNum = 0;
                         JSONArray jsonArray = new JSONArray(response);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject j = jsonArray.getJSONObject(i);
@@ -190,10 +189,11 @@ public class HomeScreen extends Fragment {
                             if ((int) j.get("boardID") > maxNum) {
                                 maxNum = (int) j.get("boardID");
                                 boardString = (String) j.get("placements");
+                                seqNum = (int) j.get("sequenceNumber");
                             }
                         }
 
-                        getGameDetails(gameID);
+                        getGameDetails(gameID, seqNum);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -212,7 +212,7 @@ public class HomeScreen extends Fragment {
      * - Parses the most recent board into a 2D int array
      * - Navigates to the Resume Game Popup
      */
-    public void getGameDetails(int gameID) {
+    public void getGameDetails(int gameID, int seqNum) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgamedetails/" + gameID;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -230,6 +230,7 @@ public class HomeScreen extends Fragment {
 
                         intent.putExtra("resumedLayout", layout);
                         intent.putExtra("difficulty", (int) res.get("difficulty"));
+                        intent.putExtra("sequenceNum", seqNum); // sequence number of board to be rendered
                         startActivity(intent);
 
                         Log.d("HomeScreen", response);
@@ -245,15 +246,16 @@ public class HomeScreen extends Fragment {
         queue.add(stringRequest);
     }
 
+    /**
+     * Uses regex to parse a String representing piece placements into a 2D array of piece IDs
+     */
     public int[][] parseBoard(String b) {
         int[][] layout = new int[size][size];
         String[] boardString = b.split("\\s+");
-        Log.d("HomeScreen", "boardString length is: " + boardString.length);
 
         for (int j = 0; j < size; j++) {
             for (int k = 0; k < size; k++) {
                 layout[j][k] = Integer.parseInt(boardString[j * size + k]);
-                Log.d("HomeScreen", "Piece ID is: " + layout[j][k]);
             }
         }
 
