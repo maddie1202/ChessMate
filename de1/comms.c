@@ -59,6 +59,13 @@ bool receive_move(game_t *game, int game_id)
 
 bool pause_game()
 {
+    long PBreleases = *pb_edgecapture_addr;
+
+    if (PBreleases == KEY1) {
+        *pb_edgecapture_addr = 0;
+        return true;
+    } 
+
     return false;
 }
 
