@@ -14,6 +14,9 @@ module.exports = app => {
     //create a game with gameID and game details
     app.post("/makegame", game.create);
 
+    //get a game's result
+    app.get("/getgameresult/:gameID", game.getResult);
+
     //update a game with gameID and game details
     app.put("/updategame", game.update);
 

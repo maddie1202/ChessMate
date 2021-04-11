@@ -60,6 +60,27 @@ Game.findById = (gameID, result) => {
     });
 };
 
+//get a game's result
+//app.get("/getgameresult/:gameID", game.getResult);
+Game.findResult = (gameID, result) => {
+    sql.query("SELECT * FROM Results WHERE gameID = " + gameID, (err,res) => {
+    if(err){
+        console.log("error from db: ", err);
+        result(err, null);
+        return;
+    }
+
+    if(res.length) {
+        console.log("found game result: ", res); // print game
+        result(null, res);       //provide json
+        return;
+    }
+
+    //not found result for game with gameID
+    result({ kind: "not_found in db" }, null);
+    });
+};
+
 //Retrieve latest game
 //app.get("/getlatestgame/:userID", game.findLatest);
 // get game details

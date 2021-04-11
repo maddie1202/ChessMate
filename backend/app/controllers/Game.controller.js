@@ -21,6 +21,26 @@ exports.findOne = (req,res) => {
     });
 };
 
+//get a game's result
+//app.get("/getgameresult/:gameID", game.getResult);
+exports.getResult = (req,res) => {
+    const gameID = req.params.gameID;
+    Game.findResult(gameID, (err, data) => {
+        if (err) {
+              if (err.kind === "not_found") {
+                res.status(404).send({
+                  message: `Not found Game with gameID ${gameID}.`
+                });
+              } else {
+                res.status(500).send({
+                  message: "Error retrieving  result for Game with gameID " + gameID
+                });
+              }
+        } else res.send(data);
+    });
+};
+
+
 //Retrieve latest game
 //app.get("/getlatestgame/:userID", game.findLatest);
 exports.findLatest = (req,res) => {
