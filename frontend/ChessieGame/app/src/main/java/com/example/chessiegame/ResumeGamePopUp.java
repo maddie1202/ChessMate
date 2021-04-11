@@ -64,7 +64,6 @@ public class ResumeGamePopUp extends Activity {
                 }
             }
         });
-
     }
 
     private void navigateToChess(int gameID, int difficulty) {
