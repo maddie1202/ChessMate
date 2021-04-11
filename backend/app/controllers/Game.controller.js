@@ -21,6 +21,25 @@ exports.findOne = (req,res) => {
     });
 };
 
+//Retrieve latest game
+//app.get("/getlatestgame/:userID", game.findLatest);
+exports.findLatest = (req,res) => {
+    const userID = req.params.userID;
+    Game.findLatest(userID, (err, data) => {
+            if (err) {
+                  if (err.kind === "not_found") {
+                    res.status(404).send({
+                      message: `Not found latest Game with userID ${userID}.`
+                    });
+                  } else {
+                    res.status(500).send({
+                      message: "Error retrieving latest Game with userID " + userID
+                    });
+                  }
+            } else res.send(data);
+        });
+};
+
 exports.findAll = (req,res) => {
 
     const userID = req.params.userID;

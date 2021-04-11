@@ -58,6 +58,14 @@ CREATE TABLE Achievements(
     FOREIGN KEY (goalID) REFERENCES GoalsLookup (goalID) ON DELETE CASCADE
 );
 
+CREATE TABLE Move(
+    moveID int PRIMARY KEY AUTO_INCREMENT,
+    placements varchar(13000) NOT NULL
+);
+
+INSERT INTO Move(placements) VALUES('1 2 3 4 5');
+INSERT INTO Move(placements) VALUES('12 23 34 45 56');
+
 /* some starter values to insert into db to test apis */
 INSERT INTO User(userID, name) VALUES('testUser123','testUser');
 

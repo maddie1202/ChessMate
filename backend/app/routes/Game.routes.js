@@ -8,6 +8,9 @@ module.exports = app => {
     //Retrieve all games for user with userId
     app.get("/getallgames/:userID", game.findAll);
 
+    //Retrieve latest game
+    app.get("/getlatestgame/:userID", game.findLatest);
+
     //create a game with gameID and game details
     app.post("/makegame", game.create);
 

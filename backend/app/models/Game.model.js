@@ -60,6 +60,29 @@ Game.findById = (gameID, result) => {
     });
 };
 
+//Retrieve latest game
+//app.get("/getlatestgame/:userID", game.findLatest);
+// get game details
+Game.findLatest = (userID, result) => {
+    sql.query("SELECT * FROM Game g, Results r WHERE r.gameID = g.gameID AND r.userID=" + userID + "AND startDateTime = MAX(startDateTime) AND r.result <> 1 AND r.result <> -1 GROUP BY userID", (err, res) => {
+        if(err){
+            console.log("error from db: ", err);
+            result(err, null);
+            return;
+        }
+
+        if(res.length) {
+            console.log("found game details: ", res); // print game
+            result(null, res);       //provide json
+            return;
+        }
+
+        //not found latest Game with userID
+        result({ kind: "not_found in db" }, null);
+    });
+};
+
+
 // There is a table in db called
 // Results(userID, gameID, result)
 

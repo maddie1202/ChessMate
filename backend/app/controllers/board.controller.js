@@ -50,6 +50,28 @@ exports.findOne = (req,res) => {
     });
 };
 
+
+//Retrive latest board with gameID
+//app.get("/getlatestboard/:gameID", board.findLatest);
+exports.findLatest = (req,res) => {
+
+    const gameID = req.params.gameID;
+    Board.findLatest(gameID, (err, data) => {
+        if (err) {
+              if (err.kind === "not_found") {
+                res.status(404).send({
+                  message: `Not found latest Board with gameID ${gameID}.`
+                });
+              } else {
+                res.status(500).send({
+                  message: "Error retrieving latest Board with gameID " + gameID
+                });
+              }
+        } else res.send(data);
+    });
+};
+
+
 //find all boards with gameID
 exports.findAll = (req,res) => {
 

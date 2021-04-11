@@ -81,6 +81,23 @@ Board.findById = (boardID, result) => {
     });
 };
 
+
+//Retrive latest board with gameID
+//app.get("/getlatestboard/:gameID", board.findLatest);
+Board.findLatest = (gameID, result) => {
+    sql.query("SELECT * FROM Board WHERE gameID = " + gameID + "AND sequenceNumber = MAX(sequenceNumber) GROUP BY gameID", (err, res) => {
+        if(err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+
+        console.log("board: ", res);
+        result(null, res);
+    });
+};
+
+
 //find all boards with gameID
 Board.getAll = (gameID, result) => {
     sql.query("SELECT * FROM Board WHERE gameID=" + gameID, (err, res) => {

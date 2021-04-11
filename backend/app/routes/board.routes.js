@@ -8,6 +8,9 @@ module.exports = app => {
     //Retrieve a single Board with boardId
     app.get("/getboard/:boardID", board.findOne);
 
+    //Retrive latest board with gameID
+    app.get("/getlatestboard/:gameID", board.findLatest);
+
     //insert a new board
     app.post("/makeboard", board.create);
 
