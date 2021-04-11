@@ -23,6 +23,7 @@ void play_game()
 
         switch (state) {
             case WAIT_GAME: 
+                printf("WAIT_GAME\N");
                 if (start_new_game(&game_id)) {
                     send_ack_start_game();
                     state = WAIT_MOVE;
@@ -31,18 +32,21 @@ void play_game()
                 }
                 break;
             case WAIT_MOVE: 
-                    if (receive_move(game, game_id)) {
-                        state = SEND_MOVE;
-                    } else if (pause_game()) {
-                        state = WAIT_GAME;
-                    }
-                case SEND_MOVE:
-                    game->board = generate_ai_move(game, BLACK, 3);
-                    move_list_t *possible_player_moves = generate_all_moves(game, WHITE);
-
-                    if (in_checkmate(game->board, WHITE)) {
-                    send_game_over_white_wins(game_id);
+                printf("WAIT_MOVE\N");
+                if (receive_move(game, game_id)) {
+                    state = SEND_MOVE;
+                } else if (pause_game()) {
                     state = WAIT_GAME;
+                }
+                break;
+            case SEND_MOVE:
+                printf("SEND_MOVE\N");
+                game->board = generate_ai_move(game, BLACK, 3);
+                move_list_t *possible_player_moves = generate_all_moves(game, WHITE);
+
+                if (in_checkmate(game->board, WHITE)) {
+                send_game_over_white_wins(game_id);
+                state = WAIT_GAME;
                 } else if (in_checkmate(game->board, BLACK)) {
                     send_game_over_black_wins(game, game_id);
                     state = WAIT_GAME;
@@ -50,6 +54,7 @@ void play_game()
                     send_move(game, possible_player_moves, game_id);
                     state = WAIT_MOVE;
                 }
+                break;
         }
     }
 
