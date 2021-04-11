@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#5B5B5B">
+
+
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="96dp"
+        android:gravity="center"
+        android:text="GAME PAUSED:"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/resume"
+        android:layout_width="253dp"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="59dp"
+        android:layout_marginBottom="492dp"
+        android:text="RESUME"
+        android:textColor="#0C0C0C"
+        android:textSize="18sp"
+        app:backgroundTint="#E6FFECFB" />
+
+    <ImageButton
+        android:id="@+id/close_button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginRight="22dp"
+        android:background="#00FFFFFF"
+        android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
+    <TextView
+        android:id="@+id/save"
+        android:layout_width="247dp"
+        android:layout_height="95dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="284dp"
+        android:gravity="center"
+        android:text="To Save and Quit: Press KEY1 then Quit"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/quit"
+        android:layout_width="253dp"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="59dp"
+        android:layout_marginBottom="240dp"
+        android:text="QUIT"
+        android:textColor="#0C0C0C"
+        android:textSize="18sp"
+        app:backgroundTint="#E6FFECFB" />
+</RelativeLayout>
