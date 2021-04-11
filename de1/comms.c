@@ -4,13 +4,20 @@
 #include "include/HW.h"
 #include <stdbool.h>
 
+#define KEY0 1
+#define KEY1 2
+#define KEY2 4
+#define KEY3 8
+
 volatile int *pb_edgecapture_addr;
 volatile int *leds_addr;
+volatile int *switches_addr;
 
 void init_hardware()
 {
     pb_edgecapture_addr = (volatile int *)(lw_virtual + pb_edgecapture_offset);
     leds_addr = (volatile int *)(lw_virtual + leds_offset);
+    switches_addr = (volatile int *)(lw_virtual + switches_offset);
     *pb_edgecapture_addr = 0;
 }
 
@@ -18,14 +25,10 @@ bool start_new_game(int *game_id)
 {
     long PBreleases = *pb_edgecapture_addr;
 
-    // Display the state of the change register on red LEDs
-    *leds_addr = PBreleases;
-    if (PBreleases)
-    {
-        // Delay, so that we can observe the change on the LEDs
-        for (int i = 0; i < 10000000; i++);
-        *pb_edgecapture_addr = 0; //reset the changes for next round
-    }
+    if (PBreleases == KEY0) {
+        *game_id = *switches_addr;
+        return true;
+    } 
 
     return false;
 }

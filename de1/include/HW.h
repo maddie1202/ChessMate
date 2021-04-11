@@ -14,6 +14,7 @@
 #define push_buttons_offset 0x0010
 #define pb_edgecapture_offset 0x001C
 #define leds_offset 0x0020
+#define switches_offset 0x0000
 
 extern int lw_fd, sdram_fd;
 extern void *lw_virtual, *sdram_virtual;
