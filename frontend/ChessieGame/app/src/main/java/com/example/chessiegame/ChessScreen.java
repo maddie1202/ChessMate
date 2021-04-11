@@ -73,7 +73,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     private final int word = 4;
 
     private boolean startNewGame;
-    public String boardString;
+    public int[][] resumedLayout;
     private boolean newGameFlag;
     private boolean resumeGameFlag;
     private boolean pauseGameFlag;
@@ -130,7 +130,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         user = mAuth.getCurrentUser();
 
         gameID = getIntent().getIntExtra("gameID", 0);
-        boardString = getIntent().getStringExtra("boardString");
+        resumedLayout = new int[rows][cols];
+        resumedLayout = (int[][]) getIntent().getSerializableExtra("resumedLayout");
         tiles = new Tile[rows][cols];
         nextState = new int[rows][cols];
         chessBoard = findViewById(R.id.chess);
@@ -143,50 +144,43 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         startNewGame = getIntent().getBooleanExtra("newGame", true);
         if (startNewGame) { // get the most recent game and its gamestate
             newGameFlag = true;
-            int difficulty = getIntent().getIntExtra("difficulty", 1);
-            // TODO: change uid to user.getUID() later
-            postNewGame(user.getUid(), difficulty);
+            postNewGameResult(user.getUid(), gameID);
         } else {
             resumeGameFlag = true;
         }
 
-        initChessboard(startNewGame, "");
+        initChessboard(startNewGame, resumedLayout);
 
         if (mBlueAdapter == null) {
             showToast("Bluetooth is not available");
         } else {
             // automatically turn on Bluetooth
             if (!mBlueAdapter.isEnabled()) {
-                showToast("Turning On Bluetooth...");
                 // intent to turn BT on
                 Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(intent, REQUEST_ENABLE_BT);
-            } else {
-                showToast("Bluetooth is already on");
             }
 
             if (!err) {
                 // intent to make BT discoverable
                 Intent discover = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                 startActivityForResult(discover, REQUEST_DISCOVER_BT);
-                showToast("Bluetooth is discoverable");
 
                 BluetoothDevice device = mBlueAdapter.getRemoteDevice("20:17:01:09:52:49");
-                showToast(device.getName());
+                showToast("Connected to " + device.getName());
 
                 if (device != null) {
                     Intent btIntent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
                     btIntent.putExtra("btDevice", device);
                     btIntent.putExtra("btReceiver", btReceiver);
                     startService(btIntent);
-                    showToast("Started Bluetooth Service");
                     //stopService(new Intent(this, BluetoothService.class)); --> to stop service
                 } else {
-                    showToast("Encountered an error");
+                    showToast("Encountered a bluetooth error");
                 }
 
             } else {
-                showToast("Encountered an error");
+                showToast("Encountered a bluetooth error");
             }
         }
 
@@ -313,7 +307,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
                     Log.d("ChessScreen", "Successfully posted game result");
-                    boardToStringAndPost(); // post the initialized chessboard
+                    // boardToStringAndPost(); // post the initialized chessboard
                 }, error -> {
             Log.d("ChessScreen", error.toString());
         });
@@ -452,7 +446,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         tiles[move.getDest_col()][move.getDest_row()].setPiece(p);
     }
 
-    public void initChessboard(boolean newGame, String boardString) {
+    public void initChessboard(boolean newGame, int[][] resumedLayout) {
         int width = getScreenWidth();
         int tileSize = width / 8;
 
@@ -900,6 +894,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 num_player_moves = fourByteToInt(Arrays.copyOfRange(data, 292, 295));
 
                 // TODO: parse possible player moves
+            } else { // test case, receive a string
+                Log.d("ChessScreen", "Received string from BT: " + Arrays.toString(data));
             }
 
         }
