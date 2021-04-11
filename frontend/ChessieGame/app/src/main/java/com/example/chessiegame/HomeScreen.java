@@ -8,12 +8,14 @@ import android.os.Bundle;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -51,7 +53,6 @@ public class HomeScreen extends Fragment {
     private String mParam1;
     private String mParam2;
 
-
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private RequestQueue queue;
@@ -62,9 +63,6 @@ public class HomeScreen extends Fragment {
     public int id;
     private Button start;
     private Button resume;
-
-    PopupWindow popUpStart;
-
 
     public HomeScreen() {
         // Required empty public constructor
@@ -96,7 +94,6 @@ public class HomeScreen extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
     }
 
     @Override
@@ -104,9 +101,7 @@ public class HomeScreen extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         id = container.getId();
-
         View v = inflater.inflate(R.layout.fragment_home_screen, container, false);
-
         start = v.findViewById(R.id.start_new_game);
         resume = v.findViewById(R.id.resume_previous);
 
@@ -116,15 +111,6 @@ public class HomeScreen extends Fragment {
         user = mAuth.getCurrentUser();
 
 
-        popUpStart = new PopupWindow(getContext());
-
-        /*
-        LinearLayout layout = new LinearLayout(getContext());
-        LinearLayout mainLayout = new LinearLayout(getContext());
-        TextView tv = new TextView(getContext());
-
-         */
-
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,65 +118,21 @@ public class HomeScreen extends Fragment {
                 Intent intent = new Intent(getActivity(), PopDifficulty.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
-
-
-                /*
-                popUpStart.showAtLocation(layout, Gravity.BOTTOM, 10, 10);
-                popUpStart.update(50, 50, 300, 80);
-
-                 */
-
             }
         });
-        /*
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        tv.setText("Hi this is a sample text for popup window");
-        layout.addView(tv, params);
-        popUpStart.setContentView(layout);
-
-         */
         resume.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
-                /*
-                getLatestGame(user.getUid());
+                //TODO: change back to userid
+                getLatestGame("G2OqGHBvFogJrA56TaawC6WcUt72");
                 Intent intent = new Intent(getActivity(), ResumeGamePopUp.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
-                 */
-
-                onButtonShowPopUp(v);
             }
         });
-
         return v;
     }
-
-
-
-    public void onButtonShowPopUp(View view){
-
-        // inflate the layout of the popup window
-        LayoutInflater inflater = (LayoutInflater)
-                getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.fragment_difficulty_set, null);
-
-        // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-    }
-
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void getLatestGame(String uid) {

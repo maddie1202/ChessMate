@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class ResumeGamePopUp extends Activity {
 
@@ -45,6 +46,9 @@ public class ResumeGamePopUp extends Activity {
 
         ImageButton closeButton = (ImageButton) findViewById(R.id.close_button2);
         Button startGame = (Button) findViewById(R.id.start_button2);
+        TextView game = (TextView)findViewById(R.id.gameIDresume);
+        String bin = Integer.toBinaryString(gameID);
+        game.setText("The game id is " + bin);
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +74,7 @@ public class ResumeGamePopUp extends Activity {
         Intent intent = new Intent(ResumeGamePopUp.this, ChessScreen.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.putExtra("gameID", gameID);
-        intent.putExtra("resumedLayout", layout);
+        //intent.putExtra("resumedLayout", layout);
         intent.putExtra("newGame", false);
         intent.putExtra("difficulty", difficulty);
         startActivity(intent);
