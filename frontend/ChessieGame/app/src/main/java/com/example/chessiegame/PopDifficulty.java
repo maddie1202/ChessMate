@@ -112,7 +112,8 @@ public class PopDifficulty extends Activity {
                         // TODO: prompt user to enter gameID on switches and key with textViews
 
                        TextView game = (TextView)findViewById(R.id.gameID);
-                       game.setText("The game id is " + gameID);
+                       String bin = Integer.toBinaryString(gameID);
+                       game.setText("The game id is " + bin);
                         // they will then press the start button on app to begin the game
 
                     } catch (JSONException e) {
