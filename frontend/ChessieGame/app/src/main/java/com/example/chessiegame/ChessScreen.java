@@ -268,7 +268,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
-    public void timerStart(long timeLengthMili){
+    public void timerStart(long timeLengthMili) {
         timer = new CountDownTimer(timeLengthMili, 1000) {
             public void onTick(long millisUntilFinished) {
                 milliLeft= millisUntilFinished;
@@ -309,16 +309,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         startActivity(intent);
         overridePendingTransition(0,0);
     }
-    
-    /*
-    @Override
-    public void onPause() {
-        super.onPause();
-        timerHandler.removeCallbacks(timerRunnable);
-        Button b = (Button)findViewById(R.id.button);
-        b.setText("start");
-    }
-     */
+
     /**
      * Posts a new game result with ID gameID
      */
@@ -354,7 +345,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         try {
             postData.put("gameID", gameID);
             postData.put("result", result); // 0 for lose game, 1 for win game
-            //TODO: post time remaining
             postData.put("timeleft", timeRemaining);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -398,10 +388,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         for (int i = 0; i < rows ; i ++) {
             for (int j = 0; j < cols; j++) {
                 if (tiles[i][j].getPiece() == null) {
-                    sb.append((char) 50);
+                    sb.append(0);
                 } else {
-                    sb.append((char) tiles[i][j].getPiece().id);
+                    sb.append(tiles[i][j].getPiece().id);
                 }
+                sb.append(' ');
             }
         }
 
@@ -420,7 +411,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         Log.d("ChessScreen", "Post board gameID is: " + gameID);
         Log.d("ChessScreen", "Post board placement string: " + boardMoves);
         Log.d("ChessScreen", "Post board sequenceNum: " + sequenceNum);
-        Log.d("ChessScreen", "Post board example piece: " + tiles[0][0].getPiece().name);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
                 response -> {
@@ -466,7 +456,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 if (newGame) {
                     //Pawn placement
                     if (i == 1) {
-                        p = new Piece(this, i, j, "bpawn", 255 - j);
+                        p = new Piece(this, i, j, "bpawn", (-1 * j - 1));
                         p.setImageResource(R.drawable.bpawn);
                     } else if (i == 6) {
                         p = new Piece(this, i, j, "wpawn", (j + 1));
@@ -480,10 +470,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "wrook", 9);
                         p.setImageResource(R.drawable.wrook);
                     } else if (j == 7 && i == 0) {
-                        p = new Piece(this, i, j, "brook", 246);
+                        p = new Piece(this, i, j, "brook", -10);
                         p.setImageResource(R.drawable.brook);
                     } else if (j == 0 && i == 0) {
-                        p = new Piece(this, i, j, "brook", 247);
+                        p = new Piece(this, i, j, "brook", -9);
                         p.setImageResource(R.drawable.brook);
 
                     }
@@ -495,10 +485,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "wknight", 19);
                         p.setImageResource(R.drawable.wknight);
                     } else if (j == 6 && i == 0) {
-                        p = new Piece(this, i, j, "bknight", 236);
+                        p = new Piece(this, i, j, "bknight", -20);
                         p.setImageResource(R.drawable.bknight);
                     } else if (j == 1 && i == 0) {
-                        p = new Piece(this, i, j, "bknight", 237);
+                        p = new Piece(this, i, j, "bknight", -19);
                         p.setImageResource(R.drawable.bknight);
                     }
                     //Bishops
@@ -509,10 +499,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "wbishop", 29);
                         p.setImageResource(R.drawable.wbishop);
                     } else if (j == 5 && i == 0) {
-                        p = new Piece(this, i, j, "bbishop", 226);
+                        p = new Piece(this, i, j, "bbishop", -30);
                         p.setImageResource(R.drawable.bbishop);
                     } else if (j == 2 && i == 0) {
-                        p = new Piece(this, i, j, "bbishop", 227);
+                        p = new Piece(this, i, j, "bbishop", -29);
                         p.setImageResource(R.drawable.bbishop);
                     }
                     //Queen
@@ -520,7 +510,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "wqueen", 39);
                         p.setImageResource(R.drawable.wqueen);
                     } else if (j == 4 && i == 0) {
-                        p = new Piece(this, i, j, "bqueen", 217);
+                        p = new Piece(this, i, j, "bqueen", -39);
                         p.setImageResource(R.drawable.bqueen);
                     }
                     //King
@@ -528,12 +518,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "wking", 48);
                         p.setImageResource(R.drawable.wking);
                     } else if (j == 3 && i == 0) {
-                        p = new Piece(this, i, j, "bking", 207);
+                        p = new Piece(this, i, j, "bking", -48);
                         p.setImageResource(R.drawable.bking);
                     }
                 } else { // assign layout based on prev game state
                     Log.d("ChessScreen", "In progress");
-                    if (resumedLayout[i][j] != 50) { // there is a piece on this tile
+                    if (resumedLayout[i][j] != 0) { // there is a piece on this tile
                         int id = resumedLayout[i][j];
                         p = new Piece(this, i, j, "", id);
                         p.setImageResource(imageMap.get(id));
@@ -668,10 +658,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     clearValidMoves(); // delete the table of valid moves in prep for the next one
                     if (p.id == 9) wrook0_moved = true;
                     else if (p.id == 10) wrook1_moved = true;
-                    else if (p.id == 247) brook0_moved = true;
-                    else if (p.id == 246) brook1_moved = true;
+                    else if (p.id == -9) brook0_moved = true;
+                    else if (p.id == -10) brook1_moved = true;
                     else if (p.id == 48) wking_moved = true;
-                    else if (p.id == 207) bking_moved = true;
+                    else if (p.id == -48) bking_moved = true;
                     forwardPlayerMove(); // send player move to Service and POST to db
                 }
 
@@ -838,7 +828,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 int newPieceID = AIMove[i][j];
 
                 if (t.hasPiece() && p != null) { // there was a already piece on that square
-                    if (newPieceID == 50) { // piece gets replaced with a blank
+                    if (newPieceID == 0) { // piece gets replaced with a blank
                         t.removePiece(p);
                     } else if (newPieceID != p.id) { // AIMove[i][j] is not 0
                         // if the new board is not the same as the current board
@@ -849,7 +839,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         pc.setImageResource(imageMap.get(newPieceID));
                     }
                 } else { // no piece was on that square
-                    if (newPieceID != 50) { // the square on new board has a piece
+                    if (newPieceID != 0) { // the square on new board has a piece
                         Piece pc = new Piece(this, i, j, "Piece", newPieceID);
                         t.setPiece(pc);
                         Log.d("Chess Screen", "NewPieceID is " + String.valueOf(newPieceID));

@@ -158,6 +158,7 @@ public class HomeScreen extends Fragment {
                     }
                 },
                 error -> {
+                    showToast("No Games Currently in Progress");
                     Log.d("ChessScreen", "Error fetching most recent game");
                 });
 
@@ -218,10 +219,6 @@ public class HomeScreen extends Fragment {
                         JSONArray arr = new JSONArray(response);
                         JSONObject res = (JSONObject) arr.get(0);
 
-
-
-
-
                         // finally navigate to Resume Game PopUp
                         Intent intent = new Intent(getActivity(), ResumeGamePopUp.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -252,12 +249,11 @@ public class HomeScreen extends Fragment {
      */
     public int[][] parseBoard(String b) {
         int[][] layout = new int[size][size];
-        char[] arr = b.toCharArray();
+        String[] boardString = b.split("\\s+");
 
         for (int j = 0; j < size; j++) {
             for (int k = 0; k < size; k++) {
-                layout[j][k] = (int) arr[j * size + k];
-                Log.d("HomeScreen", "Resumed layout piece ID is: " + layout[j][k]);
+                layout[j][k] = Integer.parseInt(boardString[j * size + k]);
             }
         }
 

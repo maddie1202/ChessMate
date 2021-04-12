@@ -299,7 +299,7 @@ public class BluetoothService extends Service {
                             JSONArray arr = new JSONArray(response);
                             if (arr.length() > 0) {
                                 String allMoves = (String) arr.getJSONObject(0).get("placements");
-                                String[] moveBoards = allMoves.split("~");
+                                String[] moveBoards = allMoves.split(",");
                                 for (String moveBoard : moveBoards) {
                                     validMoves.add(parseBoard(moveBoard));
                                 }
@@ -337,11 +337,11 @@ public class BluetoothService extends Service {
          */
         public int[][] parseBoard(String b) {
             int[][] layout = new int[size][size];
-            char[] arr = b.toCharArray();
+            String[] boardString = b.split("\\s+");
 
             for (int j = 0; j < size; j++) {
                 for (int k = 0; k < size; k++) {
-                    layout[j][k] = (int) arr[j * size + k];
+                    layout[j][k] = Integer.parseInt(boardString[j * size + k]);
                 }
             }
 

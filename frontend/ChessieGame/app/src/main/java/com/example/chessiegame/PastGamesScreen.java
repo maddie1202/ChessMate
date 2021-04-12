@@ -296,11 +296,11 @@ public class PastGamesScreen extends Fragment {
      */
     public int[][] parseBoard(String b) {
         int[][] layout = new int[size][size];
-        char[] arr = b.toCharArray();
+        String[] boardString = b.split("\\s+");
 
         for (int j = 0; j < size; j++) {
             for (int k = 0; k < size; k++) {
-                layout[j][k] = (int) arr[j * size + k];
+                layout[j][k] = Integer.parseInt(boardString[j * size + k]);
             }
         }
 
