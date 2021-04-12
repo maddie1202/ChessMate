@@ -46,7 +46,6 @@ import static androidx.core.content.ContextCompat.getSystemService;
  */
 public class HomeScreen extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -248,11 +247,11 @@ public class HomeScreen extends Fragment {
      */
     public int[][] parseBoard(String b) {
         int[][] layout = new int[size][size];
-        String[] boardString = b.split("\\s+");
+        char[] arr = b.toCharArray();
 
         for (int j = 0; j < size; j++) {
             for (int k = 0; k < size; k++) {
-                layout[j][k] = Integer.parseInt(boardString[j * size + k]);
+                layout[j][k] = (int) arr[j * size + k];
             }
         }
 

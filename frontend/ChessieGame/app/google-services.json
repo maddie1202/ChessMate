@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "687858811033-kfmldo07djbeidveoqsfg1ado7uqs8cf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chessiegame",
+            "certificate_hash": "62f73bd490f5b23a44ac60c0705965f4d8622c46"
+          }
+        },
+        {
           "client_id": "687858811033-sga3ol4npvsu1afo1o8kr5jauf7r1mc0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
