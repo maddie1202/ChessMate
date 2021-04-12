@@ -41,10 +41,13 @@
 
     <Button
         android:id="@+id/pause_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="109dp"
-        android:text="Button"
+        android:layout_width="87dp"
+        android:layout_height="49dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="84dp"
+        android:text="PAUSE"
+        app:backgroundTint="#BA748C"
         app:layout_constraintBottom_toTopOf="@+id/chess"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.Gravity;
@@ -105,31 +106,16 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     //TODO: notes
     // on resume, send the player's last move (second most recent board in DB) and send to DE1 to get possible moves
     TextView timerTextView;
-    long startTime = 0;
-
-    //runs without a timer by reposting this handler at the end of the runnable
-    /*
-    Handler timerHandler = new Handler();
-    Runnable timerRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            long millis = System.currentTimeMillis() - startTime;
-            int seconds = (int) (millis / 1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
-
-            timerTextView.setText(String.format("%d:%02d", minutes, seconds));
-
-            timerHandler.postDelayed(this, 500);
-        }
-    };
-     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chess_screen);
+
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
 
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         btReceiver = new BTReceiver(new Handler());
@@ -208,26 +194,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         bti.putExtra("userMove", btTest.getBytes());
         startService(bti);*/
 
-        /*
-        Button b = (Button) findViewById(R.id.button);
-        b.setText("start");
-        b.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Button b = (Button) v;
-                if (b.getText().equals("stop")) {
-                    timerHandler.removeCallbacks(timerRunnable);
-                    b.setText("start");
-                } else {
-                    startTime = System.currentTimeMillis();
-                    timerHandler.postDelayed(timerRunnable, 0);
-                    b.setText("stop");
-                }
-            }
-        });
-         */
-
         new CountDownTimer(600000, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -253,11 +219,52 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             }
         }.start();
 
+        //POPUP
+        // inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.pause_game, null);
+        // create the popup window
+        int width_f = (int) (width*.9);
+        //int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height_f = (int) (height*.7);
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width_f, height_f, focusable);
+
         Button pause = (Button) findViewById(R.id.pause_button);
+        Button quit = (Button) popupView.findViewById(R.id.quit);
+        Button resume = (Button) popupView.findViewById(R.id.resume);
+        ImageButton closeButton3 = (ImageButton) popupView.findViewById(R.id.close_button3);
+
+
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onButtonShowPopUp(view);
+                //onButtonShowPopUp(view, width, height);
+                // show the popup window
+                // which view you pass in doesn't matter, it is only used for the window tolken
+                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+            }
+
+        });
+
+        quit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToHome(gameID);
+            }
+        });
+
+        resume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+        closeButton3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
             }
         });
 
@@ -279,22 +286,16 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
-    public void onButtonShowPopUp(View view){
-        // inflate the layout of the popup window
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.pause_game, null);
+    //TODO: is this what i need to pass??
 
-        ImageButton closeButton3 = (ImageButton) findViewById(R.id.close_button2);
-        // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        PopupWindow popupWindow = new PopupWindow(popupView, width, 2*(height)/3, focusable);
-
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
+    private void navigateToHome(int gameID) {
+        Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        intent.putExtra("newGame", false);
+        //intent.putExtra("difficulty", difficulty);
+        intent.putExtra("gameID", gameID);
+        startActivity(intent);
+        overridePendingTransition(0,0);
     }
 
     /*
@@ -306,7 +307,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         b.setText("start");
     }
      */
-
     /**
      * Posts a new game result with ID gameID
      */
