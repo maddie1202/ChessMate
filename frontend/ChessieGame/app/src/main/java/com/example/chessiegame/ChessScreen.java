@@ -207,7 +207,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
             public void onFinish() {
                 timerTextView.setText("Over! You lost");
-                updateGameResult(user.getUid(), gameID, 0); // update game with you lost
+                updateGameResult(gameID, 0, 0); // update game with you lost
                 Handler h = new Handler();
                 Runnable r = new Runnable() {
                     public void run() {
@@ -286,14 +286,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
-    //TODO: is this what i need to pass??
-
     private void navigateToHome(int gameID) {
+        updateGameResult(gameID, -1, 500000); // TODO: make timeRemaining the actual time on the timer
         Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        intent.putExtra("newGame", false);
-        //intent.putExtra("difficulty", difficulty);
-        intent.putExtra("gameID", gameID);
         startActivity(intent);
         overridePendingTransition(0,0);
     }
@@ -336,15 +332,14 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     /**
      * Updates the game result in the DB
      */
-    public void updateGameResult(String uid, int gameID, int result) {
+    public void updateGameResult(int gameID, int result, int timeRemaining) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/postresult";
         JSONObject postData = new JSONObject();
         try {
-            postData.put("userID", uid);
             postData.put("gameID", gameID);
             postData.put("result", result); // 0 for lose game, 1 for win game
             //TODO: post time remaining
-            postData.put("timeleft", 0);
+            postData.put("timeleft", timeRemaining);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -928,10 +923,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 } else if (gameResult == 0) { // AI won
                     // TODO: display that AI won
                     renderOpponentMove();
-                    updateGameResult(user.getUid(), gameID, gameResult);
+                    updateGameResult(gameID, gameResult, 0);
                 } else {
                     // TODO: display that player won
-                    updateGameResult(user.getUid(), gameID, gameResult);
+                    updateGameResult(gameID, gameResult, 0);
                 }
             }
         }
