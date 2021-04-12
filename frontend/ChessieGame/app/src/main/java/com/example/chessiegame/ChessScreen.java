@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.Gravity;
@@ -130,6 +131,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chess_screen);
+
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
 
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         btReceiver = new BTReceiver(new Handler());
@@ -257,7 +263,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onButtonShowPopUp(view);
+
+                onButtonShowPopUp(view, width, height);
             }
         });
 
@@ -279,17 +286,18 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
-    public void onButtonShowPopUp(View view){
+    public void onButtonShowPopUp(View view, int width, int height){
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.pause_game, null);
 
         ImageButton closeButton3 = (ImageButton) findViewById(R.id.close_button2);
         // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int width_f = (int) (width*.9);
+        //int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height_f = (int) (height*.9);
         boolean focusable = true; // lets taps outside the popup also dismiss it
-        PopupWindow popupWindow = new PopupWindow(popupView, width, 2*(height)/3, focusable);
+        PopupWindow popupWindow = new PopupWindow(popupView, width_f, height_f, focusable);
 
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window tolken
