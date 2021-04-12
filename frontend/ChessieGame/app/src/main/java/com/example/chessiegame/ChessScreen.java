@@ -185,6 +185,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 int targetSeqNum = 0;
                 if (!startNewGame) {
                     targetSeqNum = sequenceNum; // we want to get the last AI move (the last move by default)
+                    sequenceNum++; // increment seqNum by 1 to recalibrate to player moves
                 }
                 Intent btIntent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
                 btIntent.putExtra("btDevice", device);
@@ -624,6 +625,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
                 p.updateCoordinates(r, c); // update p's coordinates
                 boolean removedPiece = false;
+                boolean validMove = true;
                 Piece tmp = tiles[r][c].getPiece();
                 if (tiles[r][c].hasPiece() && tmp != null) { // check if there was already a piece in the drop view
                     tiles[r][c].removePiece(tmp);
@@ -635,7 +637,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
                 if (!validMoves.contains(newLayout)) { // MOVE VALIDATION
                     // TODO: reject the move and undo everything, do nothing for now
-                    /*if (removedPiece) { // restore temp
+                    /*
+                    showToast("You played an invalid move");
+                    validMove = false;
+                    if (removedPiece) { // restore temp
                         tiles[r][c].removePiece(p);
                         tiles[r][c].setPiece(tmp);
                     }
@@ -644,16 +649,16 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 }
                 vw.setVisibility(View.VISIBLE); // finally set Visibility to VISIBLE
 
-                if (p.id == 9) wrook0_moved = true;
-                else if (p.id == 10) wrook1_moved = true;
-                else if (p.id == -9) brook0_moved = true;
-                else if (p.id == -10) brook1_moved = true;
-                else if (p.id == 48) wking_moved = true;
-                else if (p.id == -48) bking_moved = true;
-
-                // sends the player move to the BTService and makes a POST request to db
-                //sendPlayerMoveBT();
-                forwardPlayerMove();
+                if (validMove) {
+                    clearValidMoves(); // delete the table of valid moves in prep for the next one
+                    if (p.id == 9) wrook0_moved = true;
+                    else if (p.id == 10) wrook1_moved = true;
+                    else if (p.id == -9) brook0_moved = true;
+                    else if (p.id == -10) brook1_moved = true;
+                    else if (p.id == 48) wking_moved = true;
+                    else if (p.id == -48) bking_moved = true;
+                    forwardPlayerMove(); // send player move to Service and POST to db
+                }
 
                 return true;
             default:
@@ -685,6 +690,25 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Clears the valid moves table after a player has made a valid move
+     */
+    private void clearValidMoves() {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/deleteallmoves";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url,
+                response -> {
+                    Log.d("ChessScreen", "Successfully deleted valid moves table");
+                }, error -> {
+            Log.d("ChessScreen", error.toString());
+        });
+
+        queue.add(stringRequest);
+    }
+
+    /**
+     * Post the player's move to the database and send a signal to the service
+     */
     private void forwardPlayerMove() {
         boardToStringAndPost(); // sends board to the db
         Intent intent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
@@ -895,13 +919,17 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 validMoves = (HashSet<int[][]>) resultData.getSerializable("validMoves");
                 gameResult = resultData.getInt("result");
 
-                if (gameResult != 1) {
+                if (gameResult == -1) { // player was not the winner
                     renderOpponentMove();
+                } else if (gameResult == 0) { // AI won
+                    // TODO: display that AI won
+                    renderOpponentMove();
+                    updateGameResult(user.getUid(), gameID, gameResult);
                 } else {
+                    // TODO: display that player won
                     updateGameResult(user.getUid(), gameID, gameResult);
                 }
             }
-
         }
 
         /**

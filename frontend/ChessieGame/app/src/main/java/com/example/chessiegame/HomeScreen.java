@@ -142,12 +142,9 @@ public class HomeScreen extends Fragment {
                 response -> {
                     try {
                         JSONArray jsonArray = new JSONArray(response);
-                        JSONObject entry = jsonArray.getJSONObject(0);
-                        // find the most recent game
-                        try {
+                        if (jsonArray.length() > 0) {
+                            JSONObject entry = jsonArray.getJSONObject(0);
                             gameID = (int) entry.get("gameID");
-                        } catch (Exception e) {
-                            Log.d("HomeScreen", "User has no prev games");
                         }
 
                         // get the result of the most recent game

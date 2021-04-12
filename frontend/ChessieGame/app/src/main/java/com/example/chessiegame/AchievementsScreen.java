@@ -73,7 +73,6 @@ public class AchievementsScreen extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment AchievementsScreen.
      */
-    // TODO: Rename and change types and number of parameters
     public static AchievementsScreen newInstance(String param1, String param2) {
         AchievementsScreen fragment = new AchievementsScreen();
         Bundle args = new Bundle();
@@ -161,7 +160,6 @@ public class AchievementsScreen extends Fragment {
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
-                    Toast.makeText(getActivity(),response,Toast.LENGTH_LONG).show();
                     try {
                         JSONArray arr = new JSONArray(response);
                         for (int i = 0; i < arr.length(); i++) {
