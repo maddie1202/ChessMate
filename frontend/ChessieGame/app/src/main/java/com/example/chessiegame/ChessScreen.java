@@ -103,6 +103,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     boolean bking_moved = false;
     int num_player_moves;
 
+    private CountDownTimer timer;
+    long milliLeft;
+
     //TODO: notes
     // on resume, send the player's last move (second most recent board in DB) and send to DE1 to get possible moves
     TextView timerTextView;
@@ -194,30 +197,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         bti.putExtra("userMove", btTest.getBytes());
         startService(bti);*/
 
-        new CountDownTimer(600000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                long millis = millisUntilFinished;
-                int seconds = (int) (millis / 1000);
-                int minutes = seconds / 60;
-                seconds = seconds % 60;
-
-                timerTextView.setText(String.format("Time Remaining: %d:%02d", minutes, seconds));
-            }
-
-            public void onFinish() {
-                timerTextView.setText("Over! You lost");
-                updateGameResult(gameID, 0, 0); // update game with you lost
-                Handler h = new Handler();
-                Runnable r = new Runnable() {
-                    public void run() {
-                        Intent intent = new Intent(getApplicationContext(), HomeScreen.class);
-                        startActivity(intent);
-                    }
-                };
-                h.postDelayed(r,10000); // after 10 seconds, automatically go back to home
-            }
-        }.start();
+        timerStart(600000);
 
         //POPUP
         // inflate the layout of the popup window
@@ -235,7 +215,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         Button resume = (Button) popupView.findViewById(R.id.resume);
         ImageButton closeButton3 = (ImageButton) popupView.findViewById(R.id.close_button3);
 
-
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -243,6 +222,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 // show the popup window
                 // which view you pass in doesn't matter, it is only used for the window tolken
                 popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+                timerPause();
             }
 
         });
@@ -258,6 +238,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             @Override
             public void onClick(View v) {
                 popupWindow.dismiss();
+                timerResume();
             }
         });
 
@@ -265,6 +246,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             @Override
             public void onClick(View v) {
                 popupWindow.dismiss();
+                timerResume();
             }
         });
 
@@ -286,6 +268,40 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
+    public void timerStart(long timeLengthMili){
+        timer = new CountDownTimer(timeLengthMili, 1000) {
+            public void onTick(long millisUntilFinished) {
+                milliLeft= millisUntilFinished;
+                long millis = millisUntilFinished;
+                int seconds = (int) (millis / 1000);
+                int minutes = seconds / 60;
+                seconds = seconds % 60;
+                timerTextView.setText(String.format("Time Remaining: %d:%02d", minutes, seconds));
+            }
+
+            public void onFinish() {
+                timerTextView.setText("Over! You lost");
+                updateGameResult(gameID, 0, 0); // update game with you lost
+                Handler h = new Handler();
+                Runnable r = new Runnable() {
+                    public void run() {
+                        Intent intent = new Intent(getApplicationContext(), HomeScreen.class);
+                        startActivity(intent);
+                    }
+                };
+                h.postDelayed(r,10000); // after 10 seconds, automatically go back to home
+            }
+        }.start();
+    }
+
+    public void timerPause() {
+        timer.cancel();
+    }
+
+    private void timerResume() {
+        timerStart(milliLeft);
+    }
+
     private void navigateToHome(int gameID) {
         updateGameResult(gameID, -1, 500000); // TODO: make timeRemaining the actual time on the timer
         Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
@@ -293,7 +309,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         startActivity(intent);
         overridePendingTransition(0,0);
     }
-
+    
     /*
     @Override
     public void onPause() {
