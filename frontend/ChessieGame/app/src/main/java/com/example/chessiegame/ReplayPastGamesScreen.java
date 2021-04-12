@@ -302,7 +302,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                             int newPieceID = b[i][j];
 
                             if (t.hasPiece() && p != null) { // there was a already piece on that square
-                                if (newPieceID == 0) { // piece gets replaced with a blank
+                                if (newPieceID == 50) { // piece gets replaced with a blank
                                     t.removePiece(p);
                                 } else if (newPieceID != p.id) { // b[i][j] is not 0
                                     // if the new board is not the same as the current board
@@ -313,7 +313,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                                     pc.setImageResource(imageMap.get(newPieceID));
                                 }
                             } else { // no piece was on that square
-                                if (newPieceID != 0) { // the square on new board has a piece
+                                if (newPieceID != 50) { // the square on new board has a piece
                                     Piece pc = new Piece(context, i, j, "Piece", newPieceID);
                                     t.setPiece(pc);
                                     Log.d("Replay Games Screen", "NewPieceID is " + String.valueOf(newPieceID));

@@ -196,12 +196,10 @@ exports.updateResult = (req,res) => {
             });
           }
 
-
-          const userID = req.body.userID;
           const gameID = req.body.gameID;
           const result = req.body.result;
 
-          Game.updateResult(userID, gameID, result, (err, data) => {
+          Game.updateResult(gameID, result, (err, data) => {
             if (err) {
                 if (err.kind === "not_found") {
                   res.status(404).send({

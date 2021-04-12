@@ -433,7 +433,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         for (int i = 0; i < rows ; i ++) {
             for (int j = 0; j < cols; j++) {
                 if (tiles[i][j].getPiece() == null) {
-                    sb.append((char) 0);
+                    sb.append((char) 50);
                 } else {
                     sb.append((char) tiles[i][j].getPiece().id);
                 }
@@ -568,7 +568,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     }
                 } else { // assign layout based on prev game state
                     Log.d("ChessScreen", "In progress");
-                    if (resumedLayout[i][j] != 0) { // there is a piece on this tile
+                    if (resumedLayout[i][j] != 50) { // there is a piece on this tile
                         int id = resumedLayout[i][j];
                         p = new Piece(this, i, j, "", id);
                         p.setImageResource(imageMap.get(id));
@@ -873,7 +873,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 int newPieceID = AIMove[i][j];
 
                 if (t.hasPiece() && p != null) { // there was a already piece on that square
-                    if (newPieceID == 0) { // piece gets replaced with a blank
+                    if (newPieceID == 50) { // piece gets replaced with a blank
                         t.removePiece(p);
                     } else if (newPieceID != p.id) { // AIMove[i][j] is not 0
                         // if the new board is not the same as the current board
@@ -884,7 +884,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         pc.setImageResource(imageMap.get(newPieceID));
                     }
                 } else { // no piece was on that square
-                    if (newPieceID != 0) { // the square on new board has a piece
+                    if (newPieceID != 50) { // the square on new board has a piece
                         Piece pc = new Piece(this, i, j, "Piece", newPieceID);
                         t.setPiece(pc);
                         Log.d("Chess Screen", "NewPieceID is " + String.valueOf(newPieceID));
