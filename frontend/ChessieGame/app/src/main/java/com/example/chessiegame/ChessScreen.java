@@ -233,8 +233,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
 
         Button pause = (Button) findViewById(R.id.pause_button);
-        Button quit = (Button) findViewById(R.id.quit);
-        Button resume = (Button) findViewById(R.id.resume);
+        Button quit = (Button) popupView.findViewById(R.id.quit);
+        Button resume = (Button) popupView.findViewById(R.id.resume);
 
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,6 +245,13 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
             }
 
+        });
+
+        quit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToHome(gameID);
+            }
         });
 
         int targetSeqNum = 0;
@@ -265,8 +272,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
+    //TODO: is this what i need to pass??
+
     private void navigateToHome(int gameID) {
-        Intent intent = new Intent(ChessScreen.this, HomeScreen.class);
+        Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.putExtra("newGame", false);
         //intent.putExtra("difficulty", difficulty);
