@@ -41,6 +41,7 @@ public class BoardMap {
         for (int i = -1; i > -9; i--) {
             imageMap.put(i, R.drawable.bpawn); // bpawn
         }
+        //
 
         for (int i = -9; i > -19; i--) {
             imageMap.put(i, R.drawable.brook); // brook
