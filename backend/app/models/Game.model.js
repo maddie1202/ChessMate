@@ -252,9 +252,9 @@ Game.createResult = (userID, gameID, resultnum, result) => {
         }
 };
 
-Game.updateResult = (userID, gameID, resultnum, result) => {
+Game.updateResult = (gameID, resultnum, result) => {
     sql.query(
-    "UPDATE Results SET result = " +resultnum+ " WHERE userID = \"" + userID + "\" AND gameID = " + gameID,
+    "UPDATE Results SET result = " +resultnum+ " WHERE gameID = " + gameID,
      (err, res) => {
         if(err) {
             console.log("error: ", err);
@@ -268,8 +268,7 @@ Game.updateResult = (userID, gameID, resultnum, result) => {
             return;
         }
 
-        const user = "" + userID + "";
-        var resultobj = {"userID" : user,
+        var resultobj = {
                           "gameID" : gameID,
                           "result" : resultnum };
 
@@ -289,30 +288,42 @@ Game.updateResult = (userID, gameID, resultnum, result) => {
             var difficulty = res[0].difficulty;
 
             console.log("diff = " + difficulty);
-            sql.query("SELECT realCount FROM Achievements WHERE userID = \"" + userID + "\" AND difficulty = "+difficulty, (err, res) => {
+            sql.query("SELECT userID FROM Results WHERE gameID = " + gameID, (err,res) =>{
                 if(err){
-                    console.log("err in select realCount: ", err);
+                    console.log("err in select userID: ", err);
                     return;
                 }
-                if(res.length >= 1){
-                    var num = res.length;
-                    var realCount = res;
-                    var i;
-                    for(i = 0; i<num; i++){
-                        var count;
-                        if(resultnum == 0){
-                            count = realCount[i].realCount - 1;
-                        }
-                        else {
-                            count = realCount[i].realCount + 1;
-                        }
 
-                        var value = "realCount="+count;
-                        var condition = "userID=\""+userID+"\" AND difficulty="+difficulty;
-                        sql.query("UPDATE Achievements SET "+value+ " WHERE "+condition);
+                const userID = res[0].userID;
+
+                sql.query("SELECT realCount FROM Achievements WHERE userID = \"" + userID + "\" AND difficulty = "+difficulty, (err, res) => {
+                    if(err){
+                        console.log("err in select realCount: ", err);
+                        return;
                     }
-                }
+                    if(res.length >= 1){
+                        var num = res.length;
+                        var realCount = res;
+                        var i;
+                        for(i = 0; i<num; i++){
+                            var count;
+                            if(resultnum == 0){
+                                count = realCount[i].realCount - 1;
+                            }
+                            else {
+                                count = realCount[i].realCount + 1;
+                            }
+
+                            var value = "realCount="+count;
+                            var condition = "userID=\""+userID+"\" AND difficulty="+difficulty;
+                            sql.query("UPDATE Achievements SET "+value+ " WHERE "+condition);
+                        }
+                    }
+                });
+
             });
+
+
         });
     }
 
