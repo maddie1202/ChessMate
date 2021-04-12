@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.gridlayout.widget.GridLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,6 @@ public class AccountScreen extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment AccountScreen.
      */
-    // TODO: Rename and change types and number of parameters
     public static AccountScreen newInstance(String param1, String param2) {
         AccountScreen fragment = new AccountScreen();
         Bundle args = new Bundle();
@@ -106,7 +106,7 @@ public class AccountScreen extends Fragment {
         gridArray = new ArrayList<String>();
 
         RequestQueue queue = Volley.newRequestQueue(getActivity());
-        getPastGames(queue, "http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/1");
+        getPastGames(queue, "http://ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + user.getUid());
 
         if (!gridArray.isEmpty()) {
             TextView titleText;
@@ -144,8 +144,6 @@ public class AccountScreen extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        Toast.makeText(getActivity(),response,Toast.LENGTH_LONG).show();
                         try {
                             JSONArray jsonArray = new JSONArray(response);
                             gridArray.clear();
@@ -160,7 +158,7 @@ public class AccountScreen extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(),error.getMessage(),Toast.LENGTH_LONG).show();
+                Log.d("AccountScreen", "Could not pull account details");
             }
         });
 

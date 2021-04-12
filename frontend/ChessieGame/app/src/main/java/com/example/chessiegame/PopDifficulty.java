@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -62,6 +63,8 @@ public class PopDifficulty extends Activity {
             public void onClick(View v) {
                 if (gameID != -1 && skill != -1) {
                     navigateToChess(gameID, skill);
+                } else {
+                    showToast("Please select a level of difficulty");
                 }
             }
         });
@@ -86,6 +89,10 @@ public class PopDifficulty extends Activity {
                 postNewGame(3);
             }
         });
+    }
+
+    private void showToast(String msg){
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     /**

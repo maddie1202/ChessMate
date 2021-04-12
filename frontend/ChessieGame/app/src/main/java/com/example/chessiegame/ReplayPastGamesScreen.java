@@ -49,7 +49,6 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         backArrow = findViewById(R.id.arrow_back);
         gameID = getIntent().getIntExtra("gameID", 0);
         gameBoards = (HashMap<Integer, Integer[][]>) getIntent().getSerializableExtra("boards");
-        gameID = 116; // hardcode it for now
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +57,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
             }
         });
 
+        Log.d("ReplayPastGames", "GameID is: " + gameID);
         context = this;
         imageMap = new BoardMap(this);
         tiles = new Tile[rows][cols];
@@ -66,7 +66,6 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         mockBoards();
 
         initChessboard();
-        //mockOneMove();
         replayGame();
     }
 
@@ -287,6 +286,9 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         int length = gameBoards.size();
         ArrayList<Integer> keys = new ArrayList<>(gameBoards.keySet());
         Collections.sort(keys);
+        for (int i = 0; i < keys.size(); i++) {
+            Log.d("ReplayPastGames", "Key index: " + keys.get(i));
+        }
 
         Handler h = new Handler();
         for(int index = 0; index < length; index++) {

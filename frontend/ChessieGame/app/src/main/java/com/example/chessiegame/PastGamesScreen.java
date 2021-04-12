@@ -239,7 +239,8 @@ public class PastGamesScreen extends Fragment {
             //rp2.gravity = Gravity.CENTER_HORIZONTAL;
 
             //gameDate.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-            gameDate.setText(g.date); // g.date is date that the game was played
+            String gDate = g.date;
+            gameDate.setText("Played " + gDate); // g.date is date that the game was played
             gameDate.setTextColor(Color.BLACK);
             gameDate.setTextSize(10);
             //gameDate.setPadding(5,5,5,5);

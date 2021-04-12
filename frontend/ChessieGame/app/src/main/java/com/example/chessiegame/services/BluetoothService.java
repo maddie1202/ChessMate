@@ -37,13 +37,15 @@ public class BluetoothService extends Service {
     private final UUID btUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BTThread btThread;
     private boolean started = false;
+    private boolean startPolling;
 
     private int gameID;
-    private int boardID;
+    private int gameResult;
     private int sequenceNum;
     private String AIMove;
     private int[][] AIBoard;
     private HashSet<int[][]> validMoves;
+
     private final int size = 8;
 
     public BluetoothService() {
@@ -71,8 +73,9 @@ public class BluetoothService extends Service {
             btDevice = intent.getExtras().getParcelable("btDevice"); // not null
             btReceiver = intent.getExtras().getParcelable("btReceiver");
             gameID = intent.getIntExtra("gameID", 0);
-            boardID = 0;
-            sequenceNum = intent.getIntExtra("sequenceNum", 0);
+            gameResult = -1;
+            sequenceNum = intent.getIntExtra("sequenceNum", 0); // sequenceNum to wait for
+            startPolling = true; // start scanning db for an opponent entry
             AIMove = "";
             AIBoard = new int[size][size];
             validMoves = new HashSet<int[][]>();
@@ -112,7 +115,7 @@ public class BluetoothService extends Service {
                 btThread.write(data);
                 Log.d("Bluetooth Service", "User move sent to btThread");*/
 
-                sequenceNum = intent.getIntExtra("sequenceNum", sequenceNum);
+                startPolling = true; // player made a move, start polling for opponent's move
                 Log.d("Bluetooth Service", "Target sequence num received: " + sequenceNum);
 
                 // test send back message
@@ -154,7 +157,6 @@ public class BluetoothService extends Service {
         public void run() {
             byte[] buffer = new byte[12000];  // buffer store for the stream
             int bytes; // bytes returned from read()
-            int currSequenceNum = 0;
 
             while (true) {
                 /*try {
@@ -172,15 +174,21 @@ public class BluetoothService extends Service {
                         btReceiver.send(1, readData);
                     } else { // alternate design*/
 
-                while (!newInfo) { // wait on new information from the db
-                    pollDatabaseForMove(gameID);
+                while (!newInfo && startPolling) { // wait on new information from the db
                     pollDatabaseForResult(gameID);
                     SystemClock.sleep(200); // sleep between polls
                 }
 
-                newInfo = false; // reset newInfo for the next move
-                getValidMoves(); // now get the possible valid player moves
-                sequenceNum += 2; // always scan for EVEN sequence numbers
+                if (startPolling) { // we have info and are still polling
+                    newInfo = false; // reset newInfo for the next move
+                    startPolling = false; // stop polling until player makes a move
+                    if (gameResult == 1) {
+                        sendPlayerWon();
+                    } else {
+                        getValidMoves(); // now get the possible valid player moves
+                        sequenceNum += 2; // always scan for EVEN sequence numbers
+                    }
+                }
                 /*    }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -201,36 +209,20 @@ public class BluetoothService extends Service {
          * Queries the database for the most recent board in the game with ID = gameID
          */
         public void pollDatabaseForMove(int gameID) {
-            // TODO: update url later, this does the same thing rn but slower
             String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getlatestboard/" + gameID;
 
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                     response -> {
                         try {
-                            /*int maxNum = boardID;
-                            JSONArray jsonArray = new JSONArray(response);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject j = jsonArray.getJSONObject(i);
-                                // get the max sequenceNumber to find the most recent board
-                                if ((int) j.get("boardID") > maxNum) {
-                                    maxNum = (int) j.get("boardID");
-                                    AIMove = (String) j.get("placements");
-                                }
-                            }
-
-                            if (maxNum > boardID) {
-                                boardID = maxNum;
-                                AIBoard = parseMove(AIMove);
-                                newInfo = true;
-                            }*/
-
                             JSONArray arr = new JSONArray(response);
-                            JSONObject res = arr.getJSONObject(0);
-                            int num = (int) res.get("sequenceNumber");
-                            if (num == sequenceNum) { // there is new information in the db
-                                AIMove = res.get("placements").toString(); // the AI's move
-                                AIBoard = parseMove(AIMove);
-                                newInfo = true;
+                            if (arr.length() > 0) { // in case the game has nothing in it
+                                JSONObject res = arr.getJSONObject(0);
+                                int num = (int) res.get("sequenceNumber");
+                                if (num == sequenceNum) { // there is new information in the db
+                                    AIMove = res.get("placements").toString(); // the AI's move
+                                    AIBoard = parseMove(AIMove);
+                                    newInfo = true;
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -248,7 +240,35 @@ public class BluetoothService extends Service {
          * Queries the database for an updated result for game with gameID
          */
         public void pollDatabaseForResult(int gameID) {
-            // TODO: query the database for a result != -1, update newInfo if updated result found
+            String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgameresult/" + gameID;
+
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    response -> {
+                        try {
+                            JSONArray arr = new JSONArray(response);
+                            if (arr.length() > 0) { // non-empty result
+                                int result = Integer.parseInt((String) arr.getJSONObject(0).get("result"));
+                                if (result == 0) { // opponent won
+                                    gameResult = 0;
+                                    pollDatabaseForMove(gameID);
+                                } else if (result == 1) { // player won
+                                    gameResult = 1;
+                                    newInfo = true; // no need to look for opponent data if player won
+                                } else { // we keep playing, look for a new move
+                                    gameResult = -1;
+                                    pollDatabaseForMove(gameID);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    },
+                    error -> {
+                        Log.d("ChessScreen", "Error fetching valid player moves");
+                    });
+
+            // Add the request to the RequestQueue.
+            queue.add(stringRequest);
         }
 
         /**
@@ -257,7 +277,6 @@ public class BluetoothService extends Service {
          * and finally clears the valid player moves table for the next entry
          */
         public void getValidMoves() {
-            // TODO: update url to get valid player moves
             String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallmoves";
 
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -273,8 +292,7 @@ public class BluetoothService extends Service {
                             Bundle AIData = new Bundle();
                             AIData.putSerializable("AIMove", AIBoard);
                             AIData.putSerializable("validMoves", validMoves);
-                            // TODO: update this with the game result returned by AI
-                            AIData.putInt("result", -1);
+                            AIData.putInt("result", gameResult);
                             btReceiver.send(1, AIData);
 
                             // OPTIONAL: clear the validMoves table?
@@ -288,6 +306,15 @@ public class BluetoothService extends Service {
 
             // Add the request to the RequestQueue.
             queue.add(stringRequest);
+        }
+
+        public void sendPlayerWon() { // when gameResult == 1, AIBoard and validMoves are ignored
+            // send AI move and Set containing valid player moves to the chess screen
+            Bundle AIData = new Bundle();
+            AIData.putSerializable("AIMove", AIBoard);
+            AIData.putSerializable("validMoves", validMoves);
+            AIData.putInt("result", gameResult);
+            btReceiver.send(1, AIData);
         }
 
         /**
