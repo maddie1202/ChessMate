@@ -68,7 +68,10 @@ void print_test_result(test_result_t result, const char* test)
 
 int main()
 {
-    setup_hardware();
+    if (!setup_hardware()) {
+        printf("Hardware setup error\n");
+        return 1;
+    }
 
     printf("Running test_game...\n");
     test_game();

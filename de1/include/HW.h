@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #define pawn_offset 0x2040
 #define rook_offset 0x2080
 #define knight_offset 0x20C0 
@@ -25,5 +27,5 @@ void * map_physical (int, unsigned int, unsigned int);
 void close_physical (int);
 int unmap_physical (void *, unsigned int);
 
-int setup_hardware();
+bool setup_hardware();
 void teardown_hardware();
