@@ -106,26 +106,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     //TODO: notes
     // on resume, send the player's last move (second most recent board in DB) and send to DE1 to get possible moves
     TextView timerTextView;
-    long startTime = 0;
-
-    //runs without a timer by reposting this handler at the end of the runnable
-    /*
-    Handler timerHandler = new Handler();
-    Runnable timerRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            long millis = System.currentTimeMillis() - startTime;
-            int seconds = (int) (millis / 1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
-
-            timerTextView.setText(String.format("%d:%02d", minutes, seconds));
-
-            timerHandler.postDelayed(this, 500);
-        }
-    };
-     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,26 +194,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         bti.putExtra("userMove", btTest.getBytes());
         startService(bti);*/
 
-        /*
-        Button b = (Button) findViewById(R.id.button);
-        b.setText("start");
-        b.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Button b = (Button) v;
-                if (b.getText().equals("stop")) {
-                    timerHandler.removeCallbacks(timerRunnable);
-                    b.setText("start");
-                } else {
-                    startTime = System.currentTimeMillis();
-                    timerHandler.postDelayed(timerRunnable, 0);
-                    b.setText("stop");
-                }
-            }
-        });
-         */
-
         new CountDownTimer(600000, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -259,13 +219,32 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             }
         }.start();
 
+        //POPUP
+
+        // inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.pause_game, null);
+        // create the popup window
+        int width_f = (int) (width*.9);
+        //int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height_f = (int) (height*.7);
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width_f, height_f, focusable);
+
+
         Button pause = (Button) findViewById(R.id.pause_button);
+        Button quit = (Button) findViewById(R.id.quit);
+        Button resume = (Button) findViewById(R.id.resume);
+
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                onButtonShowPopUp(view, width, height);
+                //onButtonShowPopUp(view, width, height);
+                // show the popup window
+                // which view you pass in doesn't matter, it is only used for the window tolken
+                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
             }
+
         });
 
         int targetSeqNum = 0;
@@ -286,12 +265,20 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
+    private void navigateToHome(int gameID) {
+        Intent intent = new Intent(ChessScreen.this, HomeScreen.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        intent.putExtra("newGame", false);
+        //intent.putExtra("difficulty", difficulty);
+        intent.putExtra("gameID", gameID);
+        startActivity(intent);
+        overridePendingTransition(0,0);
+    }
+
     public void onButtonShowPopUp(View view, int width, int height){
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.pause_game, null);
-
-        ImageButton closeButton3 = (ImageButton) findViewById(R.id.close_button2);
         // create the popup window
         int width_f = (int) (width*.9);
         //int height = LinearLayout.LayoutParams.WRAP_CONTENT;
