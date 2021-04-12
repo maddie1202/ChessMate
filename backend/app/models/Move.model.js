@@ -4,19 +4,23 @@ const Move =function(move){
     this.placements = move.placements;
 };
 
-//Add a possible move
+//Add all possible move
 Move.create = (move, result) => {
-    const attributes = "placements";
-    const values = "\'"+move+"\'";
-    sql.query("INSERT INTO Move(" + attributes + ") VALUES(" + values + ")", (err, res) => {
-        if(err){
-            console.log("error: ", err);
-            result(err, null);
-            return;
-        }
-        console.log("created moveID: ", res.insertId);
-        result(null, {"moveID" : res.insertId });
-    });
+
+    var i;
+    for(i = 0; i < move.length; i++){
+        const attributes = "placements";
+        const values = "\'"+move[i]+"\'";
+        sql.query("INSERT INTO Move(" + attributes + ") VALUES(" + values + ")", (err, res) => {
+            if(err){
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("created moveID: ", res.insertId);
+        });
+    }
+   result(err, {message : "Done!"});
 
 };
 

@@ -16,8 +16,8 @@ exports.findAll = (req,res) => {
 };
 
 //Add a possible move
-//app.post("/createonemove", move.createOne);
-exports.createOne = (req,res) => {
+//app.post("/createmoves", move.createAll);
+exports.createAll = (req,res) => {
     //validate request
     if (req.body.placements == null) {
         res.status(400).send({
@@ -25,13 +25,14 @@ exports.createOne = (req,res) => {
         });
     }
 
-    const move = req.body.placements;
+    const moves = req.body.placements;
+    const move = moves.split(",");
     // Save Move in the database
     Move.create(move, (err, data) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the Move."
+          err.message || "Some error occurred while creating the Moves."
       });
     else res.send(data);
     });
