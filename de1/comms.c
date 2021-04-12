@@ -7,6 +7,7 @@
 #include <string.h>
 
 #define PUT_GAME_RESULT_URL "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/updateresult"
+#define POST_GAME_RESULT_URL "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/postresult"
 
 #define KEY0 1
 #define KEY1 2
@@ -17,6 +18,9 @@ volatile int *pb_edgecapture_addr;
 volatile int *leds_addr;
 volatile int *switches_addr;
 
+/*
+ * Setup the virtual addressing for the pushbuttons, leds, and switches on the DE1.
+ */
 bool init_hardware()
 {
     pb_edgecapture_addr = (volatile int *)(lw_virtual + pb_edgecapture_offset);
@@ -27,17 +31,27 @@ bool init_hardware()
     return true;
 }
 
+/*
+ * Setup libcurl global settings.
+ */
 bool init_networking()
 {
     curl_global_init(CURL_GLOBAL_ALL);
     return true;
 }
 
+/* 
+ * Cleanup liburl global settings.
+ */
 void cleanup_networking()
 {
     curl_global_cleanup();
 }
 
+/*
+ * To start a new game, the player enters the game ID given on the 
+ * app on the switches and presses KEY0 on the DE1.
+ */
 bool start_new_game(int *game_id)
 {
     long PBreleases = *pb_edgecapture_addr;
@@ -51,6 +65,11 @@ bool start_new_game(int *game_id)
     return false;
 }
 
+/*
+ * To resume a game, the player has to enter the game ID on the switches, 
+ * and press KEY2 to confirm the input.
+ * We will need to wait for the player move.
+ */
 bool resume_old_game(game_t *game, int *game_id)
 {
     long PBreleases = *pb_edgecapture_addr;
@@ -69,11 +88,18 @@ void display_state(enum game_state state)
 
 }
 
+/*
+ * Poll the DB until the player makes a new move in the game.
+ */
 bool receive_move(game_t *game, int game_id)
 {
     return false;
 }
 
+/*
+ * Player presses KEY1 to indicate that theyhave paused the game on the app.
+ * Ensure that we have sent the latest AI move before pausing.
+ */
 bool pause_game()
 {
     long PBreleases = *pb_edgecapture_addr;
@@ -86,23 +112,47 @@ bool pause_game()
     return false;
 }
 
+/*
+ * Send init board???
+ */
 void send_ack_start_game()
 {
 
 }
 
+/*
+ * Post both the AI move and the list of potential player moves to the database.
+ */
 void send_move(game_t *game, move_list_t *possible_player_moves, int game_id, int seq_num)
 {
     
 }
 
+/*
+ * If the AI has won, we need to send over our winning move, and then update 
+ * the game result accordingly.
+ */
 void send_game_over_black_wins(game_t* game, int game_id, int seq_num)
 {
+    // send black's winning move
+    send_move(game, NULL, game_id, seq_num);
 
+    // update game result to 0 to indicate player lost
+    char body[80];
+    sprintf(body, "{\"gameId\": %d, \"result\": 0}", game_id);
+    if (send_put_request(PUT_GAME_RESULT_URL, body)) {
+        printf("Success!\n");
+    } else {
+        printf("Failure :(");
+    }
 }
 
+/*
+ * If the player has won, all we need to do is update the game status.
+ */
 void send_game_over_white_wins(int game_id)
 {
+    // update game result to 1 to indicate player won
     char body[80];
     sprintf(body, "{\"gameId\": %d, \"result\": 1}", game_id);
     if (send_put_request(PUT_GAME_RESULT_URL, body)) {
@@ -112,6 +162,9 @@ void send_game_over_white_wins(int game_id)
     }
 }
 
+/* 
+ * If the player presses KEY3 on the board, cleanup everything and exit the program. 
+ */
 bool end_program()
 {
     long PBreleases = *pb_edgecapture_addr;
@@ -124,6 +177,9 @@ bool end_program()
     return false;
 }
 
+/*
+ * Sends a post request to the given url containing the given body.
+ */
 bool send_post_request(char *url, char *body)
 {
     CURL *curl;
@@ -156,6 +212,9 @@ bool send_post_request(char *url, char *body)
     return false;
 }
 
+/*
+ * Sends a put request to the given url containing the given body.
+ */
 bool send_put_request(char *url, char *body)
 {
     CURL *curl;
@@ -164,11 +223,11 @@ bool send_put_request(char *url, char *body)
     /* get a curl handle */ 
     curl = curl_easy_init();
     if (curl) {
-        /* First set the URL that is about to receive our POST. This URL can
+        /* First set the URL that is about to receive our PUT. This URL can
         just as well be a https:// URL if that is what should receive the
         data. */ 
         curl_easy_setopt(curl, CURLOPT_URL, url);
-        /* Now specify the POST data */ 
+        /* Now specify the PUT data */ 
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body);
         curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
     
@@ -189,6 +248,9 @@ bool send_put_request(char *url, char *body)
     return false;
 }
 
+/*
+ * Sends a get request to the given url.  Saves the data received in a file???
+ */
 bool send_get_request(char *url)
 {
     CURL *curl;

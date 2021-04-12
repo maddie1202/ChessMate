@@ -9,6 +9,11 @@
 int lw_fd, sdram_fd;
 void *lw_virtual, *sdram_virtual;
 
+/*
+ * Setup virtual addressing for SDRAM and LW bridge,
+ * then initialize virtual addresses for buttons and switches,
+ * then setup global settings for using libcurl for http requests.
+ */
 bool setup()
 {
     if (!setup_hardware()) {
@@ -29,12 +34,18 @@ bool setup()
     return true;
 }
 
+/*
+ * Cleanup all the virtual addressing dealing with the DE1.
+ */
 void teardown()
 {
     teardown_hardware();
     cleanup_networking();
 }
 
+/*
+ * Main state machine for playing a game with the app.
+ */
 void play_game()
 {
     enum game_state state = WAIT_GAME;

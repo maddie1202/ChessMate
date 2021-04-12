@@ -21,7 +21,10 @@
 extern int lw_fd, sdram_fd;
 extern void *lw_virtual, *sdram_virtual;
 
-/* Prototypes for functions used to access physical memory addresses */
+/* 
+ * Prototypes for functions used to access physical memory addresses.
+ * Note that these 4 functions are directly from the Intel tutorial "Using Linux on the DE1-SoC" 
+ */
 int open_physical (int);
 void * map_physical (int, unsigned int, unsigned int);
 void close_physical (int);
