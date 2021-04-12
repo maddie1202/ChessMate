@@ -176,7 +176,7 @@ public class BluetoothService extends Service {
 
                 while (!newInfo && startPolling) { // wait on new information from the db
                     pollDatabaseForResult(gameID);
-                    SystemClock.sleep(200); // sleep between polls
+                    SystemClock.sleep(350); // sleep between polls
                 }
 
                 if (startPolling) { // we have info and are still polling

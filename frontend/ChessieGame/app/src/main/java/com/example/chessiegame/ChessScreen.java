@@ -650,6 +650,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 vw.setVisibility(View.VISIBLE); // finally set Visibility to VISIBLE
 
                 if (validMove) {
+                    clearValidMoves(); // delete the table of valid moves in prep for the next one
                     if (p.id == 9) wrook0_moved = true;
                     else if (p.id == 10) wrook1_moved = true;
                     else if (p.id == -9) brook0_moved = true;
@@ -689,6 +690,25 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Clears the valid moves table after a player has made a valid move
+     */
+    private void clearValidMoves() {
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/deleteallmoves";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url,
+                response -> {
+                    Log.d("ChessScreen", "Successfully deleted valid moves table");
+                }, error -> {
+            Log.d("ChessScreen", error.toString());
+        });
+
+        queue.add(stringRequest);
+    }
+
+    /**
+     * Post the player's move to the database and send a signal to the service
+     */
     private void forwardPlayerMove() {
         boardToStringAndPost(); // sends board to the db
         Intent intent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
