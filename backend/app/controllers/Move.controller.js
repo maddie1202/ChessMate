@@ -26,7 +26,7 @@ exports.createAll = (req,res) => {
     }
 
     const moves = req.body.placements;
-    const move = moves.split(",");
+    const move = moves.split("~");
     // Save Move in the database
     Move.create(move, (err, data) => {
     if (err)
