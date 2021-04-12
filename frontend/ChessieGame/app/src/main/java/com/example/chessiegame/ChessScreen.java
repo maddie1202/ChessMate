@@ -295,7 +295,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         // create the popup window
         int width_f = (int) (width*.9);
         //int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height_f = (int) (height*.9);
+        int height_f = (int) (height*.7);
         boolean focusable = true; // lets taps outside the popup also dismiss it
         PopupWindow popupWindow = new PopupWindow(popupView, width_f, height_f, focusable);
 
