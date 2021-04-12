@@ -7,8 +7,8 @@
 
     <TextView
         android:id="@+id/gameIDresume"
-        android:layout_width="158dp"
-        android:layout_height="91dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="76dp"
@@ -27,7 +27,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="156dp"
         android:gravity="center"
-        android:text="After choosing the difficulty, please input the gameID on switches then press KEY0 (1 switch up, 0 switch down)"
+        android:text="Please input the gameID on the switches then press KEY0 (1 switch up, 0 switch down)"
         android:textColor="#FFFFFF"
         android:textSize="24sp" />
 
