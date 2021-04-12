@@ -6,7 +6,7 @@ module.exports = app => {
     app.get("/getallmoves", move.findAll);
 
     //Add a possible move
-    app.post("/createonemove", move.createOne);
+    app.post("/createmoves", move.createAll);
 
     //delete all possible moves
     app.delete("/deleteallmoves", move.deleteAll);
