@@ -252,6 +252,7 @@ public class HomeScreen extends Fragment {
         for (int j = 0; j < size; j++) {
             for (int k = 0; k < size; k++) {
                 layout[j][k] = (int) arr[j * size + k];
+                Log.d("HomeScreen", "Resumed layout piece ID is: " + layout[j][k]);
             }
         }
 
