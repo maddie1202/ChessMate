@@ -387,7 +387,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         for (int i = 0; i < rows ; i ++) {
             for (int j = 0; j < cols; j++) {
                 if (tiles[i][j].getPiece() == null) {
-                    sb.append(0);
+                    sb.append((char) 0);
                 } else {
                     sb.append((char) tiles[i][j].getPiece().id);
                 }
