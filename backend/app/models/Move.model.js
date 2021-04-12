@@ -20,7 +20,7 @@ Move.create = (move, result) => {
             console.log("created moveID: ", res.insertId);
         });
     }
-   result(err, {message : "Done!"});
+   result(null, {message : "Done!"});
 
 };
 
