@@ -199,34 +199,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
         timerStart(600000);
 
-        /*
-        timer = new CountDownTimer(600000, 1000) {
-            public void onTick(long millisUntilFinished) {
-                long milliLeft= millisUntilFinished;
-                long millis = millisUntilFinished;
-                int seconds = (int) (millis / 1000);
-                int minutes = seconds / 60;
-                seconds = seconds % 60;
-
-                timerTextView.setText(String.format("Time Remaining: %d:%02d", minutes, seconds));
-            }
-
-            public void onFinish() {
-                timerTextView.setText("Over! You lost");
-                updateGameResult(user.getUid(), gameID, 0); // update game with you lost
-                Handler h = new Handler();
-                Runnable r = new Runnable() {
-                    public void run() {
-                        Intent intent = new Intent(getApplicationContext(), HomeScreen.class);
-                        startActivity(intent);
-                    }
-                };
-                h.postDelayed(r,10000); // after 10 seconds, automatically go back to home
-            }
-        }.start();
-
-         */
-
         //POPUP
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
