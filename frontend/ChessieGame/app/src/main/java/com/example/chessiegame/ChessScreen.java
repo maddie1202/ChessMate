@@ -220,7 +220,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         }.start();
 
         //POPUP
-
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.pause_game, null);
@@ -231,10 +230,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         boolean focusable = true; // lets taps outside the popup also dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width_f, height_f, focusable);
 
-
         Button pause = (Button) findViewById(R.id.pause_button);
         Button quit = (Button) popupView.findViewById(R.id.quit);
         Button resume = (Button) popupView.findViewById(R.id.resume);
+        ImageButton closeButton3 = (ImageButton) popupView.findViewById(R.id.close_button3);
+
 
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -251,6 +251,20 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             @Override
             public void onClick(View v) {
                 navigateToHome(gameID);
+            }
+        });
+
+        resume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+        closeButton3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
             }
         });
 
@@ -284,23 +298,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         overridePendingTransition(0,0);
     }
 
-    public void onButtonShowPopUp(View view, int width, int height){
-        // inflate the layout of the popup window
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.pause_game, null);
-        // create the popup window
-        int width_f = (int) (width*.9);
-        //int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height_f = (int) (height*.7);
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        PopupWindow popupWindow = new PopupWindow(popupView, width_f, height_f, focusable);
-
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-    }
-
     /*
     @Override
     public void onPause() {
@@ -310,7 +307,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         b.setText("start");
     }
      */
-
     /**
      * Posts a new game result with ID gameID
      */
