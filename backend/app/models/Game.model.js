@@ -307,7 +307,7 @@ Game.updateResult = (gameID, resultnum, result) => {
                         var i;
                         for(i = 0; i<num; i++){
                             var count;
-                            if(resultnum == 0){
+                            if(resultnum == 0 && realCount[i] > 0){
                                 count = realCount[i].realCount - 1;
                             }
                             else {
