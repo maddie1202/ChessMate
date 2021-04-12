@@ -62,7 +62,7 @@ public class PastGamesScreen extends Fragment {
     private RequestQueue queue;
     private ArrayList<Integer> gameIDList;
     private ArrayList<PastGame> gameList;
-    private HashMap<Integer, Integer[][]> boards;
+    private HashMap<Integer, int[][]> boards;
     private final Map<String, String> monthMap = new HashMap<String, String>() {{
         put("01", "January");
         put("02", "February");
@@ -267,19 +267,11 @@ public class PastGamesScreen extends Fragment {
                         JSONArray arr = new JSONArray(response); // boards are sorted by increasing boardID
                         for (int i = 0; i < arr.length(); i++) {
                             JSONObject board = arr.getJSONObject(i);
+                            int boardID = Integer.parseInt(board.get("boardID").toString());
 
                             // parse the board
                             String placements = board.get("placements").toString();
-                            String[] boardString = placements.split("\\s+");
-                            Integer[][] pieces = new Integer[size][size];
-                            int boardID = Integer.parseInt(board.get("boardID").toString());
-
-                            for (int j = 0; j < size; j++) {
-                                for (int k = 0; k < size; k++) {
-                                    pieces[j][k] = Integer.parseInt(boardString[j * size + k]);
-                                }
-                            }
-
+                            int[][] pieces = parseBoard(placements);
                             boards.put(boardID, pieces);
                         }
 
@@ -297,6 +289,22 @@ public class PastGamesScreen extends Fragment {
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
+    }
+
+    /**
+     * Uses regex to parse a String representing piece placements into a 2D array of piece IDs
+     */
+    public int[][] parseBoard(String b) {
+        int[][] layout = new int[size][size];
+        char[] arr = b.toCharArray();
+
+        for (int j = 0; j < size; j++) {
+            for (int k = 0; k < size; k++) {
+                layout[j][k] = (int) arr[j * size + k];
+            }
+        }
+
+        return layout;
     }
 
     class PastGame {

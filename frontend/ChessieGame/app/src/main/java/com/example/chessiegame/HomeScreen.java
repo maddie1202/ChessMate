@@ -218,8 +218,13 @@ public class HomeScreen extends Fragment {
                         JSONArray arr = new JSONArray(response);
                         JSONObject res = (JSONObject) arr.get(0);
 
+
+
+
+
                         // finally navigate to Resume Game PopUp
                         Intent intent = new Intent(getActivity(), ResumeGamePopUp.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         intent.putExtra("gameID", gameID);
                         Log.d("HomeScreen", "Resume game layout is: " + boardString);
                         int[][] layout = parseBoard(boardString);
@@ -252,6 +257,7 @@ public class HomeScreen extends Fragment {
         for (int j = 0; j < size; j++) {
             for (int k = 0; k < size; k++) {
                 layout[j][k] = (int) arr[j * size + k];
+                Log.d("HomeScreen", "Resumed layout piece ID is: " + layout[j][k]);
             }
         }
 

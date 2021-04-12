@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.os.SystemClock;
@@ -31,8 +32,8 @@ public class BluetoothService extends Service {
 
     private OutputStream btOutputStream;
     private InputStream btInputStream;
-    private BluetoothDevice btDevice;
-    private ResultReceiver btReceiver;
+    //private BluetoothDevice btDevice;
+    private ResultReceiver btReceiver = null;
     BluetoothSocket btSocket;
     private final UUID btUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BTThread btThread;
@@ -67,10 +68,13 @@ public class BluetoothService extends Service {
     public int onStartCommand(Intent intent,
                                int flags,
                                int startId) {
+        if (intent == null) {
+            return Service.START_STICKY;
+        }
 
         if (!started) { // first time starting the service, initialize everything
             started = true;
-            btDevice = intent.getExtras().getParcelable("btDevice"); // not null
+            //btDevice = intent.getExtras().getParcelable("btDevice"); // not null
             btReceiver = intent.getExtras().getParcelable("btReceiver");
             gameID = intent.getIntExtra("gameID", 0);
             gameResult = -1;
@@ -85,15 +89,14 @@ public class BluetoothService extends Service {
             // initialize IO Streams to null
             btOutputStream = null;
             btInputStream = null;
-            btThread = null;
 
-            try {
+            /*try {
                 btSocket = btDevice.createRfcommSocketToServiceRecord(btUUID);
                 btSocket.connect();
             } catch (IOException e) {
                 Log.d("Bluetooth Service", "Bluetooth Connection Failed");
                 e.printStackTrace();
-            }
+            }*/
 
             // start the thread without having to connect to btSocket
             btThread = new BTThread(btReceiver);
@@ -117,6 +120,11 @@ public class BluetoothService extends Service {
 
                 startPolling = true; // player made a move, start polling for opponent's move
                 Log.d("Bluetooth Service", "Target sequence num received: " + sequenceNum);
+                if (btReceiver == null) {
+                    Log.d("Bluetooth Service", "BTReceiver is null");
+                } else {
+                    Log.d("Bluetooth Service", "BTReceiver is not null");
+                }
 
                 // test send back message
                 /*Bundle readData = new Bundle();
@@ -132,9 +140,6 @@ public class BluetoothService extends Service {
     @Override
     public void onDestroy() {
         Log.d("Bluetooth Service", "Service Destroyed");
-        if (btThread != null) {
-            btThread.interrupt(); // interrupt the thread
-        }
     }
 
     public class BTThread extends Thread {
@@ -146,12 +151,12 @@ public class BluetoothService extends Service {
             this.btReceiver = btReceiver;
             newInfo = false;
 
-            try {
+            /*try {
                 btInputStream = btSocket.getInputStream();
                 btOutputStream = btSocket.getOutputStream();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
 
         public void run() {
@@ -176,7 +181,8 @@ public class BluetoothService extends Service {
 
                 while (!newInfo && startPolling) { // wait on new information from the db
                     pollDatabaseForResult(gameID);
-                    SystemClock.sleep(350); // sleep between polls
+                    Log.d("BluetoothService", "Polling database");
+                    wait(350); // sleep between polls
                 }
 
                 if (startPolling) { // we have info and are still polling
@@ -194,6 +200,14 @@ public class BluetoothService extends Service {
                     e.printStackTrace();
                     break;
                 }*/
+            }
+        }
+
+        public void wait(int ms) {
+            try {
+                Thread.sleep(ms);
+            } catch(InterruptedException ex) {
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -220,7 +234,7 @@ public class BluetoothService extends Service {
                                 int num = (int) res.get("sequenceNumber");
                                 if (num == sequenceNum) { // there is new information in the db
                                     AIMove = res.get("placements").toString(); // the AI's move
-                                    AIBoard = parseMove(AIMove);
+                                    AIBoard = parseBoard(AIMove);
                                     newInfo = true;
                                 }
                             }
@@ -247,7 +261,7 @@ public class BluetoothService extends Service {
                         try {
                             JSONArray arr = new JSONArray(response);
                             if (arr.length() > 0) { // non-empty result
-                                int result = Integer.parseInt((String) arr.getJSONObject(0).get("result"));
+                                int result = (int) arr.getJSONObject(0).get("result");
                                 if (result == 0) { // opponent won
                                     gameResult = 0;
                                     pollDatabaseForMove(gameID);
@@ -283,19 +297,20 @@ public class BluetoothService extends Service {
                     response -> {
                         try {
                             JSONArray arr = new JSONArray(response);
+                            if (arr.length() > 0) {
+                                String allMoves = (String) arr.getJSONObject(0).get("placements");
+                                String[] moveBoards = allMoves.split("~");
+                                for (String moveBoard : moveBoards) {
+                                    validMoves.add(parseBoard(moveBoard));
+                                }
 
-                            for (int i = 0; i < arr.length(); i++) {
-                                JSONObject elem = arr.getJSONObject(i);
-                                validMoves.add(parseMove((String) elem.get("placements")));
+                                // send AI move and Set containing valid player moves to the chess screen
+                                Bundle AIData = new Bundle();
+                                AIData.putSerializable("AIMove", AIBoard);
+                                AIData.putSerializable("validMoves", validMoves);
+                                AIData.putInt("result", gameResult);
+                                btReceiver.send(1, AIData);
                             }
-                            // send AI move and Set containing valid player moves to the chess screen
-                            Bundle AIData = new Bundle();
-                            AIData.putSerializable("AIMove", AIBoard);
-                            AIData.putSerializable("validMoves", validMoves);
-                            AIData.putInt("result", gameResult);
-                            btReceiver.send(1, AIData);
-
-                            // OPTIONAL: clear the validMoves table?
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -318,15 +333,15 @@ public class BluetoothService extends Service {
         }
 
         /**
-         * Turns the String representing the AI move into a 2d array of piece IDs
+         * Uses regex to parse a String representing piece placements into a 2D array of piece IDs
          */
-        public int[][] parseMove(String s) {
-            String[] boardString = s.split("\\s+");
+        public int[][] parseBoard(String b) {
             int[][] layout = new int[size][size];
+            char[] arr = b.toCharArray();
 
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++) {
-                    layout[i][j] = Integer.parseInt(boardString[i * size + j]);
+            for (int j = 0; j < size; j++) {
+                for (int k = 0; k < size; k++) {
+                    layout[j][k] = (int) arr[j * size + k];
                 }
             }
 

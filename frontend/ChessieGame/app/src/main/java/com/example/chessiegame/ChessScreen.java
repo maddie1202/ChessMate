@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.Gravity;
@@ -45,6 +46,7 @@ import com.example.chessiegame.components.BoardMap;
 import com.example.chessiegame.components.Move;
 import com.example.chessiegame.components.Piece;
 import com.example.chessiegame.components.Tile;
+import com.example.chessiegame.services.BluetoothService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -104,31 +106,16 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     //TODO: notes
     // on resume, send the player's last move (second most recent board in DB) and send to DE1 to get possible moves
     TextView timerTextView;
-    long startTime = 0;
-
-    //runs without a timer by reposting this handler at the end of the runnable
-    /*
-    Handler timerHandler = new Handler();
-    Runnable timerRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            long millis = System.currentTimeMillis() - startTime;
-            int seconds = (int) (millis / 1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
-
-            timerTextView.setText(String.format("%d:%02d", minutes, seconds));
-
-            timerHandler.postDelayed(this, 500);
-        }
-    };
-     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chess_screen);
+
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
 
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         btReceiver = new BTReceiver(new Handler());
@@ -163,7 +150,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
         initChessboard(startNewGame, resumedLayout);
 
-        if (mBlueAdapter == null) {
+        /*if (mBlueAdapter == null) {
             showToast("Bluetooth is not available");
         } else {
             // automatically turn on Bluetooth
@@ -181,20 +168,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 BluetoothDevice device = mBlueAdapter.getRemoteDevice("20:17:01:09:52:49"); // replace MAC address if need
                 showToast("Connected to " + device.getName());
 
-                // start service even if device not found
-                int targetSeqNum = 0;
-                if (!startNewGame) {
-                    targetSeqNum = sequenceNum; // we want to get the last AI move (the last move by default)
-                    sequenceNum++; // increment seqNum by 1 to recalibrate to player moves
-                }
-                Intent btIntent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
-                btIntent.putExtra("btDevice", device);
-                btIntent.putExtra("btReceiver", btReceiver);
-                btIntent.putExtra("gameID", gameID);
-                btIntent.putExtra("sequenceNum", targetSeqNum);
-                startService(btIntent);
-
-                /*if (device != null) {
+                if (device != null) {
                     Intent btIntent = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
                     btIntent.putExtra("btDevice", device);
                     btIntent.putExtra("btReceiver", btReceiver);
@@ -203,42 +177,22 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     //stopService(new Intent(this, BluetoothService.class)); --> to stop service
                 } else {
                     showToast("Encountered a bluetooth error");
-                }*/
+                }
 
             } else {
                 showToast("Encountered a bluetooth error");
             }
-        }
+        }*/
 
         timerTextView = (TextView) findViewById(R.id.timerTextView);
         timerTextView.setTextSize(20);
         timerTextView.setTextColor(Color.BLACK);
 
-        String btTest = "Bluetooth Test";
+        /*String btTest = "Bluetooth Test";
         Intent bti = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
         // MUST send byte[] data to bluetooth service using "userMove" tag
         bti.putExtra("userMove", btTest.getBytes());
-        startService(bti);
-
-        /*
-        Button b = (Button) findViewById(R.id.button);
-        b.setText("start");
-        b.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Button b = (Button) v;
-                if (b.getText().equals("stop")) {
-                    timerHandler.removeCallbacks(timerRunnable);
-                    b.setText("start");
-                } else {
-                    startTime = System.currentTimeMillis();
-                    timerHandler.postDelayed(timerRunnable, 0);
-                    b.setText("stop");
-                }
-            }
-        });
-         */
+        startService(bti);*/
 
         new CountDownTimer(600000, 1000) {
 
@@ -265,32 +219,83 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             }
         }.start();
 
-        Button pause = (Button) findViewById(R.id.pause_button);
-        pause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onButtonShowPopUp(view);
-            }
-        });
-
-    }
-
-    public void onButtonShowPopUp(View view){
+        //POPUP
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.pause_game, null);
-
-        ImageButton closeButton3 = (ImageButton) findViewById(R.id.close_button2);
         // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int width_f = (int) (width*.9);
+        //int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height_f = (int) (height*.7);
         boolean focusable = true; // lets taps outside the popup also dismiss it
-        PopupWindow popupWindow = new PopupWindow(popupView, width, 2*(height)/3, focusable);
+        final PopupWindow popupWindow = new PopupWindow(popupView, width_f, height_f, focusable);
 
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+        Button pause = (Button) findViewById(R.id.pause_button);
+        Button quit = (Button) popupView.findViewById(R.id.quit);
+        Button resume = (Button) popupView.findViewById(R.id.resume);
+        ImageButton closeButton3 = (ImageButton) popupView.findViewById(R.id.close_button3);
 
+
+        pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //onButtonShowPopUp(view, width, height);
+                // show the popup window
+                // which view you pass in doesn't matter, it is only used for the window tolken
+                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+            }
+
+        });
+
+        quit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToHome(gameID);
+            }
+        });
+
+        resume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+        closeButton3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+        int targetSeqNum = 0;
+        if (!startNewGame) {
+            targetSeqNum = sequenceNum; // we want to get the last AI move (the last move by default)
+            sequenceNum++; // increment seqNum by 1 to recalibrate to player moves
+        }
+        Intent btIntent = new Intent(this, BluetoothService.class);
+        //btIntent.putExtra("btDevice", device);
+        if (btReceiver != null) {
+            btIntent.putExtra("btReceiver", btReceiver);
+            btIntent.putExtra("gameID", gameID);
+            btIntent.putExtra("sequenceNum", targetSeqNum);
+            startService(btIntent);
+        } else {
+            Log.d("ChessScreen", "BTReceiver is null");
+        }
+
+    }
+
+    //TODO: is this what i need to pass??
+
+    private void navigateToHome(int gameID) {
+        Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        intent.putExtra("newGame", false);
+        //intent.putExtra("difficulty", difficulty);
+        intent.putExtra("gameID", gameID);
+        startActivity(intent);
+        overridePendingTransition(0,0);
     }
 
     /*
@@ -302,7 +307,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         b.setText("start");
     }
      */
-
     /**
      * Posts a new game result with ID gameID
      */
@@ -383,11 +387,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         for (int i = 0; i < rows ; i ++) {
             for (int j = 0; j < cols; j++) {
                 if (tiles[i][j].getPiece() == null) {
-                    sb.append(0);
+                    sb.append((char) 0);
                 } else {
-                    sb.append(tiles[i][j].getPiece().id);
+                    sb.append((char) tiles[i][j].getPiece().id);
                 }
-                sb.append(" ");
             }
         }
 
@@ -398,13 +401,14 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         try {
             postData.put("placements", boardMoves);
             postData.put("gameID", gameID);
-            postData.put("sequenceNumber", sequenceNum);
+            postData.put("sequenceNum", sequenceNum);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        Log.d("ChessScreen", "Post board gameID is: " + String.valueOf(gameID));
+        Log.d("ChessScreen", "Post board gameID is: " + gameID);
         Log.d("ChessScreen", "Post board placement string: " + boardMoves);
+        Log.d("ChessScreen", "Post board sequenceNum: " + sequenceNum);
         Log.d("ChessScreen", "Post board example piece: " + tiles[0][0].getPiece().name);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
@@ -451,7 +455,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 if (newGame) {
                     //Pawn placement
                     if (i == 1) {
-                        p = new Piece(this, i, j, "bpawn", (-1 * j - 1));
+                        p = new Piece(this, i, j, "bpawn", 255 - j);
                         p.setImageResource(R.drawable.bpawn);
                     } else if (i == 6) {
                         p = new Piece(this, i, j, "wpawn", (j + 1));
@@ -465,10 +469,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "wrook", 9);
                         p.setImageResource(R.drawable.wrook);
                     } else if (j == 7 && i == 0) {
-                        p = new Piece(this, i, j, "brook", -10);
+                        p = new Piece(this, i, j, "brook", 246);
                         p.setImageResource(R.drawable.brook);
                     } else if (j == 0 && i == 0) {
-                        p = new Piece(this, i, j, "brook", -9);
+                        p = new Piece(this, i, j, "brook", 247);
                         p.setImageResource(R.drawable.brook);
 
                     }
@@ -480,10 +484,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "wknight", 19);
                         p.setImageResource(R.drawable.wknight);
                     } else if (j == 6 && i == 0) {
-                        p = new Piece(this, i, j, "bknight", -20);
+                        p = new Piece(this, i, j, "bknight", 236);
                         p.setImageResource(R.drawable.bknight);
                     } else if (j == 1 && i == 0) {
-                        p = new Piece(this, i, j, "bknight", -19);
+                        p = new Piece(this, i, j, "bknight", 237);
                         p.setImageResource(R.drawable.bknight);
                     }
                     //Bishops
@@ -494,10 +498,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "wbishop", 29);
                         p.setImageResource(R.drawable.wbishop);
                     } else if (j == 5 && i == 0) {
-                        p = new Piece(this, i, j, "bbishop", -30);
+                        p = new Piece(this, i, j, "bbishop", 226);
                         p.setImageResource(R.drawable.bbishop);
                     } else if (j == 2 && i == 0) {
-                        p = new Piece(this, i, j, "bbishop", -29);
+                        p = new Piece(this, i, j, "bbishop", 227);
                         p.setImageResource(R.drawable.bbishop);
                     }
                     //Queen
@@ -505,7 +509,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "wqueen", 39);
                         p.setImageResource(R.drawable.wqueen);
                     } else if (j == 4 && i == 0) {
-                        p = new Piece(this, i, j, "bqueen", -39);
+                        p = new Piece(this, i, j, "bqueen", 217);
                         p.setImageResource(R.drawable.bqueen);
                     }
                     //King
@@ -513,7 +517,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "wking", 48);
                         p.setImageResource(R.drawable.wking);
                     } else if (j == 3 && i == 0) {
-                        p = new Piece(this, i, j, "bking", -48);
+                        p = new Piece(this, i, j, "bking", 207);
                         p.setImageResource(R.drawable.bking);
                     }
                 } else { // assign layout based on prev game state
@@ -653,10 +657,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     clearValidMoves(); // delete the table of valid moves in prep for the next one
                     if (p.id == 9) wrook0_moved = true;
                     else if (p.id == 10) wrook1_moved = true;
-                    else if (p.id == -9) brook0_moved = true;
-                    else if (p.id == -10) brook1_moved = true;
+                    else if (p.id == 247) brook0_moved = true;
+                    else if (p.id == 246) brook1_moved = true;
                     else if (p.id == 48) wking_moved = true;
-                    else if (p.id == -48) bking_moved = true;
+                    else if (p.id == 207) bking_moved = true;
                     forwardPlayerMove(); // send player move to Service and POST to db
                 }
 

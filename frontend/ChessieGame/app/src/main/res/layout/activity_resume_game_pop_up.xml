@@ -7,13 +7,13 @@
 
     <TextView
         android:id="@+id/gameIDresume"
-        android:layout_width="158dp"
-        android:layout_height="91dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="76dp"
         android:layout_marginLeft="76dp"
-        android:layout_marginTop="487dp"
+        android:layout_marginTop="365dp"
         android:layout_marginEnd="71dp"
         android:layout_marginRight="71dp"
         android:textColor="#FFFFFF"
@@ -27,7 +27,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="156dp"
         android:gravity="center"
-        android:text="After choosing the difficulty, please input the gameID on switches then press KEY0 (1 switch up, 0 switch down)"
+        android:text="Please input the gameID on the switches then press KEY0 (1 switch up, 0 switch down)"
         android:textColor="#FFFFFF"
         android:textSize="24sp" />
 
@@ -38,7 +38,7 @@
         android:layout_below="@+id/hard_button"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="292dp"
+        android:layout_marginBottom="193dp"
         android:text="START"
         android:textColor="#0C0B0B"
         android:textSize="18sp"
