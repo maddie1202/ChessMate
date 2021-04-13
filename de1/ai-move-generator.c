@@ -118,6 +118,50 @@ double eval_board(board_t *board, int colour)
     return score;
 }
 
+// Assumes the board in current_game hasn't yet been updated with the latest move
+game_t *update_game_state(game_t *current_game, board_t *new_board, char moved_last)
+{
+    // max of 2 pieces can be moved by a player in one turn
+    char pieces_moved[2] = {0, 0};
+
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            // detect difference between boards: we will be recording the moved pieces on new_board so there is no doubling up
+            // also, only consider pieces from the player that made the last move
+            if ((*current_game->board)[i][j] != (*new_board)[i][j] && get_colour((*new_board)[i][j]) == moved_last) {
+                // haven't detected any other changed pieces yet
+                if (pieces_moved[0] == 0) {
+                    pieces_moved[0] = (*new_board)[i][j];
+                }
+                // have now found the max number of possible pieces moved by the user
+                else {
+                    pieces_moved[1] = (*new_board)[i][j];
+                    break;
+                }
+
+            }
+        }
+    }
+
+    game_t *new_game = copy_game_replace_board(current_game, new_board);
+
+    if (pieces_moved[0] == WROOK0) new_game->wrook0_has_moved = true;
+    else if (pieces_moved[0] == WROOK1) new_game->wrook1_has_moved = true;
+    else if (pieces_moved[0] == WKING) new_game->wking_has_moved = true;
+    else if (pieces_moved[0] == BROOK0) new_game->brook0_has_moved = true;
+    else if (pieces_moved[0] == BROOK1) new_game->brook1_has_moved = true;
+    else if (pieces_moved[0] == BKING) new_game->bking_has_moved = true;
+
+    if (pieces_moved[1] == WROOK0) new_game->wrook0_has_moved = true;
+    else if (pieces_moved[1] == WROOK1) new_game->wrook1_has_moved = true;
+    else if (pieces_moved[1] == WKING) new_game->wking_has_moved = true;
+    else if (pieces_moved[1] == BROOK0) new_game->brook0_has_moved = true;
+    else if (pieces_moved[1] == BROOK1) new_game->brook1_has_moved = true;
+    else if (pieces_moved[1] == BKING) new_game->bking_has_moved = true;
+
+    return new_game;    
+}
+
 // recursive helper
 static double generate_ai_move_helper(game_t *game, int original_colour, int colour, int depth, double alpha, double beta)
 {
@@ -156,7 +200,8 @@ static double generate_ai_move_helper(game_t *game, int original_colour, int col
     return min_or_max_score;
 }
 
-board_t *generate_ai_move(game_t *game, int colour, int depth)
+// Returns a game rather than a board now
+game_t *generate_ai_move(game_t *game, int colour, int depth)
 {
     if (game == NULL || game->board == NULL || 
         (colour != BLACK && colour != WHITE) || depth < 1) return NULL;
@@ -184,7 +229,7 @@ board_t *generate_ai_move(game_t *game, int colour, int depth)
     board_t *chosen_move = copy_board(possible_moves->moves[max_score_idx]);
     destroy_move_list(possible_moves);
 
-    return chosen_move;
+    return update_game_state(game, chosen_move, colour);
 }
 
 bool in_check(board_t *board, int colour)

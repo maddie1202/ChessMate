@@ -131,7 +131,8 @@ static bool test_move_and_response(game_t *game, move_t wmove, move_t bmove)
         print_board(game->board);
     }
 
-    board_t *actual = generate_ai_move(game, BLACK, MINIMAX_DEPTH);
+    game_t *new_game = generate_ai_move(game, BLACK, MINIMAX_DEPTH);
+    board_t *actual = new_game->board;
 
     move_piece(game->board, bmove.piece, bmove.x, bmove.y);
     move_rook_for_castle(game, bmove, BLACK);
