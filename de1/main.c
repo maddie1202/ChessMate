@@ -22,7 +22,7 @@ bool setup()
     }
 
     if (!init_hardware()) {
-        printf("Netowrking init error\n");
+        printf("Hardware init error\n");
         return false;
     }
 
@@ -61,16 +61,17 @@ void play_game()
             case WAIT_GAME: 
                 printf("WAIT_GAME\n");
                 if (start_new_game(&game_id)) {
-                    send_ack_start_game();
+                    send_ack_start_game(game, game_id);
+                    seq_num = 1;
                     state = WAIT_MOVE;
-                } else if (resume_old_game(game, &game_id)) {
+                } else if (resume_old_game(game, &game_id, &seq_num)) {
                     state = SEND_MOVE;
                 }
                 break;
             case WAIT_MOVE: 
                 printf("WAIT_MOVE\n");
                 printf("%d\n", game_id);
-                if (receive_move(game, game_id)) {
+                if (receive_recent_move(game, game_id, &seq_num)) {
                     state = SEND_MOVE;
                 } else if (pause_game()) {
                     state = WAIT_GAME;
@@ -85,10 +86,10 @@ void play_game()
                     send_game_over_white_wins(game_id);
                     state = WAIT_GAME;
                 } else if (in_checkmate(game->board, BLACK)) {
-                    send_game_over_black_wins(game, game_id, seq_num);
+                    send_game_over_black_wins(game, game_id, &seq_num);
                     state = WAIT_GAME;
                 } else {
-                    send_move(game, possible_player_moves, game_id, seq_num);
+                    send_move(game, possible_player_moves, game_id, &seq_num);
                     state = WAIT_MOVE;
                 }
                 break;

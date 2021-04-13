@@ -56,6 +56,7 @@ possible-move-generators-SW.c \
 generator-support-SW.c \
 ai-move-generator.c \
 hardware-setup.c \
+frozen/frozen.c \
 
 	gcc -std=c99 -Wall -fsigned-char -g -o bin/playgame \
 	main.c \
@@ -65,4 +66,5 @@ hardware-setup.c \
 	generator-support-SW.c \
 	ai-move-generator.c \
 	hardware-setup.c \
-	-lm
+	frozen/frozen.c \
+	-lm -lcurl
