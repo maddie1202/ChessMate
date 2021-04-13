@@ -205,10 +205,10 @@ public class PastGamesScreen extends Fragment {
 
             TableRow.LayoutParams rp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
             rp.height = 430;
-            rp.width = 380;
+            //rp.width = 380;
             rp.rightMargin = 10;
             rp.leftMargin = 10;
-            rp.topMargin = 20;
+            //rp.topMargin = 5;
             rp.gravity = Gravity.CENTER;
             rp.gravity = Gravity.CENTER_HORIZONTAL;
 
@@ -219,8 +219,8 @@ public class PastGamesScreen extends Fragment {
             PastGame g = gameList.get(i);
             ImageView chessImage = new ImageView(getActivity());
             chessImage.setImageResource(R.drawable.chessimage);
-            chessImage.setMaxWidth(360);
-            chessImage.setMaxHeight(360);
+            //chessImage.setMaxWidth(20);
+           // chessImage.setMaxHeight(6);
             chessImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -228,21 +228,24 @@ public class PastGamesScreen extends Fragment {
                 }
             });
 
-            gameItem.addView(chessImage, 0);
+           gameItem.addView(chessImage, 0);
 
             TextView gameDate = new TextView(getActivity());
             Log.d("Past Games Screen", g.date);
 
             LinearLayout.LayoutParams rp2 = new LinearLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            //rp2.setMargins(5, 5, 5, 5);
-            //rp2.gravity = Gravity.CENTER;
-            //rp2.gravity = Gravity.CENTER_HORIZONTAL;
+           // rp2.setMargins(10, 10, 10, 10);
+
+            rp2.gravity = Gravity.CENTER;
+            rp2.gravity = Gravity.CENTER_HORIZONTAL;
+            //rp2.height = 430;
+            rp2.width = 380;
 
             //gameDate.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
             String gDate = g.date;
             gameDate.setText("Played " + gDate); // g.date is date that the game was played
             gameDate.setTextColor(Color.BLACK);
-            gameDate.setTextSize(10);
+            gameDate.setTextSize(14);
             //gameDate.setPadding(5,5,5,5);
             //rp2.setMargins(5,5,5,5);
             gameDate.setLayoutParams(rp2);
