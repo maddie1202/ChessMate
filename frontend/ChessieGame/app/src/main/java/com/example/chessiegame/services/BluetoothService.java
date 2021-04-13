@@ -115,17 +115,11 @@ public class BluetoothService extends Service {
             if (btThread != null) {
                 /*byte[] data = intent.getExtras().getByteArray("userMove");
                 assert data != null;
-                btThread.write(data);
-                Log.d("Bluetooth Service", "User move sent to btThread");*/
+                btThread.write(data);*/
 
                 startPolling = true; // player made a move, start polling for opponent's move
                 Log.d("Bluetooth Service", "Target sequence num received: " + sequenceNum);
 
-                // test send back message
-                /*Bundle readData = new Bundle();
-                readData.putByteArray("readData", data);
-                Log.d("Bluetooth Service", "Sending move back to the chessscreen");
-                btReceiver.send(1, readData);*/
             }
         }
 
@@ -146,6 +140,7 @@ public class BluetoothService extends Service {
             this.btReceiver = btReceiver;
             newInfo = false;
 
+            // Bluetooth socket initialization
             /*try {
                 btInputStream = btSocket.getInputStream();
                 btOutputStream = btSocket.getOutputStream();
@@ -322,6 +317,9 @@ public class BluetoothService extends Service {
             queue.add(stringRequest);
         }
 
+        /**
+         * Signal that the player won the game
+         */
         public void sendPlayerWon() { // when gameResult == 1, AIBoard and validMoves are ignored
             // send AI move and Set containing valid player moves to the chess screen
             Bundle AIData = new Bundle();

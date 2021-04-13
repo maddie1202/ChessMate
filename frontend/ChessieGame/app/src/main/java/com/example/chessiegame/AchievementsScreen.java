@@ -153,7 +153,6 @@ public class AchievementsScreen extends Fragment {
     }
 
     private void getStatusAchievements(boolean progressSelected) {
-        // TODO: adjust url to query for finished or unfinished achievements
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgoals";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
