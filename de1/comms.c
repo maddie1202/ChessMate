@@ -142,7 +142,7 @@ bool resume_old_game(game_t *game, int *game_id, int *seq_num)
         *pb_edgecapture_addr = 0;
 
         char url[256];
-        sprintf(url, GET_RECENT_BOARD_URL, game_id);
+        sprintf(url, GET_RECENT_BOARD_URL, *game_id);
 
         char *result;
         if (!send_get_request(url, &result)) return false;
@@ -241,7 +241,7 @@ bool pause_game()
 }
 
 /*
- * Send init board???
+ * Send init board
  */
 void send_ack_start_game(game_t *game, int game_id)
 {
@@ -258,7 +258,9 @@ void send_move(game_t *game, move_list_t *possible_player_moves, int game_id, in
     char body[512];
     char placements[256];
     format_board(game->board, placements);
-    sprintf(body, "placements=%s&gameID=%d&sequenceNum=%d", placements, game_id, *seq_num);
+    sprintf(body, "placements=%s&gameID=%d&sequenceNum=%d&wrookO_moved=%d&wrookI_moved=%d&wking_moved=%d&brookO_moved=%d&brookI_moved=%d&bking_moved=%d", 
+            placements, game_id, *seq_num, game->wrook0_has_moved, game->wrook1_has_moved, game->wking_has_moved, 
+            game->brook0_has_moved, game->brook1_has_moved, game->bking_has_moved);
     send_post_request(POST_AI_MOVE_URL, body);
 
     (*seq_num)++;

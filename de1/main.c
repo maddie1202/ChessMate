@@ -59,37 +59,40 @@ void play_game()
 
         switch (state) {
             case WAIT_GAME: 
-                printf("WAIT_GAME\n");
                 if (start_new_game(&game_id)) {
                     send_ack_start_game(game, game_id);
                     seq_num = 1;
                     state = WAIT_MOVE;
+                    printf("WAIT_MOVE\n");
                 } else if (resume_old_game(game, &game_id, &seq_num)) {
+                    printf("SEND_MOVE\n");
                     state = SEND_MOVE;
                 }
                 break;
             case WAIT_MOVE: 
-                printf("WAIT_MOVE\n");
-                printf("%d\n", game_id);
                 if (receive_recent_move(game, game_id, &seq_num)) {
+                    printf("SEND_MOVE\n");
                     state = SEND_MOVE;
                 } else if (pause_game()) {
+                    printf("WAIT_GAME\n");
                     state = WAIT_GAME;
                 }
                 break;
             case SEND_MOVE:
-                printf("SEND_MOVE\n");
                 game = generate_ai_move(game, BLACK, 3);
                 move_list_t *possible_player_moves = generate_all_moves(game, WHITE);
 
                 if (in_checkmate(game->board, WHITE)) {
                     send_game_over_white_wins(game_id);
+                    printf("WAIT_GAME\n");
                     state = WAIT_GAME;
                 } else if (in_checkmate(game->board, BLACK)) {
                     send_game_over_black_wins(game, game_id, &seq_num);
+                    printf("WAIT_GAME\n");
                     state = WAIT_GAME;
                 } else {
                     send_move(game, possible_player_moves, game_id, &seq_num);
+                    printf("WAIT_MOVE\n");
                     state = WAIT_MOVE;
                 }
                 break;
