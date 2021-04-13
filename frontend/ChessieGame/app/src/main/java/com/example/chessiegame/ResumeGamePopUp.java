@@ -16,6 +16,7 @@ public class ResumeGamePopUp extends Activity {
     public int difficulty;
     public int[][] layout;
     public int sequenceNum;
+    public int timeLeft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,7 @@ public class ResumeGamePopUp extends Activity {
         difficulty = getIntent().getIntExtra("difficulty", 0);
         layout = (int[][]) getIntent().getSerializableExtra("resumedLayout");
         sequenceNum = getIntent().getIntExtra("sequenceNum", 0);
+        timeLeft = getIntent().getIntExtra("timeLeft", 0);
 
         // TODO: show gameID in binary, get user to set switches, then press KEY2, then press start
 
@@ -72,6 +74,7 @@ public class ResumeGamePopUp extends Activity {
         intent.putExtra("newGame", false);
         intent.putExtra("difficulty", difficulty);
         intent.putExtra("sequenceNum", sequenceNum);
+        intent.putExtra("timeLeft", timeLeft);
         startActivity(intent);
         overridePendingTransition(0,0);
     }
