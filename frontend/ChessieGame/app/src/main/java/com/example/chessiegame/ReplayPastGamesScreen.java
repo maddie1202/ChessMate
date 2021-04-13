@@ -53,6 +53,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ReplayPastGamesScreen.this, PastGamesScreen.class);
+                //intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
             }
         });

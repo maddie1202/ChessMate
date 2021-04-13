@@ -228,12 +228,12 @@ public class BluetoothService extends Service {
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                     response -> {
                         try {
-                            JSONArray arr = new JSONArray(response);
-                            if (arr.length() > 0) { // in case the game has nothing in it
-                                JSONObject res = arr.getJSONObject(0);
-                                int num = (int) res.get("sequenceNumber");
+                            JSONObject json = new JSONObject(response);
+                            // TODO: info will be returned as a json
+                            if (json != null) { // in case the game has nothing in it
+                                int num = (int) json.get("sequenceNumber");
                                 if (num == sequenceNum) { // there is new information in the db
-                                    AIMove = res.get("placements").toString(); // the AI's move
+                                    AIMove = json.get("placements").toString(); // the AI's move
                                     AIBoard = parseBoard(AIMove);
                                     newInfo = true;
                                 }

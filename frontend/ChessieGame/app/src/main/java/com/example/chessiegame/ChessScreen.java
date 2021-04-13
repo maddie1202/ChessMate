@@ -184,9 +184,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         bti.putExtra("userMove", btTest.getBytes());
         startService(bti);*/
 
-
-        // TODO: change back to timeleft
-        timerStart(5000);
+        timerStart(timeLeft);
 
         //POPUP
         // inflate the layout of the popup window
@@ -276,36 +274,26 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                 // create the popup window
                 int width_f = (int) (width * .9);
-                //int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                int height_f = (int) (height * .7);
+                int height_f = (int) (height * .4);
                 boolean focusable = true; // lets taps outside the popup also dismiss it
-                // final PopupWindow popupWindow = new PopupWindow(popupView, width_f, height_f, focusable);
                 View popupViewlost = inflater.inflate(R.layout.popup_lost, null);
                 // create the popup window
                 final PopupWindow popupWindowLost = new PopupWindow(popupViewlost, width_f, height_f, focusable);
 
                 popupWindowLost.showAtLocation(popupViewlost, Gravity.CENTER, 0, 0);
                 Button home = (Button) popupViewlost.findViewById(R.id.home);
+
                 home.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //popupWindowLost.dismiss();
-                        Intent intent = new Intent(ChessScreen.this, HomeScreen.class);
+                        Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
 
                     }
                 });
-                /*
-                Handler h = new Handler();
-                Runnable r = new Runnable() {
-                    public void run() {
-                        Intent intent = new Intent(getApplicationContext(), HomeScreen.class);
-                        startActivity(intent);
-                    }
-                };
-                h.postDelayed(r,10000); // after 10 seconds, automatically go back to home
 
-                 */
             }
         }.start();
     }
@@ -604,7 +592,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         int action = event.getAction();
         // Handles each of the expected events
         switch (action) {
-
             case DragEvent.ACTION_DRAG_STARTED:
                 // Determines if this View can accept the dragged data
                 if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
@@ -969,12 +956,58 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 } else if (gameResult == 0) { // AI won
                     // TODO: display that AI won
                     renderOpponentMove();
-
                     updateGameResult(gameID, gameResult, 0);
+
+                    LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                    // create the popup window
+                    int width_f = (int) (width * .9);
+                    int height_f = (int) (height * .4);
+                    boolean focusable = true; // lets taps outside the popup also dismiss it
+                    View popupViewlost = inflater.inflate(R.layout.popup_lost, null);
+                    // create the popup window
+                    final PopupWindow popupWindowLost = new PopupWindow(popupViewlost, width_f, height_f, focusable);
+
+                    popupWindowLost.showAtLocation(popupViewlost, Gravity.CENTER, 0, 0);
+                    Button home = (Button) popupViewlost.findViewById(R.id.home);
+
+                    home.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //popupWindowLost.dismiss();
+                            Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                            startActivity(intent);
+
+                        }
+                    });
                 } else {
                     // TODO: display that player won
                     updateGameResult(gameID, gameResult, 0);
+
+                    LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                    // create the popup window
+                    int width_f = (int) (width * .9);
+                    int height_f = (int) (height * .5);
+                    boolean focusable = true; // lets taps outside the popup also dismiss it
+                    View popupViewWin = inflater.inflate(R.layout.popup_win, null);
+                    // create the popup window
+                    final PopupWindow popupWindowWin = new PopupWindow(popupViewWin, width_f, height_f, focusable);
+
+                    popupWindowWin.showAtLocation(popupViewWin, Gravity.CENTER, 0, 0);
+                    Button home = (Button) popupViewWin.findViewById(R.id.home);
+
+                    home.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //popupWindowLost.dismiss();
+                            Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                            startActivity(intent);
+
+                        }
+                    });
                 }
+
             }
         }
 
