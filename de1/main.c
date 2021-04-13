@@ -63,7 +63,7 @@ void play_game()
                     send_ack_start_game(game, game_id);
                     seq_num = 1;
                     state = WAIT_MOVE;
-                    printf("WAIT_MOVE\n");
+                    printf("WAIT_MOVE exp seq #: %d\n", seq_num);
                 } else if (resume_old_game(game, &game_id, &seq_num)) {
                     printf("SEND_MOVE\n");
                     state = SEND_MOVE;
@@ -92,7 +92,7 @@ void play_game()
                     state = WAIT_GAME;
                 } else {
                     send_move(game, possible_player_moves, game_id, &seq_num);
-                    printf("WAIT_MOVE\n");
+                    printf("WAIT_MOVE exp seq #: %d\n", seq_num);
                     state = WAIT_MOVE;
                 }
                 break;

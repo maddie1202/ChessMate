@@ -201,7 +201,7 @@ bool receive_recent_move(game_t *game, int game_id, int *expected_seq_num)
         wking_moved: %d, bking_moved: %d}", &board_id, &placements, &game_ID, &sequenceNumber, 
         &wrook0_moved, &wrook1_moved, &brook0_moved, &brook1_moved, &wking_moved, &bking_moved);
 
-    if (strcmp("", placements)) {
+    if (!strcmp("", placements)) {
         printf("RECEIVE RECENT MOVE: placements is empty\n");
         return false;
     }
