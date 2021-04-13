@@ -119,6 +119,7 @@ double eval_board(board_t *board, int colour)
 }
 
 // Assumes the board in current_game hasn't yet been updated with the latest move
+// FREES current_game!!!
 game_t *update_game_state(game_t *current_game, board_t *new_board, char moved_last)
 {
     // max of 2 pieces can be moved by a player in one turn
@@ -159,6 +160,7 @@ game_t *update_game_state(game_t *current_game, board_t *new_board, char moved_l
     else if (pieces_moved[1] == BROOK1) new_game->brook1_has_moved = true;
     else if (pieces_moved[1] == BKING) new_game->bking_has_moved = true;
 
+    destroy_game(current_game);
     return new_game;    
 }
 

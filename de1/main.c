@@ -79,7 +79,7 @@ void play_game()
                 break;
             case SEND_MOVE:
                 printf("SEND_MOVE\n");
-                game->board = generate_ai_move(game, BLACK, 3);
+                game = generate_ai_move(game, BLACK, 3);
                 move_list_t *possible_player_moves = generate_all_moves(game, WHITE);
 
                 if (in_checkmate(game->board, WHITE)) {
