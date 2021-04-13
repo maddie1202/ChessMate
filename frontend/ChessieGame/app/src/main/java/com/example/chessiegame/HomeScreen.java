@@ -108,7 +108,6 @@ public class HomeScreen extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
-
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,6 +117,7 @@ public class HomeScreen extends Fragment {
                 startActivity(intent);
             }
         });
+
         resume.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
@@ -126,6 +126,7 @@ public class HomeScreen extends Fragment {
                 getLatestGame("G2OqGHBvFogJrA56TaawC6WcUt72");
             }
         });
+
         return v;
     }
 
@@ -228,6 +229,7 @@ public class HomeScreen extends Fragment {
 
                         intent.putExtra("resumedLayout", layout);
                         intent.putExtra("difficulty", (int) res.get("difficulty"));
+                        intent.putExtra("timeLeft", (int) res.get("timeleft"));
                         intent.putExtra("sequenceNum", seqNum); // sequence number of board to be rendered
                         startActivity(intent);
 
