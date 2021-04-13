@@ -185,8 +185,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         startService(bti);*/
 
 
-        // TODO: change back to timeleft
-        timerStart(5000);
+
+        timerStart(timeLeft);
 
         //POPUP
         // inflate the layout of the popup window
