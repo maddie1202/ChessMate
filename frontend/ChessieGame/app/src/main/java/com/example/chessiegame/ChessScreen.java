@@ -184,7 +184,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         bti.putExtra("userMove", btTest.getBytes());
         startService(bti);*/
 
-        timerStart(timeLeft);
+        timerStart(30000);
 
         //POPUP
         // inflate the layout of the popup window
@@ -389,8 +389,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     int[][] boardToIntArray() {
         int[][] board = new int[rows][cols];
 
-        for (int i = 0; i < cols ; i ++) {
-            for (int j = 0; j < rows; j++) {
+        for (int i = 7; i >= 0; i--) {
+            for (int j = 0; j < cols; j++) {
                 if (tiles[i][j].getPiece() == null) {
                     board[i][j] = 0;
                 } else {
@@ -408,7 +408,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     public void boardToStringAndPost() {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < rows ; i ++) {
+        for (int i = 7; i >= 0 ; i--) {
             for (int j = 0; j < cols; j++) {
                 if (tiles[i][j].getPiece() == null) {
                     sb.append(0);
@@ -535,19 +535,19 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     }
                     //Queen
                     else if (j == 4 && i == 7) {
-                        p = new Piece(this, i, j, "wqueen", 39);
-                        p.setImageResource(R.drawable.wqueen);
+                        p = new Piece(this, i, j, "wking", 48);
+                        p.setImageResource(R.drawable.wking);
                     } else if (j == 4 && i == 0) {
-                        p = new Piece(this, i, j, "bqueen", -39);
-                        p.setImageResource(R.drawable.bqueen);
+                        p = new Piece(this, i, j, "bking", -48);
+                        p.setImageResource(R.drawable.bking);
                     }
                     //King
                     else if (j == 3 && i == 7) {
-                        p = new Piece(this, i, j, "wking", 48);
-                        p.setImageResource(R.drawable.wking);
+                        p = new Piece(this, i, j, "wqueen", 39);
+                        p.setImageResource(R.drawable.wqueen);
                     } else if (j == 3 && i == 0) {
-                        p = new Piece(this, i, j, "bking", -48);
-                        p.setImageResource(R.drawable.bking);
+                        p = new Piece(this, i, j, "bqueen", -39);
+                        p.setImageResource(R.drawable.bqueen);
                     }
                 } else { // assign layout based on prev game state
                     Log.d("ChessScreen", "In progress");
@@ -625,8 +625,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             case DragEvent.ACTION_DROP:
                 // Turns off any color tints
                 v.getBackground().clearColorFilter();
-                // Invalidates the view to force a redraw
-                v.invalidate();
 
                 // the view that was dropped
                 View vw = (View) event.getLocalState();
@@ -667,9 +665,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 tiles[r][c].setPiece(p); // drop p in its new location
                 int[][] newLayout = boardToIntArray();
 
-                if (!validMoves.contains(newLayout)) { // MOVE VALIDATION
-                    // TODO: reject the move and undo everything, do nothing for now
-                    /*
+                /*if (!validMoves.contains(newLayout)) { // MOVE VALIDATION
                     showToast("You played an invalid move");
                     validMove = false;
                     if (removedPiece) { // restore temp
@@ -677,8 +673,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         tiles[r][c].setPiece(tmp);
                     }
                     tiles[prevRow][prevCol].setPiece(p);
-                    p.updateCoordinates(prevRow, prevCol);*/
-                }
+                    p.updateCoordinates(prevRow, prevCol);
+                }*/
                 vw.setVisibility(View.VISIBLE); // finally set Visibility to VISIBLE
 
                 if (validMove) {
@@ -692,6 +688,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     forwardPlayerMove(); // send player move to Service and POST to db
                 }
 
+                // Invalidates the view to force a redraw
+                v.invalidate();
                 return true;
             default:
                 Log.e("DragDrop Example", "Unknown action type received by OnDragListener.");
@@ -851,26 +849,34 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Piece p = tiles[i][j].getPiece();
-                Tile t = tiles[i][j];
                 int newPieceID = AIMove[i][j];
+                Log.d("Chess Screen", "AI Board piece: " + newPieceID + " row: " + i + " column: " + j);
 
-                if (t.hasPiece() && p != null) { // there was a already piece on that square
+                try {
+                    tiles[i][j].setOnDragListener(this);
+                } catch (Exception e) {
+                    Log.d("Chess Screen", "Can't reset on drag listener");
+                }
+
+                if (tiles[i][j].hasPiece() && p != null) { // there was a already piece on that square
                     if (newPieceID == 0) { // piece gets replaced with a blank
-                        t.removePiece(p);
+                        tiles[i][j].removePiece(p);
                     } else if (newPieceID != p.id) { // AIMove[i][j] is not 0
                         // if the new board is not the same as the current board
-                        t.removePiece(p);
+                        tiles[i][j].removePiece(p);
                         Piece pc = new Piece(this, i, j, "Piece", newPieceID);
-                        t.setPiece(pc);
                         Log.d("Chess Screen", "NewPieceID is " + String.valueOf(newPieceID));
+                        tiles[i][j].setPiece(pc);
                         pc.setImageResource(imageMap.get(newPieceID));
+                        pc.setOnTouchListener(this);
                     }
                 } else { // no piece was on that square
                     if (newPieceID != 0) { // the square on new board has a piece
                         Piece pc = new Piece(this, i, j, "Piece", newPieceID);
-                        t.setPiece(pc);
                         Log.d("Chess Screen", "NewPieceID is " + String.valueOf(newPieceID));
                         pc.setImageResource(imageMap.get(newPieceID));
+                        tiles[i][j].setPiece(pc);
+                        pc.setOnTouchListener(this);
                     }
                 }
             }
@@ -917,10 +923,10 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
                 Total: ~12000 bytes
              */
-            byte[] data = resultData.getByteArray("readData");
+            //byte[] data = resultData.getByteArray("readData");
             Log.d("ChessScreen", "Chess screen received data");
 
-            if (data != null && data.length > 300) { // bluetooth receiver
+            /*if (data != null && data.length > 300) { // bluetooth receiver
                 start_game_ack = fourByteToBoolean(Arrays.copyOfRange(data, 0, 3));
                 game_over = fourByteToBoolean(Arrays.copyOfRange(data, 4, 7));
                 white_wins = fourByteToBoolean(Arrays.copyOfRange(data, 8, 11));
@@ -944,18 +950,19 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 renderOpponentMove(); // render the ai move on the gameboard
                 num_player_moves = fourByteToInt(Arrays.copyOfRange(data, 292, 295));
 
-                // TODO: parse possible player moves
-            } else { // alternate protocol - receive AI move and possible player moves
-                // Log.d("ChessScreen", "Received string from BT: " + Arrays.toString(data)); - test receive string
+            } else { */// alternate protocol - receive AI move and possible player moves
+                //Log.d("ChessScreen", "Received string from BT: " + Arrays.toString(data)); - test receive string
                 AIMove = (int[][]) resultData.getSerializable("AIMove");
                 validMoves = (HashSet<int[][]>) resultData.getSerializable("validMoves");
                 gameResult = resultData.getInt("result");
+                View screen = findViewById(R.id.chess);
 
                 if (gameResult == -1) { // player was not the winner
                     renderOpponentMove();
+                    screen.invalidate();
                 } else if (gameResult == 0) { // AI won
-                    // TODO: display that AI won
                     renderOpponentMove();
+                    screen.invalidate();
                     updateGameResult(gameID, gameResult, 0);
 
                     LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -977,11 +984,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                             Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                             startActivity(intent);
-
                         }
                     });
                 } else {
-                    // TODO: display that player won
                     updateGameResult(gameID, gameResult, 0);
 
                     LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -1008,7 +1013,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     });
                 }
 
-            }
+            //}
         }
 
         /**

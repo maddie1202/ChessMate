@@ -166,8 +166,7 @@ public class PastGamesScreen extends Fragment {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     try {
-                        JSONArray arr = new JSONArray(response);
-                        JSONObject res = arr.getJSONObject(0);
+                        JSONObject res = new JSONObject(response);
                         String date = res.get("startDateTime").toString();
                         gameList.add(new PastGame(gameID, date.substring(5, 7), date.substring(8, 10), date.substring(11, 16)));
 
@@ -301,9 +300,12 @@ public class PastGamesScreen extends Fragment {
         int[][] layout = new int[size][size];
         String[] boardString = b.split("\\s+");
 
+        // layout[0][0] = boardString[7][0]
+        // layout[1][0] = boardString[6][0]
+        // layout[2][0] = boardString[5][0]
         for (int j = 0; j < size; j++) {
             for (int k = 0; k < size; k++) {
-                layout[j][k] = Integer.parseInt(boardString[j * size + k]);
+                layout[j][k] = Integer.parseInt(boardString[(7 - j) * size + k]);
             }
         }
 
