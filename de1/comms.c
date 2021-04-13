@@ -196,7 +196,7 @@ int get_difficulty(int game_id)
     char *time;
 
     json_scanf(result, strlen(result), 
-        "{gameID: %d, startDateTime: %d, difficulty: %d, timeleft: %d}", 
+        "{gameID: %d, startDateTime: %Q, difficulty: %d, timeleft: %d}", 
         &game_ID, &time, &difficulty, &time_left);
 
     free(time);
