@@ -102,7 +102,7 @@ void play_game()
         }
 
         if (end_program()) break;
-        usleep(250000);
+        sleep(0.25);
     }
 
     teardown();
