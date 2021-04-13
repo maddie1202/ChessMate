@@ -1,18 +1,14 @@
 package com.example.chessiegame;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothDevice;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -27,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -37,30 +32,22 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.chessiegame.components.BoardMap;
-import com.example.chessiegame.components.Move;
 import com.example.chessiegame.components.Piece;
 import com.example.chessiegame.components.Tile;
 import com.example.chessiegame.services.BluetoothService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class ChessScreen extends AppCompatActivity implements View.OnDragListener, View.OnTouchListener {
 
@@ -95,19 +82,16 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     boolean start_game_ack = false;
     boolean game_over = false;
     boolean white_wins = false;
-    boolean wrook0_moved = false;
-    boolean wrook1_moved = false;
-    boolean brook0_moved = false;
-    boolean brook1_moved = false;
-    boolean wking_moved = false;
-    boolean bking_moved = false;
+    int wrook0_moved = 0;
+    int wrook1_moved = 0;
+    int brook0_moved = 0;
+    int brook1_moved = 0;
+    int wking_moved = 0;
+    int bking_moved = 0;
     int num_player_moves;
 
     private CountDownTimer timer;
     long milliLeft;
-
-    //TODO: notes
-    // on resume, send the player's last move (second most recent board in DB) and send to DE1 to get possible moves
     TextView timerTextView;
 
     @Override
@@ -190,6 +174,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         timerTextView = (TextView) findViewById(R.id.timerTextView);
         timerTextView.setTextSize(20);
         timerTextView.setTextColor(Color.BLACK);
+        int timeLeft = getIntent().getIntExtra("timeLeft", 600000);
 
         /*String btTest = "Bluetooth Test";
         Intent bti = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
@@ -197,7 +182,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         bti.putExtra("userMove", btTest.getBytes());
         startService(bti);*/
 
-        timerStart(600000);
+        timerStart(timeLeft);
 
         //POPUP
         // inflate the layout of the popup window
@@ -271,7 +256,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     public void timerStart(long timeLengthMili) {
         timer = new CountDownTimer(timeLengthMili, 1000) {
             public void onTick(long millisUntilFinished) {
-                milliLeft= millisUntilFinished;
+                milliLeft = millisUntilFinished;
                 long millis = millisUntilFinished;
                 int seconds = (int) (millis / 1000);
                 int minutes = seconds / 60;
@@ -303,11 +288,30 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     }
 
     private void navigateToHome(int gameID) {
-        updateGameResult(gameID, -1, 500000); // TODO: make timeRemaining the actual time on the timer
-        Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivity(intent);
-        overridePendingTransition(0,0);
+
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/updateresult";
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("gameID", gameID);
+            postData.put("result", -1); // 0 for lose game, 1 for win game
+            // TODO: put remaining time in the db
+            //postData.put("timeleft", (int) milliLeft);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, postData,
+                response -> {
+                    Log.d("ChessScreen", "Successfully updated game result");
+                    Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                    overridePendingTransition(0,0);
+                }, error -> {
+            Log.d("ChessScreen", error.toString());
+        });
+
+        queue.add(jsonObjectRequest);
     }
 
     /**
@@ -340,17 +344,17 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
      * Updates the game result in the DB
      */
     public void updateGameResult(int gameID, int result, int timeRemaining) {
-        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/postresult";
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/updateresult";
         JSONObject postData = new JSONObject();
         try {
             postData.put("gameID", gameID);
             postData.put("result", result); // 0 for lose game, 1 for win game
-            postData.put("timeleft", timeRemaining);
+            //postData.put("timeleft", timeRemaining);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, postData,
                 response -> {
                     Log.d("ChessScreen", "Successfully updated game result");
                 }, error -> {
@@ -382,7 +386,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     /**
      * Converts the current board into a String and send to the DB
      */
-    public String boardToStringAndPost() {
+    public void boardToStringAndPost() {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < rows ; i ++) {
@@ -404,6 +408,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             postData.put("placements", boardMoves);
             postData.put("gameID", gameID);
             postData.put("sequenceNum", sequenceNum);
+            postData.put("wrookO_moved", wrook0_moved);
+            postData.put("wrookI_moved", wrook1_moved);
+            postData.put("brookO_moved", brook0_moved);
+            postData.put("brookI_moved", brook1_moved);
+            postData.put("wking_moved", wking_moved);
+            postData.put("bking_moved", bking_moved);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -422,7 +432,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
         queue.add(jsonObjectRequest);
 
-        return boardMoves;
     }
 
     public void initChessboard(boolean newGame, int[][] resumedLayout) {
@@ -606,12 +615,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 Piece p = (Piece) vw;
                 Log.d("ChessScreen", "Dropped piece: " + p.name);
 
-                wrook0_moved = false;
-                wrook1_moved = false;
-                brook0_moved = false;
-                brook1_moved = false;
-                wking_moved = false;
-                bking_moved = false;
+                wrook0_moved = 0;
+                wrook1_moved = 0;
+                brook0_moved = 0;
+                brook1_moved = 0;
+                wking_moved = 0;
+                bking_moved = 0;
 
                 ViewGroup owner = (ViewGroup) vw.getParent();
                 owner.removeView(vw); // remove the dragged view
@@ -656,12 +665,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
                 if (validMove) {
                     clearValidMoves(); // delete the table of valid moves in prep for the next one
-                    if (p.id == 9) wrook0_moved = true;
-                    else if (p.id == 10) wrook1_moved = true;
-                    else if (p.id == -9) brook0_moved = true;
-                    else if (p.id == -10) brook1_moved = true;
-                    else if (p.id == 48) wking_moved = true;
-                    else if (p.id == -48) bking_moved = true;
+                    if (p.id == 9) wrook0_moved = 1;
+                    else if (p.id == 10) wrook1_moved = 1;
+                    else if (p.id == -9) brook0_moved = 1;
+                    else if (p.id == -10) brook1_moved = 1;
+                    else if (p.id == 48) wking_moved = 1;
+                    else if (p.id == -48) bking_moved = 1;
                     forwardPlayerMove(); // send player move to Service and POST to db
                 }
 
@@ -765,12 +774,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         fillUserDataArray(resumeGame, 8, 11);
 
         // set pieces
-        byte[] wrook0 = wrook0_moved ? intToBytes(1) : intToBytes(0);
-        byte[] wrook1 = wrook0_moved ? intToBytes(1) : intToBytes(0);
-        byte[] brook0 = wrook0_moved ? intToBytes(1) : intToBytes(0);
-        byte[] brook1 = wrook0_moved ? intToBytes(1) : intToBytes(0);
-        byte[] wking = wrook0_moved ? intToBytes(1) : intToBytes(0);
-        byte[] bking = wrook0_moved ? intToBytes(1) : intToBytes(0);
+        byte[] wrook0 = (wrook0_moved == 1) ? intToBytes(1) : intToBytes(0);
+        byte[] wrook1 = (wrook0_moved == 1) ? intToBytes(1) : intToBytes(0);
+        byte[] brook0 = (wrook0_moved == 1) ? intToBytes(1) : intToBytes(0);
+        byte[] brook1 = (wrook0_moved == 1) ? intToBytes(1) : intToBytes(0);
+        byte[] wking = (wrook0_moved == 1) ? intToBytes(1) : intToBytes(0);
+        byte[] bking = (wrook0_moved == 1) ? intToBytes(1) : intToBytes(0);
 
         fillUserDataArray(wrook0, 12, 15);
         fillUserDataArray(wrook1, 16, 19);
@@ -897,12 +906,12 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 start_game_ack = fourByteToBoolean(Arrays.copyOfRange(data, 0, 3));
                 game_over = fourByteToBoolean(Arrays.copyOfRange(data, 4, 7));
                 white_wins = fourByteToBoolean(Arrays.copyOfRange(data, 8, 11));
-                wrook0_moved = fourByteToBoolean(Arrays.copyOfRange(data, 12, 15));
-                wrook1_moved = fourByteToBoolean(Arrays.copyOfRange(data, 16, 19));
-                brook0_moved = fourByteToBoolean(Arrays.copyOfRange(data, 20, 23));
-                brook1_moved = fourByteToBoolean(Arrays.copyOfRange(data, 24, 27));
-                wking_moved = fourByteToBoolean(Arrays.copyOfRange(data, 28, 31));
-                bking_moved = fourByteToBoolean(Arrays.copyOfRange(data, 32, 35));
+                wrook0_moved = fourByteToInt(Arrays.copyOfRange(data, 12, 15));
+                wrook1_moved = fourByteToInt(Arrays.copyOfRange(data, 16, 19));
+                brook0_moved = fourByteToInt(Arrays.copyOfRange(data, 20, 23));
+                brook1_moved = fourByteToInt(Arrays.copyOfRange(data, 24, 27));
+                wking_moved = fourByteToInt(Arrays.copyOfRange(data, 28, 31));
+                bking_moved = fourByteToInt(Arrays.copyOfRange(data, 32, 35));
 
                 // parse ai move from byte array to int[][] board layout
                 int index = 36;
