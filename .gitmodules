@@ -1,3 +1,6 @@
 [submodule "frontend/Chessie"]
 	path = frontend/Chessie
 	url = https://github.com/sofiareis/Chessie
+[submodule "de1/frozen"]
+	path = de1/frozen
+	url = https://github.com/cesanta/frozen.git
