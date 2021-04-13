@@ -32,7 +32,8 @@ $(wildcard test/generator-tests/*.c) \
 game.c \
 possible-move-generators-SW.c \
 generator-support-SW.c \
-ai-move-generator.c
+ai-move-generator.c \
+hardware-setup.c \
 
 	gcc -std=c99 -Wall -fsigned-char -g -o bin/runtestHW \
 	test/test.c \
@@ -44,5 +45,26 @@ ai-move-generator.c
 	possible-move-generators-HW.c \
 	generator-support-SW.c \
 	ai-move-generator.c \
+	hardware-setup.c \
 	-lm
-	
+
+playgame: \
+main.c \
+comms.c \
+game.c \
+possible-move-generators-SW.c \
+generator-support-SW.c \
+ai-move-generator.c \
+hardware-setup.c \
+frozen/frozen.c \
+
+	gcc -std=c99 -Wall -fsigned-char -g -o bin/playgame \
+	main.c \
+	comms.c \
+	game.c \
+	possible-move-generators-HW.c \
+	generator-support-SW.c \
+	ai-move-generator.c \
+	hardware-setup.c \
+	frozen/frozen.c \
+	-lm -lcurl
