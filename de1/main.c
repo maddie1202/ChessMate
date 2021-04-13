@@ -5,6 +5,7 @@
 #include "include/HW.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <unistd.h>
 
 int lw_fd, sdram_fd;
 void *lw_virtual, *sdram_virtual;
@@ -101,6 +102,7 @@ void play_game()
         }
 
         if (end_program()) break;
+        usleep(250000);
     }
 
     teardown();
