@@ -573,7 +573,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         int action = event.getAction();
         // Handles each of the expected events
         switch (action) {
-
             case DragEvent.ACTION_DRAG_STARTED:
                 // Determines if this View can accept the dragged data
                 if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {

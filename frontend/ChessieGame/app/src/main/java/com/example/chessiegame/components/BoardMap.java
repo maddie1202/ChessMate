@@ -66,9 +66,7 @@ public class BoardMap {
         return imageMap.get(key);
     }
 
-    public int size() {
-        return imageMap.size();
-    }
+    public int size() { return imageMap.size(); }
 
     public boolean isEmpty() {
         return imageMap.isEmpty();
