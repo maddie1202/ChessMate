@@ -3,12 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-char get_colour(char piece)
-{
-    return piece == 0 ? EMPTY : (piece > 0 ? WHITE : BLACK);
-}
-
-void update_game_state(game_t *current_game, board_t *new_board, char moved_last)
+game_t *update_game_state(game_t *current_game, board_t *new_board, char moved_last)
 {
     // max of 2 pieces can be moved by a player in one turn
     char pieces_moved[2] = {0, 0};
@@ -32,19 +27,23 @@ void update_game_state(game_t *current_game, board_t *new_board, char moved_last
         }
     }
 
-    if (pieces_moved[0] == WROOK0) current_game->wrook0_has_moved = true;
-    else if (pieces_moved[0] == WROOK1) current_game->wrook1_has_moved = true;
-    else if (pieces_moved[0] == WKING) current_game->wking_has_moved = true;
-    else if (pieces_moved[0] == BROOK0) current_game->brook0_has_moved = true;
-    else if (pieces_moved[0] == BROOK1) current_game->brook1_has_moved = true;
-    else if (pieces_moved[0] == BKING) current_game->bking_has_moved = true;
+    game_t *new_game = copy_game_replace_board(current_game, new_board);
 
-    if (pieces_moved[1] == WROOK0) current_game->wrook0_has_moved = true;
-    else if (pieces_moved[1] == WROOK1) current_game->wrook1_has_moved = true;
-    else if (pieces_moved[1] == WKING) current_game->wking_has_moved = true;
-    else if (pieces_moved[1] == BROOK0) current_game->brook0_has_moved = true;
-    else if (pieces_moved[1] == BROOK1) current_game->brook1_has_moved = true;
-    else if (pieces_moved[1] == BKING) current_game->bking_has_moved = true;
+    if (pieces_moved[0] == WROOK0) new_game->wrook0_has_moved = true;
+    else if (pieces_moved[0] == WROOK1) new_game->wrook1_has_moved = true;
+    else if (pieces_moved[0] == WKING) new_game->wking_has_moved = true;
+    else if (pieces_moved[0] == BROOK0) new_game->brook0_has_moved = true;
+    else if (pieces_moved[0] == BROOK1) new_game->brook1_has_moved = true;
+    else if (pieces_moved[0] == BKING) new_game->bking_has_moved = true;
+
+    if (pieces_moved[1] == WROOK0) new_game->wrook0_has_moved = true;
+    else if (pieces_moved[1] == WROOK1) new_game->wrook1_has_moved = true;
+    else if (pieces_moved[1] == WKING) new_game->wking_has_moved = true;
+    else if (pieces_moved[1] == BROOK0) new_game->brook0_has_moved = true;
+    else if (pieces_moved[1] == BROOK1) new_game->brook1_has_moved = true;
+    else if (pieces_moved[1] == BKING) new_game->bking_has_moved = true;
+
+    return new_game;    
 }
 
 void test0(void)
@@ -83,11 +82,12 @@ void test0(void)
         };
 
     // check that WROOK0 and WKING have now moved
-    update_game_state(&game, &w_expected1, WHITE);
-    if (game.wrook0_has_moved && !game.wrook1_has_moved && game.wking_has_moved && !game.brook0_has_moved && !game.brook1_has_moved && !game.bking_has_moved) printf("Test0: Success!\n");
+    game_t *new_game = update_game_state(&game, &w_expected1, WHITE);
+    if (new_game->wrook0_has_moved && !new_game->wrook1_has_moved && new_game->wking_has_moved && !new_game->brook0_has_moved && !new_game->brook1_has_moved && !new_game->bking_has_moved) printf("Test0: Success!\n");
     else printf("Test0 failed: game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
-                game.wrook0_has_moved, game.wrook1_has_moved, game.wking_has_moved, 
-                game.brook0_has_moved, game.brook1_has_moved, game.bking_has_moved);
+                new_game->wrook0_has_moved, new_game->wrook1_has_moved, new_game->wking_has_moved, 
+                new_game->brook0_has_moved, new_game->brook1_has_moved, new_game->bking_has_moved);
+    destroy_game(new_game);
 }
 
 void test1(void)
@@ -126,11 +126,12 @@ void test1(void)
         };
 
     // check that BROOK0 and BKING have now moved
-    update_game_state(&game, &b_expected1, BLACK);
-    if (!game.wrook0_has_moved && !game.wrook1_has_moved && !game.wking_has_moved && game.brook0_has_moved && !game.brook1_has_moved && game.bking_has_moved) printf("Test1: Success!\n");
+    game_t *new_game = update_game_state(&game, &b_expected1, BLACK);
+    if (!new_game->wrook0_has_moved && !new_game->wrook1_has_moved && !new_game->wking_has_moved && new_game->brook0_has_moved && !new_game->brook1_has_moved && new_game->bking_has_moved) printf("Test1: Success!\n");
     else printf("Test1 failed: game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
-                game.wrook0_has_moved, game.wrook1_has_moved, game.wking_has_moved, 
-                game.brook0_has_moved, game.brook1_has_moved, game.bking_has_moved);
+                new_game->wrook0_has_moved, new_game->wrook1_has_moved, new_game->wking_has_moved, 
+                new_game->brook0_has_moved, new_game->brook1_has_moved, new_game->bking_has_moved);
+    destroy_game(new_game);
 }
 
 void test2(void)
@@ -167,11 +168,12 @@ void test2(void)
         };
 
     // check that nothing of consequence changed
-    update_game_state(&game, &exp, WHITE);
-    if (!game.wrook0_has_moved && !game.wrook1_has_moved && !game.wking_has_moved && !game.brook0_has_moved && !game.brook1_has_moved && !game.bking_has_moved) printf("Test2: Success!\n");
+    game_t *new_game = update_game_state(&game, &exp, WHITE);
+    if (!new_game->wrook0_has_moved && !new_game->wrook1_has_moved && !new_game->wking_has_moved && !new_game->brook0_has_moved && !new_game->brook1_has_moved && !new_game->bking_has_moved) printf("Test2: Success!\n");
     else printf("Test2 failed: game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
-                game.wrook0_has_moved, game.wrook1_has_moved, game.wking_has_moved, 
-                game.brook0_has_moved, game.brook1_has_moved, game.bking_has_moved);
+                new_game->wrook0_has_moved, new_game->wrook1_has_moved, new_game->wking_has_moved, 
+                new_game->brook0_has_moved, new_game->brook1_has_moved, new_game->bking_has_moved);
+    destroy_game(new_game);
 }
 
 void test3(void)
@@ -219,20 +221,20 @@ void test3(void)
         };
 
     // check that wking moved
-    update_game_state(&game, &w_exp, WHITE);
-    if (!game.wrook0_has_moved && !game.wrook1_has_moved && game.wking_has_moved && !game.brook0_has_moved && !game.brook1_has_moved && !game.bking_has_moved) printf("Test3.1: Success!\n");
+    game_t *new_game = update_game_state(&game, &w_exp, WHITE);
+    if (!new_game->wrook0_has_moved && !new_game->wrook1_has_moved && new_game->wking_has_moved && !new_game->brook0_has_moved && !new_game->brook1_has_moved && !new_game->bking_has_moved) printf("Test3.1: Success!\n");
     else printf("Test3 p1 failed: game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
-                game.wrook0_has_moved, game.wrook1_has_moved, game.wking_has_moved, 
-                game.brook0_has_moved, game.brook1_has_moved, game.bking_has_moved);
-
-    game.board = &w_exp;
+                new_game->wrook0_has_moved, new_game->wrook1_has_moved, new_game->wking_has_moved, 
+                new_game->brook0_has_moved, new_game->brook1_has_moved, new_game->bking_has_moved);
+    destroy_game(new_game);
 
     // check that bking moved
-    update_game_state(&game, &b_exp, BLACK);
-    if (!game.wrook0_has_moved && !game.wrook1_has_moved && game.wking_has_moved && !game.brook0_has_moved && !game.brook1_has_moved && game.bking_has_moved) printf("Test3.2: Success!\n");
+    new_game = update_game_state(&game, &b_exp, BLACK);
+    if (!new_game->wrook0_has_moved && !new_game->wrook1_has_moved && !new_game->wking_has_moved && !new_game->brook0_has_moved && !new_game->brook1_has_moved && new_game->bking_has_moved) printf("Test3.2: Success!\n");
     else printf("Test3 p2 failed: game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
-                game.wrook0_has_moved, game.wrook1_has_moved, game.wking_has_moved, 
-                game.brook0_has_moved, game.brook1_has_moved, game.bking_has_moved);
+                new_game->wrook0_has_moved, new_game->wrook1_has_moved, new_game->wking_has_moved, 
+                new_game->brook0_has_moved, new_game->brook1_has_moved, new_game->bking_has_moved);
+    destroy_game(new_game);
 }
 
 int main(void)
