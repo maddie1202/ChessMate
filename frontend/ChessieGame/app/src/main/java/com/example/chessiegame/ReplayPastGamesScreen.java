@@ -207,7 +207,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
 
                 //Pawn placement
                 if (i == 1) {
-                    p = new Piece(this, i, j, "bpawn", 255 - j);
+                    p = new Piece(this, i, j, "bpawn", (-1 * j - 1));
                     p.setImageResource(R.drawable.bpawn);
                 } else if (i == 6) {
                     p = new Piece(this, i, j, "wpawn", (j + 1));
@@ -221,10 +221,10 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                     p = new Piece(this, i, j, "wrook", 9);
                     p.setImageResource(R.drawable.wrook);
                 } else if (j == 7 && i == 0) {
-                    p = new Piece(this, i, j, "brook", 246);
+                    p = new Piece(this, i, j, "brook", -10);
                     p.setImageResource(R.drawable.brook);
                 } else if (j == 0 && i == 0) {
-                    p = new Piece(this, i, j, "brook", 247);
+                    p = new Piece(this, i, j, "brook", -9);
                     p.setImageResource(R.drawable.brook);
 
                 }
@@ -236,10 +236,10 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                     p = new Piece(this, i, j, "wknight", 19);
                     p.setImageResource(R.drawable.wknight);
                 } else if (j == 6 && i == 0) {
-                    p = new Piece(this, i, j, "bknight", 236);
+                    p = new Piece(this, i, j, "bknight", -20);
                     p.setImageResource(R.drawable.bknight);
                 } else if (j == 1 && i == 0) {
-                    p = new Piece(this, i, j, "bknight", 237);
+                    p = new Piece(this, i, j, "bknight", -19);
                     p.setImageResource(R.drawable.bknight);
                 }
                 //Bishops
@@ -250,10 +250,10 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                     p = new Piece(this, i, j, "wbishop", 29);
                     p.setImageResource(R.drawable.wbishop);
                 } else if (j == 5 && i == 0) {
-                    p = new Piece(this, i, j, "bbishop", 226);
+                    p = new Piece(this, i, j, "bbishop", -30);
                     p.setImageResource(R.drawable.bbishop);
                 } else if (j == 2 && i == 0) {
-                    p = new Piece(this, i, j, "bbishop", 227);
+                    p = new Piece(this, i, j, "bbishop", -29);
                     p.setImageResource(R.drawable.bbishop);
                 }
                 //Queen
@@ -261,7 +261,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                     p = new Piece(this, i, j, "wqueen", 39);
                     p.setImageResource(R.drawable.wqueen);
                 } else if (j == 4 && i == 0) {
-                    p = new Piece(this, i, j, "bqueen", 217);
+                    p = new Piece(this, i, j, "bqueen", -39);
                     p.setImageResource(R.drawable.bqueen);
                 }
                 //King
@@ -269,7 +269,7 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
                     p = new Piece(this, i, j, "wking", 48);
                     p.setImageResource(R.drawable.wking);
                 } else if (j == 3 && i == 0) {
-                    p = new Piece(this, i, j, "bking", 207);
+                    p = new Piece(this, i, j, "bking", -48);
                     p.setImageResource(R.drawable.bking);
                 }
 

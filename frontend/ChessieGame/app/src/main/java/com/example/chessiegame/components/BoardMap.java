@@ -38,27 +38,27 @@ public class BoardMap {
 
         imageMap.put(48, R.drawable.wking); // wking
 
-        for (int i = 255; i > 247; i--) {
+        for (int i = -1; i > -9; i--) {
             imageMap.put(i, R.drawable.bpawn); // bpawn
         }
 
-        for (int i = 247; i > 237; i--) {
+        for (int i = -9; i > -19; i--) {
             imageMap.put(i, R.drawable.brook); // brook
         }
 
-        for (int i = 237; i > 227; i--) {
+        for (int i = -19; i > -29; i--) {
             imageMap.put(i, R.drawable.bknight); // bknight
         }
 
-        for (int i = 227; i > 217; i--) {
+        for (int i = -29; i > -39; i--) {
             imageMap.put(i, R.drawable.bbishop); // bbishop
         }
 
-        for (int i = 217; i > 207; i--) {
+        for (int i = -39; i > -48; i--) {
             imageMap.put(i, R.drawable.bqueen); // bqueen
         }
 
-        imageMap.put(207, R.drawable.bking); // bking
+        imageMap.put(-48, R.drawable.bking); // bking
 
     }
 
