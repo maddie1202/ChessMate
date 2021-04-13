@@ -148,6 +148,7 @@ static bool test_move_and_response(game_t *game, move_t wmove, move_t bmove)
     double actual_score = eval_board(actual, BLACK);
 
     if (actual != NULL) free(actual);
+    free(new_game);
 
     if (expected_score <= actual_score) {
         print_test_result(test_result(true, ""), __func__);
