@@ -217,8 +217,7 @@ public class HomeScreen extends Fragment {
                 response -> {
                     try {
                         // Gets the board with the highest sequence number from game with gameID to render
-                        JSONArray arr = new JSONArray(response);
-                        JSONObject res = (JSONObject) arr.get(0);
+                        JSONObject res = new JSONObject(response);
 
                         // finally navigate to Resume Game PopUp
                         Intent intent = new Intent(getActivity(), ResumeGamePopUp.class);
@@ -255,7 +254,7 @@ public class HomeScreen extends Fragment {
 
         for (int j = 0; j < size; j++) {
             for (int k = 0; k < size; k++) {
-                layout[j][k] = Integer.parseInt(boardString[j * size + k]);
+                layout[j][k] = Integer.parseInt(boardString[(7- j) * size + k]);
             }
         }
 

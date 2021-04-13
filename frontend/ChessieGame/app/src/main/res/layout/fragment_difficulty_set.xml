@@ -74,7 +74,7 @@
         android:layout_alignParentTop="false"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
-        android:layout_marginBottom="131dp"
+        android:layout_marginBottom="80dp"
         android:text="START"
         android:textColor="#0C0B0B"
         android:textSize="18sp"

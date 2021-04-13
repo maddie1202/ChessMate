@@ -78,6 +78,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     private boolean pauseGameFlag;
     private int gameResult;
     private int sequenceNum;
+    private int difficulty;
 
     boolean start_game_ack = false;
     boolean game_over = false;
@@ -115,6 +116,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         user = mAuth.getCurrentUser();
 
         gameID = getIntent().getIntExtra("gameID", 0);
+        difficulty = getIntent().getIntExtra("difficulty", 1);
         resumedLayout = new int[rows][cols]; // layout of game in progress
         resumedLayout = (int[][]) getIntent().getSerializableExtra("resumedLayout");
         tiles = new Tile[rows][cols];
@@ -139,6 +141,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
         initChessboard(startNewGame, resumedLayout);
 
+        // Bluetooth initialization code - automatically connected to HC-05 module
         /*if (mBlueAdapter == null) {
             showToast("Bluetooth is not available");
         } else {
@@ -178,12 +181,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         timerTextView.setTextColor(Color.BLACK);
         int timeLeft = getIntent().getIntExtra("timeLeft", 600000);
 
-        /*String btTest = "Bluetooth Test";
-        Intent bti = new Intent(this, com.example.chessiegame.services.BluetoothService.class);
-        // MUST send byte[] data to bluetooth service using "userMove" tag
-        bti.putExtra("userMove", btTest.getBytes());
-        startService(bti);*/
-
+        // start the countdown timer
         timerStart(timeLeft);
 
         //POPUP
@@ -306,15 +304,17 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         timerStart(milliLeft);
     }
 
+    /**
+     * Updates the time remaining in this game, then navigates back to the home screen
+     */
     private void navigateToHome(int gameID) {
 
-        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/updateresult";
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/updategame";
         JSONObject postData = new JSONObject();
         try {
             postData.put("gameID", gameID);
-            postData.put("result", -1); // 0 for lose game, 1 for win game
-            // TODO: put remaining time in the db
-            //postData.put("timeleft", (int) milliLeft);
+            postData.put("difficulty", difficulty);
+            postData.put("timeleft", (int) milliLeft);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -389,8 +389,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     int[][] boardToIntArray() {
         int[][] board = new int[rows][cols];
 
-        for (int i = 0; i < cols ; i ++) {
-            for (int j = 0; j < rows; j++) {
+        for (int i = 7; i >= 0; i--) {
+            for (int j = 0; j < cols; j++) {
                 if (tiles[i][j].getPiece() == null) {
                     board[i][j] = 0;
                 } else {
@@ -408,7 +408,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     public void boardToStringAndPost() {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < rows ; i ++) {
+        for (int i = 7; i >= 0 ; i--) {
             for (int j = 0; j < cols; j++) {
                 if (tiles[i][j].getPiece() == null) {
                     sb.append(0);
@@ -535,19 +535,19 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     }
                     //Queen
                     else if (j == 4 && i == 7) {
-                        p = new Piece(this, i, j, "wqueen", 39);
-                        p.setImageResource(R.drawable.wqueen);
+                        p = new Piece(this, i, j, "wking", 48);
+                        p.setImageResource(R.drawable.wking);
                     } else if (j == 4 && i == 0) {
-                        p = new Piece(this, i, j, "bqueen", -39);
-                        p.setImageResource(R.drawable.bqueen);
+                        p = new Piece(this, i, j, "bking", -48);
+                        p.setImageResource(R.drawable.bking);
                     }
                     //King
                     else if (j == 3 && i == 7) {
-                        p = new Piece(this, i, j, "wking", 48);
-                        p.setImageResource(R.drawable.wking);
+                        p = new Piece(this, i, j, "wqueen", 39);
+                        p.setImageResource(R.drawable.wqueen);
                     } else if (j == 3 && i == 0) {
-                        p = new Piece(this, i, j, "bking", -48);
-                        p.setImageResource(R.drawable.bking);
+                        p = new Piece(this, i, j, "bqueen", -39);
+                        p.setImageResource(R.drawable.bqueen);
                     }
                 } else { // assign layout based on prev game state
                     Log.d("ChessScreen", "In progress");
@@ -614,6 +614,11 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 return true;
 
             case DragEvent.ACTION_DRAG_EXITED:
+                // Turns off any color tinting
+                v.getBackground().clearColorFilter();
+                // Invalidate the view to force a redraw in the new tint
+                v.invalidate();
+                return true;
 
             case DragEvent.ACTION_DRAG_ENDED:
                 // Turns off any color tinting
@@ -625,8 +630,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             case DragEvent.ACTION_DROP:
                 // Turns off any color tints
                 v.getBackground().clearColorFilter();
-                // Invalidates the view to force a redraw
-                v.invalidate();
 
                 // the view that was dropped
                 View vw = (View) event.getLocalState();
@@ -667,18 +670,19 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 tiles[r][c].setPiece(p); // drop p in its new location
                 int[][] newLayout = boardToIntArray();
 
-                if (!validMoves.contains(newLayout)) { // MOVE VALIDATION
-                    // TODO: reject the move and undo everything, do nothing for now
-                    /*
-                    showToast("You played an invalid move");
-                    validMove = false;
-                    if (removedPiece) { // restore temp
-                        tiles[r][c].removePiece(p);
-                        tiles[r][c].setPiece(tmp);
+                /*for (int[][] layout : validMoves) { // MOVE VALIDATION
+                    if (!Arrays.deepEquals(layout, newLayout)) {
+                        showToast("You played an invalid move");
+                        validMove = false;
+                        if (removedPiece) { // restore temp
+                            tiles[r][c].removePiece(p);
+                            tiles[r][c].setPiece(tmp);
+                        }
+                        tiles[prevRow][prevCol].setPiece(p);
+                        p.updateCoordinates(prevRow, prevCol);
                     }
-                    tiles[prevRow][prevCol].setPiece(p);
-                    p.updateCoordinates(prevRow, prevCol);*/
-                }
+                }*/
+
                 vw.setVisibility(View.VISIBLE); // finally set Visibility to VISIBLE
 
                 if (validMove) {
@@ -692,6 +696,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     forwardPlayerMove(); // send player move to Service and POST to db
                 }
 
+                // Invalidates the view to force a redraw
+                v.invalidate();
                 return true;
             default:
                 Log.e("DragDrop Example", "Unknown action type received by OnDragListener.");
@@ -851,26 +857,34 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Piece p = tiles[i][j].getPiece();
-                Tile t = tiles[i][j];
                 int newPieceID = AIMove[i][j];
+                Log.d("Chess Screen", "AI Board piece: " + newPieceID + " row: " + i + " column: " + j);
 
-                if (t.hasPiece() && p != null) { // there was a already piece on that square
+                try {
+                    tiles[i][j].setOnDragListener(this);
+                } catch (Exception e) {
+                    Log.d("Chess Screen", "Can't reset on drag listener");
+                }
+
+                if (tiles[i][j].hasPiece() && p != null) { // there was a already piece on that square
                     if (newPieceID == 0) { // piece gets replaced with a blank
-                        t.removePiece(p);
+                        tiles[i][j].removePiece(p);
                     } else if (newPieceID != p.id) { // AIMove[i][j] is not 0
                         // if the new board is not the same as the current board
-                        t.removePiece(p);
+                        tiles[i][j].removePiece(p);
                         Piece pc = new Piece(this, i, j, "Piece", newPieceID);
-                        t.setPiece(pc);
                         Log.d("Chess Screen", "NewPieceID is " + String.valueOf(newPieceID));
+                        tiles[i][j].setPiece(pc);
                         pc.setImageResource(imageMap.get(newPieceID));
+                        pc.setOnTouchListener(this);
                     }
                 } else { // no piece was on that square
                     if (newPieceID != 0) { // the square on new board has a piece
                         Piece pc = new Piece(this, i, j, "Piece", newPieceID);
-                        t.setPiece(pc);
                         Log.d("Chess Screen", "NewPieceID is " + String.valueOf(newPieceID));
                         pc.setImageResource(imageMap.get(newPieceID));
+                        tiles[i][j].setPiece(pc);
+                        pc.setOnTouchListener(this);
                     }
                 }
             }
@@ -917,97 +931,92 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
                 Total: ~12000 bytes
              */
-            byte[] data = resultData.getByteArray("readData");
+            //byte[] data = resultData.getByteArray("readData");
+
             Log.d("ChessScreen", "Chess screen received data");
 
-            if (data != null && data.length > 300) { // bluetooth receiver
-                start_game_ack = fourByteToBoolean(Arrays.copyOfRange(data, 0, 3));
-                game_over = fourByteToBoolean(Arrays.copyOfRange(data, 4, 7));
-                white_wins = fourByteToBoolean(Arrays.copyOfRange(data, 8, 11));
-                wrook0_moved = fourByteToInt(Arrays.copyOfRange(data, 12, 15));
-                wrook1_moved = fourByteToInt(Arrays.copyOfRange(data, 16, 19));
-                brook0_moved = fourByteToInt(Arrays.copyOfRange(data, 20, 23));
-                brook1_moved = fourByteToInt(Arrays.copyOfRange(data, 24, 27));
-                wking_moved = fourByteToInt(Arrays.copyOfRange(data, 28, 31));
-                bking_moved = fourByteToInt(Arrays.copyOfRange(data, 32, 35));
+            // Bluetooth protocol
+            /*start_game_ack = fourByteToBoolean(Arrays.copyOfRange(data, 0, 3));
+            game_over = fourByteToBoolean(Arrays.copyOfRange(data, 4, 7));
+            white_wins = fourByteToBoolean(Arrays.copyOfRange(data, 8, 11));
+            wrook0_moved = fourByteToInt(Arrays.copyOfRange(data, 12, 15));
+            wrook1_moved = fourByteToInt(Arrays.copyOfRange(data, 16, 19));
+            brook0_moved = fourByteToInt(Arrays.copyOfRange(data, 20, 23));
+            brook1_moved = fourByteToInt(Arrays.copyOfRange(data, 24, 27));
+            wking_moved = fourByteToInt(Arrays.copyOfRange(data, 28, 31));
+            bking_moved = fourByteToInt(Arrays.copyOfRange(data, 32, 35));
 
-                // parse ai move from byte array to int[][] board layout
-                int index = 36;
-                for (int i = 0; i < rows; i++) {
-                    for (int j = 0; j < cols; j++) {
-                        AIMove[i][j] = fourByteToInt(Arrays.copyOfRange(data, index, index + 3));
-                        index = index + 4;
+            // parse ai move from byte array to int[][] board layout
+            int index = 36;
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    AIMove[i][j] = fourByteToInt(Arrays.copyOfRange(data, index, index + 3));
+                    index = index + 4;
+                }
+            }
+
+            // index = 292 at this point
+            renderOpponentMove(); // render the ai move on the gameboard
+            num_player_moves = fourByteToInt(Arrays.copyOfRange(data, 292, 295));*/
+
+            AIMove = (int[][]) resultData.getSerializable("AIMove");
+            validMoves = (HashSet<int[][]>) resultData.getSerializable("validMoves");
+            gameResult = resultData.getInt("result");
+            View screen = findViewById(R.id.chess);
+
+            if (gameResult == -1) { // player was not the winner
+                renderOpponentMove();
+                screen.invalidate();
+            } else if (gameResult == 0) { // AI won
+                renderOpponentMove();
+                screen.invalidate();
+                updateGameResult(gameID, gameResult, 0);
+
+                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                // create the popup window
+                int width_f = (int) (width * .9);
+                int height_f = (int) (height * .4);
+                boolean focusable = true; // lets taps outside the popup also dismiss it
+                View popupViewlost = inflater.inflate(R.layout.popup_lost, null);
+                // create the popup window
+                final PopupWindow popupWindowLost = new PopupWindow(popupViewlost, width_f, height_f, focusable);
+
+                popupWindowLost.showAtLocation(popupViewlost, Gravity.CENTER, 0, 0);
+                Button home = (Button) popupViewlost.findViewById(R.id.home);
+
+                home.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //popupWindowLost.dismiss();
+                        Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
                     }
-                }
+                });
+            } else {
+                updateGameResult(gameID, gameResult, 0);
 
-                // index = 292 at this point
-                renderOpponentMove(); // render the ai move on the gameboard
-                num_player_moves = fourByteToInt(Arrays.copyOfRange(data, 292, 295));
+                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                // create the popup window
+                int width_f = (int) (width * .9);
+                int height_f = (int) (height * .5);
+                boolean focusable = true; // lets taps outside the popup also dismiss it
+                View popupViewWin = inflater.inflate(R.layout.popup_win, null);
+                // create the popup window
+                final PopupWindow popupWindowWin = new PopupWindow(popupViewWin, width_f, height_f, focusable);
 
-                // TODO: parse possible player moves
-            } else { // alternate protocol - receive AI move and possible player moves
-                // Log.d("ChessScreen", "Received string from BT: " + Arrays.toString(data)); - test receive string
-                AIMove = (int[][]) resultData.getSerializable("AIMove");
-                validMoves = (HashSet<int[][]>) resultData.getSerializable("validMoves");
-                gameResult = resultData.getInt("result");
+                popupWindowWin.showAtLocation(popupViewWin, Gravity.CENTER, 0, 0);
+                Button home = (Button) popupViewWin.findViewById(R.id.home);
 
-                if (gameResult == -1) { // player was not the winner
-                    renderOpponentMove();
-                } else if (gameResult == 0) { // AI won
-                    // TODO: display that AI won
-                    renderOpponentMove();
-                    updateGameResult(gameID, gameResult, 0);
+                home.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
 
-                    LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                    // create the popup window
-                    int width_f = (int) (width * .9);
-                    int height_f = (int) (height * .4);
-                    boolean focusable = true; // lets taps outside the popup also dismiss it
-                    View popupViewlost = inflater.inflate(R.layout.popup_lost, null);
-                    // create the popup window
-                    final PopupWindow popupWindowLost = new PopupWindow(popupViewlost, width_f, height_f, focusable);
-
-                    popupWindowLost.showAtLocation(popupViewlost, Gravity.CENTER, 0, 0);
-                    Button home = (Button) popupViewlost.findViewById(R.id.home);
-
-                    home.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //popupWindowLost.dismiss();
-                            Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                            startActivity(intent);
-
-                        }
-                    });
-                } else {
-                    // TODO: display that player won
-                    updateGameResult(gameID, gameResult, 0);
-
-                    LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                    // create the popup window
-                    int width_f = (int) (width * .9);
-                    int height_f = (int) (height * .5);
-                    boolean focusable = true; // lets taps outside the popup also dismiss it
-                    View popupViewWin = inflater.inflate(R.layout.popup_win, null);
-                    // create the popup window
-                    final PopupWindow popupWindowWin = new PopupWindow(popupViewWin, width_f, height_f, focusable);
-
-                    popupWindowWin.showAtLocation(popupViewWin, Gravity.CENTER, 0, 0);
-                    Button home = (Button) popupViewWin.findViewById(R.id.home);
-
-                    home.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //popupWindowLost.dismiss();
-                            Intent intent = new Intent(ChessScreen.this, HomeActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                            startActivity(intent);
-
-                        }
-                    });
-                }
-
+                    }
+                });
             }
         }
 

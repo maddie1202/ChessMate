@@ -115,22 +115,11 @@ public class BluetoothService extends Service {
             if (btThread != null) {
                 /*byte[] data = intent.getExtras().getByteArray("userMove");
                 assert data != null;
-                btThread.write(data);
-                Log.d("Bluetooth Service", "User move sent to btThread");*/
+                btThread.write(data);*/
 
                 startPolling = true; // player made a move, start polling for opponent's move
                 Log.d("Bluetooth Service", "Target sequence num received: " + sequenceNum);
-                if (btReceiver == null) {
-                    Log.d("Bluetooth Service", "BTReceiver is null");
-                } else {
-                    Log.d("Bluetooth Service", "BTReceiver is not null");
-                }
 
-                // test send back message
-                /*Bundle readData = new Bundle();
-                readData.putByteArray("readData", data);
-                Log.d("Bluetooth Service", "Sending move back to the chessscreen");
-                btReceiver.send(1, readData);*/
             }
         }
 
@@ -151,6 +140,7 @@ public class BluetoothService extends Service {
             this.btReceiver = btReceiver;
             newInfo = false;
 
+            // Bluetooth socket initialization
             /*try {
                 btInputStream = btSocket.getInputStream();
                 btOutputStream = btSocket.getOutputStream();
@@ -181,8 +171,8 @@ public class BluetoothService extends Service {
 
                 while (!newInfo && startPolling) { // wait on new information from the db
                     pollDatabaseForResult(gameID);
-                    Log.d("BluetoothService", "Polling database");
-                    wait(350); // sleep between polls
+                    Log.d("Bluetooth Service", "Polling database");
+                    wait(250); // sleep between polls
                 }
 
                 if (startPolling) { // we have info and are still polling
@@ -191,7 +181,14 @@ public class BluetoothService extends Service {
                     if (gameResult == 1) {
                         sendPlayerWon();
                     } else {
-                        getValidMoves(); // now get the possible valid player moves
+                        //getValidMoves(); // now get the possible valid player moves
+                        // send AI move and Set containing valid player moves to the chess screen
+                        Bundle AIData = new Bundle();
+                        AIData.putSerializable("AIMove", AIBoard);
+                        AIData.putSerializable("validMoves", validMoves);
+                        AIData.putInt("result", gameResult);
+                        btReceiver.send(1, AIData);
+                        Log.d("Bluetooth Service", "Done Polling and received result");
                         sequenceNum += 2; // always scan for EVEN sequence numbers
                     }
                 }
@@ -229,14 +226,16 @@ public class BluetoothService extends Service {
                     response -> {
                         try {
                             JSONObject json = new JSONObject(response);
-                            // TODO: info will be returned as a json
                             if (json != null) { // in case the game has nothing in it
                                 int num = (int) json.get("sequenceNumber");
+                                Log.d("Bluetooth Service", "Service polled sequenceNum: " + num);
                                 if (num == sequenceNum) { // there is new information in the db
                                     AIMove = json.get("placements").toString(); // the AI's move
                                     AIBoard = parseBoard(AIMove);
                                     newInfo = true;
                                 }
+                            } else {
+                                Log.d("BluetoothService", "Poll database didn't work");
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -301,16 +300,11 @@ public class BluetoothService extends Service {
                                 String allMoves = (String) arr.getJSONObject(0).get("placements");
                                 String[] moveBoards = allMoves.split(",");
                                 for (String moveBoard : moveBoards) {
+                                    Log.d("Bluetooth Service", moveBoard);
                                     validMoves.add(parseBoard(moveBoard));
                                 }
-
-                                // send AI move and Set containing valid player moves to the chess screen
-                                Bundle AIData = new Bundle();
-                                AIData.putSerializable("AIMove", AIBoard);
-                                AIData.putSerializable("validMoves", validMoves);
-                                AIData.putInt("result", gameResult);
-                                btReceiver.send(1, AIData);
                             }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -323,6 +317,9 @@ public class BluetoothService extends Service {
             queue.add(stringRequest);
         }
 
+        /**
+         * Signal that the player won the game
+         */
         public void sendPlayerWon() { // when gameResult == 1, AIBoard and validMoves are ignored
             // send AI move and Set containing valid player moves to the chess screen
             Bundle AIData = new Bundle();
@@ -341,7 +338,7 @@ public class BluetoothService extends Service {
 
             for (int j = 0; j < size; j++) {
                 for (int k = 0; k < size; k++) {
-                    layout[j][k] = Integer.parseInt(boardString[j * size + k]);
+                    layout[j][k] = Integer.parseInt(boardString[(7 - j) * size + k]);
                 }
             }
 
