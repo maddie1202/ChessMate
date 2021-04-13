@@ -245,7 +245,8 @@ bool pause_game()
  */
 void send_ack_start_game(game_t *game, int game_id)
 {
-    send_move(game, NULL, game_id, 0);
+    int seq_num = 0;
+    send_move(game, NULL, game_id, &seq_num);
 }
 
 /*
