@@ -50,7 +50,7 @@ void play_game()
 {
     enum game_state state = WAIT_GAME;
     game_t *game = init_game();
-    int game_id, seq_num;
+    int game_id, seq_num, difficulty;
 
     if (!setup()) return;
 
@@ -62,10 +62,12 @@ void play_game()
                 if (start_new_game(&game_id)) {
                     send_ack_start_game(game, game_id);
                     seq_num = 1;
+                    difficulty = get_difficulty(game_id);
                     state = WAIT_MOVE;
                     printf("WAIT_MOVE exp seq #: %d\n", seq_num);
                 } else if (resume_old_game(game, &game_id, &seq_num)) {
                     printf("SEND_MOVE\n");
+                    difficulty = get_difficulty(game_id);
                     state = SEND_MOVE;
                 }
                 break;
@@ -79,7 +81,7 @@ void play_game()
                 }
                 break;
             case SEND_MOVE:
-                game = generate_ai_move(game, BLACK, 3);
+                game = generate_ai_move(game, BLACK, difficulty);
                 move_list_t *possible_player_moves = generate_all_moves(game, WHITE);
 
                 if (in_checkmate(game->board, WHITE)) {

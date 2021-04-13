@@ -22,6 +22,8 @@ void send_move(game_t *game, move_list_t *possible_player_moves, int game_id, in
 void send_game_over_black_wins(game_t* game, int game_id, int *seq_num);
 void send_game_over_white_wins(int game_id);
 
+int get_difficulty(int game_id);
+
 bool init_networking();
 void cleanup_networking();
 

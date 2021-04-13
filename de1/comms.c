@@ -16,6 +16,8 @@
 
 #define GET_RECENT_BOARD_URL "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getlatestboard/%d"
 
+#define GET_GAME_DETAILS_URLS "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgamedetails/%d"
+
 #define KEY0 1
 #define KEY1 2
 #define KEY2 4
@@ -182,6 +184,25 @@ void display_state(enum game_state state)
 
 }
 
+int get_difficulty(int game_id)
+{
+    char url[256];
+    sprintf(url, GET_GAME_DETAILS_URLS, game_id);
+
+    char *result;
+    if (!send_get_request(url, &result)) return false;
+
+    int game_ID, difficulty, time_left;
+    char *time;
+
+    json_scanf(result, strlen(result), 
+        "{gameID: %d, startDateTime: %d, difficulty: %d, timeleft: %d}", 
+        &game_ID, &time, &difficulty, &time_left);
+
+    free(time);
+    return difficulty;
+}
+
 /*
  * Poll the DB until the player makes a new move in the game.
  */
@@ -207,6 +228,7 @@ bool receive_recent_move(game_t *game, int game_id, int *expected_seq_num)
     }
 
     if (sequenceNumber != *expected_seq_num) {
+        free(placements);
         return false;
     } else {
         free(game->board);
@@ -220,6 +242,7 @@ bool receive_recent_move(game_t *game, int game_id, int *expected_seq_num)
 
         (*expected_seq_num)++;
 
+        free(placements);
         return true;
     }
 }
