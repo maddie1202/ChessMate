@@ -84,8 +84,8 @@ void test0(void)
 
     // check that WROOK0 and WKING have now moved
     update_game_state(&game, &w_expected1, WHITE);
-    if (game.wrook0_has_moved && game.wking_has_moved) printf("Test0: Success!\n");
-    else printf("game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
+    if (game.wrook0_has_moved && !game.wrook1_has_moved && game.wking_has_moved && !game.brook0_has_moved && !game.brook1_has_moved && !game.bking_has_moved) printf("Test0: Success!\n");
+    else printf("Test0 failed: game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
                 game.wrook0_has_moved, game.wrook1_has_moved, game.wking_has_moved, 
                 game.brook0_has_moved, game.brook1_has_moved, game.bking_has_moved);
 }
@@ -127,8 +127,8 @@ void test1(void)
 
     // check that BROOK0 and BKING have now moved
     update_game_state(&game, &b_expected1, BLACK);
-    if (game.brook0_has_moved && game.bking_has_moved) printf("Test1: Success!\n");
-    else printf("game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
+    if (!game.wrook0_has_moved && !game.wrook1_has_moved && !game.wking_has_moved && game.brook0_has_moved && !game.brook1_has_moved && game.bking_has_moved) printf("Test1: Success!\n");
+    else printf("Test1 failed: game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
                 game.wrook0_has_moved, game.wrook1_has_moved, game.wking_has_moved, 
                 game.brook0_has_moved, game.brook1_has_moved, game.bking_has_moved);
 }
@@ -169,7 +169,68 @@ void test2(void)
     // check that nothing of consequence changed
     update_game_state(&game, &exp, WHITE);
     if (!game.wrook0_has_moved && !game.wrook1_has_moved && !game.wking_has_moved && !game.brook0_has_moved && !game.brook1_has_moved && !game.bking_has_moved) printf("Test2: Success!\n");
-    else printf("game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
+    else printf("Test2 failed: game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
+                game.wrook0_has_moved, game.wrook1_has_moved, game.wking_has_moved, 
+                game.brook0_has_moved, game.brook1_has_moved, game.bking_has_moved);
+}
+
+void test3(void)
+{
+    board_t curr = {
+            {WROOK0,   EMPTY,  EMPTY,  EMPTY,    WKING,   WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN0, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN0, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0,   EMPTY,  EMPTY,  EMPTY,    BKING,   BBISHOP1, BKNIGHT1, BROOK1}
+        };
+
+    game_t game;
+    game.board = &curr;
+    game.bking_has_moved = false;
+    game.brook0_has_moved = false;
+    game.brook1_has_moved = false;
+    game.wking_has_moved = false;
+    game.wrook0_has_moved = false;
+    game.wrook1_has_moved = false;
+
+    board_t w_exp = {
+            {WROOK0,   EMPTY,  EMPTY,  WKING,    EMPTY,   WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN0, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN0, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0,   EMPTY,  EMPTY,  EMPTY,    BKING,   BBISHOP1, BKNIGHT1, BROOK1}
+        };
+
+    board_t b_exp = {
+            {WROOK0,   EMPTY,  EMPTY,  WKING,    EMPTY,   WBISHOP1, WKNIGHT1, WROOK1},
+            {WPAWN0,   WPAWN1, WPAWN2, WBISHOP0, WQUEEN0, WPAWN5,   WPAWN6,   WPAWN7},       
+            {WKNIGHT0, EMPTY,  EMPTY,  WPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    WPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {EMPTY,    EMPTY,  EMPTY,  EMPTY,    BPAWN4,  EMPTY,    EMPTY,    EMPTY},
+            {BKNIGHT0, EMPTY,  EMPTY,  BPAWN3,   EMPTY,   EMPTY,    EMPTY,    EMPTY},
+            {BPAWN0,   BPAWN1, BPAWN2, BBISHOP0, BQUEEN0, BPAWN5,   BPAWN6,   BPAWN7},
+            {BROOK0,   EMPTY,  EMPTY,  BKING,    EMPTY,   BBISHOP1, BKNIGHT1, BROOK1}
+        };
+
+    // check that wking moved
+    update_game_state(&game, &w_exp, WHITE);
+    if (!game.wrook0_has_moved && !game.wrook1_has_moved && game.wking_has_moved && !game.brook0_has_moved && !game.brook1_has_moved && !game.bking_has_moved) printf("Test3.1: Success!\n");
+    else printf("Test3 p1 failed: game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
+                game.wrook0_has_moved, game.wrook1_has_moved, game.wking_has_moved, 
+                game.brook0_has_moved, game.brook1_has_moved, game.bking_has_moved);
+
+    game.board = &w_exp;
+
+    // check that bking moved
+    update_game_state(&game, &b_exp, BLACK);
+    if (!game.wrook0_has_moved && !game.wrook1_has_moved && game.wking_has_moved && !game.brook0_has_moved && !game.brook1_has_moved && game.bking_has_moved) printf("Test3.2: Success!\n");
+    else printf("Test3 p2 failed: game.wrook0_has_moved: %d, game.wrook0_has_moved: %d, game.wking_has_moved: %d, game.brook0_has_moved: %d, game.brook0_has_moved: %d, game.bking_has_moved: %d\n",
                 game.wrook0_has_moved, game.wrook1_has_moved, game.wking_has_moved, 
                 game.brook0_has_moved, game.brook1_has_moved, game.bking_has_moved);
 }
@@ -179,6 +240,9 @@ int main(void)
     test0();
     test1();
     test2();
+    test3();
+
+
 
     return 0;
 }
