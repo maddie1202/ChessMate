@@ -423,6 +423,8 @@ bool send_put_request(char *url, char *body)
     return false;
 }
 
+// These next tree functions are adapted from https://stackoverflow.com/questions/2329571/c-libcurl-get-output-into-a-string
+
 void init_string(struct string *s) {
     s->len = 0;
     s->ptr = malloc(s->len+1);
