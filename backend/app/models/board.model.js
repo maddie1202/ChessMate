@@ -42,12 +42,12 @@ const Board = function(board){
     this.placements = board.placements;
     this.gameID = board.gameID;
     this.sequenceNum = board.sequenceNum;
-    this.wrookO_moved : board.wrookO_moved,
-    this.wrookI_moved : board.wrookI_moved,
-    this.brookO_moved : board.brookO_moved,
-    this.brookI_moved : board.brookI_moved,
-    this.wking_moved : board.wking_moved,
-    this.bking_moved : board.bking_moved
+    this.wrookO_moved = board.wrookO_moved,
+    this.wrookI_moved = board.wrookI_moved,
+    this.brookO_moved = board.brookO_moved,
+    this.brookI_moved = board.brookI_moved,
+    this.wking_moved = board.wking_moved,
+    this.bking_moved = board.bking_moved
 };
 
 //create a new board in table
