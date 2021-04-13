@@ -185,7 +185,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         startService(bti);*/
 
 
-        timerStart(timeLeft);
+        // TODO: change back to timeleft
+        timerStart(5000);
 
         //POPUP
         // inflate the layout of the popup window
@@ -274,16 +275,27 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                 // create the popup window
-                int width_f = (int) (width*.9);
+                int width_f = (int) (width * .9);
                 //int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                int height_f = (int) (height*.7);
+                int height_f = (int) (height * .7);
                 boolean focusable = true; // lets taps outside the popup also dismiss it
-               // final PopupWindow popupWindow = new PopupWindow(popupView, width_f, height_f, focusable);
-
+                // final PopupWindow popupWindow = new PopupWindow(popupView, width_f, height_f, focusable);
                 View popupViewlost = inflater.inflate(R.layout.popup_lost, null);
                 // create the popup window
                 final PopupWindow popupWindowLost = new PopupWindow(popupViewlost, width_f, height_f, focusable);
+
                 popupWindowLost.showAtLocation(popupViewlost, Gravity.CENTER, 0, 0);
+                Button home = (Button) popupViewlost.findViewById(R.id.home);
+                home.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //popupWindowLost.dismiss();
+                        Intent intent = new Intent(ChessScreen.this, HomeScreen.class);
+                        startActivity(intent);
+
+                    }
+                });
+                /*
                 Handler h = new Handler();
                 Runnable r = new Runnable() {
                     public void run() {
@@ -292,6 +304,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     }
                 };
                 h.postDelayed(r,10000); // after 10 seconds, automatically go back to home
+
+                 */
             }
         }.start();
     }

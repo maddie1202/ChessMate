@@ -20,7 +20,7 @@
         android:textSize="24sp" />
 
     <Button
-        android:id="@+id/resume"
+        android:id="@+id/home"
         android:layout_width="291dp"
         android:layout_height="80dp"
         android:layout_alignParentTop="true"
