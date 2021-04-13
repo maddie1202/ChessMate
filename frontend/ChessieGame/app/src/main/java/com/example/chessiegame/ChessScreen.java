@@ -103,6 +103,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
     boolean bking_moved = false;
     int num_player_moves;
 
+    int width;
+    int height;
     private CountDownTimer timer;
     long milliLeft;
 
@@ -117,8 +119,8 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
+        width = dm.widthPixels;
+        height = dm.heightPixels;
 
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         btReceiver = new BTReceiver(new Handler());
@@ -197,7 +199,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         bti.putExtra("userMove", btTest.getBytes());
         startService(bti);*/
 
-        timerStart(600000);
+        timerStart(10000);
 
         //POPUP
         // inflate the layout of the popup window
@@ -266,6 +268,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             Log.d("ChessScreen", "BTReceiver is null");
         }
 
+
     }
 
     public void timerStart(long timeLengthMili) {
@@ -282,6 +285,19 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
             public void onFinish() {
                 timerTextView.setText("Over! You lost");
                 updateGameResult(gameID, 0, 0); // update game with you lost
+
+                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                // create the popup window
+                int width_f = (int) (width*.9);
+                //int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                int height_f = (int) (height*.7);
+                boolean focusable = true; // lets taps outside the popup also dismiss it
+               // final PopupWindow popupWindow = new PopupWindow(popupView, width_f, height_f, focusable);
+
+                View popupViewlost = inflater.inflate(R.layout.popup_lost, null);
+                // create the popup window
+                final PopupWindow popupWindowLost = new PopupWindow(popupViewlost, width_f, height_f, focusable);
+                popupWindowLost.showAtLocation(popupViewlost, Gravity.CENTER, 0, 0);
                 Handler h = new Handler();
                 Runnable r = new Runnable() {
                     public void run() {
@@ -929,6 +945,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 } else if (gameResult == 0) { // AI won
                     // TODO: display that AI won
                     renderOpponentMove();
+
                     updateGameResult(gameID, gameResult, 0);
                 } else {
                     // TODO: display that player won
