@@ -24,6 +24,12 @@ CREATE TABLE Board(
     placements varchar(13000) NOT NULL,
     gameID int NOT NULL,
     sequenceNumber int NOT NULL,
+    wrookO_moved int,
+    wrookI_moved int,
+    brookO_moved int,
+    brookI_moved int,
+    wking_moved int,
+    bking_moved int,
     PRIMARY KEY (boardID),
     FOREIGN KEY (gameID) REFERENCES Game (gameID) ON DELETE CASCADE,
     UNIQUE(gameID, sequenceNumber)

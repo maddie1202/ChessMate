@@ -16,7 +16,13 @@ exports.create = (req,res) => {
       const newBoard = new Board({
         placements: req.body.placements,
         gameID: req.body.gameID,
-        sequenceNum : req.body.sequenceNum
+        sequenceNum : req.body.sequenceNum,
+        wrookO_moved : req.body.wrookO_moved,
+        wrookI_moved : req.body.wrookI_moved,
+        brookO_moved : req.body.brookO_moved,
+        brookI_moved : req.body.brookI_moved,
+        wking_moved : req.body.wking_moved,
+        bking_moved : req.body.bking_moved,
       });
 
       // Save Board in the database

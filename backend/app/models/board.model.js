@@ -42,13 +42,19 @@ const Board = function(board){
     this.placements = board.placements;
     this.gameID = board.gameID;
     this.sequenceNum = board.sequenceNum;
+    this.wrookO_moved : board.wrookO_moved,
+    this.wrookI_moved : board.wrookI_moved,
+    this.brookO_moved : board.brookO_moved,
+    this.brookI_moved : board.brookI_moved,
+    this.wking_moved : board.wking_moved,
+    this.bking_moved : board.bking_moved
 };
 
 //create a new board in table
 Board.create = (newBoard, result) => {
 
-    const attributes = "placements, gameID, sequenceNumber";
-    const values =  "\"" + newBoard.placements + "\", " + newBoard.gameID + ", " + newBoard.sequenceNum + "";
+    const attributes = "placements, gameID, sequenceNumber,wrookO_moved, wrookI_moved, brookO_moved, brookI_moved, wking_moved, bking_moved";
+    const values =  "\"" + newBoard.placements + "\", " + newBoard.gameID + ", " + newBoard.sequenceNum + ", " + newBoard.wrookO_moved + ", " + newBoard.wrookI_moved + ", " + newBoard.brookO_moved + ", " + newBoard.brookI_moved + ", " + newBoard.wking_moved + ", " + newBoard.bking_moved;
 
     sql.query("INSERT INTO Board(" + attributes + ") VALUES(" + values + ")", (err,res) => {
         if(err){
