@@ -155,7 +155,7 @@ bool resume_old_game(game_t *game, int *game_id, int *seq_num)
             wking_moved: %d, bking_moved: %d}", &board_id, &placements, &game_id, &sequenceNumber, 
             &wrook0_moved, &wrook1_moved, &brook0_moved, &brook1_moved, &wking_moved, &bking_moved);
 
-        if (strcmp("", placements)) {
+        if (!strcmp("", placements)) {
             printf("RESUME OLD GAME: placements is empty\n");
             return false;
         }

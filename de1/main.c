@@ -27,7 +27,7 @@ bool setup()
     }
 
     if (!init_networking()) {
-        printf("Netowrking init error\n");
+        printf("Networking init error\n");
         return false;
     }
 
