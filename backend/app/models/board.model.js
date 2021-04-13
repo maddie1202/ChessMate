@@ -99,7 +99,7 @@ Board.findLatest = (gameID, result) => {
         }
 
         console.log("board: ", res);
-        result(null, res);
+        result(null, res[0]);
     });
 };
 
