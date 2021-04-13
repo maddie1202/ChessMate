@@ -184,8 +184,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         bti.putExtra("userMove", btTest.getBytes());
         startService(bti);*/
 
-
-
         timerStart(timeLeft);
 
         //POPUP
