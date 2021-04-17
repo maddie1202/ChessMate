@@ -8,39 +8,26 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-
 import com.google.android.gms.tasks.Task;
 
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.util.Base64;
 import android.util.Log;
 import com.google.android.gms.common.api.ApiException;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -54,9 +41,6 @@ import android.content.Intent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
@@ -79,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         googleLogin = findViewById(R.id.button_login2);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                //.requestIdToken(getString(R.string.default_web_client_id))
                 .requestIdToken("687858811033-bnu1iink9mre00vd4ku4ds0avir67ig2.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
@@ -110,11 +93,6 @@ public class MainActivity extends AppCompatActivity {
         facebookLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*
-                Intent intent = new Intent( v.getContext(), HomeActivity.class);
-                startActivity( intent );
-
-                 */
                 loginManager.logInWithReadPermissions(
                         MainActivity.this,
                         Arrays.asList(
@@ -128,6 +106,9 @@ public class MainActivity extends AppCompatActivity {
         //printHashKey(getApplicationContext());
     }
 
+    /**
+     * Login with Facebook
+     */
     public void facebookLogin()
     {
 
@@ -165,6 +146,9 @@ public class MainActivity extends AppCompatActivity {
                         });
     }
 
+    /**
+     * Verifies that Facebook login was successful, then navigates to Home
+     */
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d("tag", "handleFacebookAccessToken:" + token);
 
@@ -191,67 +175,9 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    /*
-    public void disconnectFromFacebook()
-    {
-        if (AccessToken.getCurrentAccessToken() == null) {
-            return; // already logged out
-        }
-
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/me/permissions/",
-                null,
-                HttpMethod.DELETE,
-                new GraphRequest
-                        .Callback() {
-                    @Override
-                    public void onCompleted(GraphResponse graphResponse)
-                    {
-                        LoginManager.getInstance().logOut();
-                    }
-                })
-                .executeAsync();
-    }
-
-
-
-
-    public void printHashKey(Context pContext)
-    {
-
-        // Add code to print out the key hash
-        try {
-
-            PackageInfo info = pContext.getPackageManager().getPackageInfo(
-                    pContext.getPackageName(), PackageManager.GET_SIGNATURES);
-
-            for (Signature signature : info.signatures) {
-
-                MessageDigest md
-                        = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:",
-                        Base64.encodeToString(
-                                md.digest(),
-                                Base64.DEFAULT));
-                Log.d("PAckaage", pContext.getPackageName());
-            }
-        }
-
-
-        catch (PackageManager.NameNotFoundException e) {
-            Log.e("TAG","printhaskey", e);
-        }
-
-        catch (NoSuchAlgorithmException e) {
-            Log.e("TAG","printhaskey", e);
-        }
-    }
-
+    /**
+     * Verifies that Google login was successful, then navigates to Home
      */
-
-    // checks if user has signed in successfully
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -281,6 +207,9 @@ public class MainActivity extends AppCompatActivity {
                 data);
     }
 
+    /**
+     * Signin with Google using Firebase
+     */
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
@@ -300,6 +229,9 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Auto-sign in if the user is already logged in with Facebook
+     */
     private void signIn(FirebaseUser user) {
         if (user != null) {
             Intent intent = new Intent( this, HomeActivity.class);
@@ -311,6 +243,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Registers a new user to the database
+     */
     public void registerNewUser(String uid, String email) {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/makeuser/";

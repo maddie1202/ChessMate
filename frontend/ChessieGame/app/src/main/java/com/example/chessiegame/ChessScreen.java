@@ -254,6 +254,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
+    /**
+     * A handler for the game timer
+     */
     public void timerStart(long timeLengthMili) {
         timer = new CountDownTimer(timeLengthMili, 1000) {
             public void onTick(long millisUntilFinished) {
@@ -296,10 +299,16 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         }.start();
     }
 
+    /**
+     * Pauses the game timer
+     */
     public void timerPause() {
         timer.cancel();
     }
 
+    /**
+     * Resume the game timer from a specific time
+     */
     private void timerResume() {
         timerStart(milliLeft);
     }
@@ -368,7 +377,6 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         try {
             postData.put("gameID", gameID);
             postData.put("result", result); // 0 for lose game, 1 for win game
-            //postData.put("timeleft", timeRemaining);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -453,6 +461,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
     }
 
+    /**
+     * Initializes the chessboard layout to either a new game, or a previous state
+     */
     public void initChessboard(boolean newGame, int[][] resumedLayout) {
         int width = getScreenWidth();
         int tileSize = width / 8;
@@ -482,7 +493,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 Piece p = null;
 
                 if (newGame) {
-                    //Pawn placement
+                    // Pawn placement
                     if (i == 1) {
                         p = new Piece(this, i, j, "bpawn", (-1 * j - 1));
                         p.setImageResource(R.drawable.bpawn);
@@ -490,7 +501,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "wpawn", (j + 1));
                         p.setImageResource(R.drawable.wpawn);
                     }
-                    //Rook
+                    // Rooks
                     else if (j == 7 && i == 7) {
                         p = new Piece(this, i, j, "wrook", 10);
                         p.setImageResource(R.drawable.wrook);
@@ -505,7 +516,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p.setImageResource(R.drawable.brook);
 
                     }
-                    //Knights
+                    // Knights
                     else if (j == 6 && i == 7) {
                         p = new Piece(this, i, j, "wknight", 20);
                         p.setImageResource(R.drawable.wknight);
@@ -519,7 +530,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "bknight", -19);
                         p.setImageResource(R.drawable.bknight);
                     }
-                    //Bishops
+                    // Bishops
                     else if (j == 5 && i == 7) {
                         p = new Piece(this, i, j, "wbishop", 30);
                         p.setImageResource(R.drawable.wbishop);
@@ -533,7 +544,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "bbishop", -29);
                         p.setImageResource(R.drawable.bbishop);
                     }
-                    //Queen
+                    // Kings
                     else if (j == 4 && i == 7) {
                         p = new Piece(this, i, j, "wking", 48);
                         p.setImageResource(R.drawable.wking);
@@ -541,7 +552,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         p = new Piece(this, i, j, "bking", -48);
                         p.setImageResource(R.drawable.bking);
                     }
-                    //King
+                    // Queens
                     else if (j == 3 && i == 7) {
                         p = new Piece(this, i, j, "wqueen", 39);
                         p.setImageResource(R.drawable.wqueen);
@@ -560,7 +571,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
 
                 if (p != null) {
                     tiles[i][j].setPiece(p);
-                    p.setOnTouchListener(this);
+                    p.setOnTouchListener(this); // set onTouchListener for drag and drop
                 }
 
                 row.addView(tiles[i][j], j);
@@ -670,7 +681,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                 tiles[r][c].setPiece(p); // drop p in its new location
                 int[][] newLayout = boardToIntArray();
 
-                /*for (int[][] layout : validMoves) { // MOVE VALIDATION
+                for (int[][] layout : validMoves) { // MOVE VALIDATION
                     if (!Arrays.deepEquals(layout, newLayout)) {
                         showToast("You played an invalid move");
                         validMove = false;
@@ -681,7 +692,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                         tiles[prevRow][prevCol].setPiece(p);
                         p.updateCoordinates(prevRow, prevCol);
                     }
-                }*/
+                }
 
                 vw.setVisibility(View.VISIBLE); // finally set Visibility to VISIBLE
 
@@ -693,7 +704,7 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
                     else if (p.id == -10) brook1_moved = 1;
                     else if (p.id == 48) wking_moved = 1;
                     else if (p.id == -48) bking_moved = 1;
-                    forwardPlayerMove(); // send player move to Service and POST to db
+                    forwardPlayerMove(); // signal player has moved to Service and POST to db
                 }
 
                 // Invalidates the view to force a redraw
@@ -891,6 +902,9 @@ public class ChessScreen extends AppCompatActivity implements View.OnDragListene
         }
     }
 
+    /**
+     * A custom Receiver class to handle communication with the Service
+     */
     public class BTReceiver extends ResultReceiver {
 
         /**

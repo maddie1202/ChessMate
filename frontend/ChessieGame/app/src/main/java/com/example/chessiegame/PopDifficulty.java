@@ -134,6 +134,9 @@ public class PopDifficulty extends Activity {
         queue.add(jsonObjectRequest);
     }
 
+    /**
+     * Passes information to and navigates to the chess screen
+     */
     private void navigateToChess(int gameID, int difficulty) {
         Intent intent = new Intent(PopDifficulty.this, ChessScreen.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

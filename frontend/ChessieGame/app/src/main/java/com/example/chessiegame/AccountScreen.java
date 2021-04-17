@@ -14,7 +14,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.Button;
-import android.widget.Toast;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -42,7 +41,6 @@ import java.util.ArrayList;
  */
 public class AccountScreen extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -53,7 +51,6 @@ public class AccountScreen extends Fragment {
     private GridLayout grid;
     private ArrayList<String> gridArray;
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     public int id;
@@ -139,6 +136,9 @@ public class AccountScreen extends Fragment {
         return v;
     }
 
+    /**
+     * Queries the database for all of the user's past games
+     */
     public void getPastGames(RequestQueue queue, String url) {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {

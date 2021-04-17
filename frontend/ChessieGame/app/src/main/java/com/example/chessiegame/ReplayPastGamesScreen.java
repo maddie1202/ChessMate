@@ -70,6 +70,9 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         replayGame();
     }
 
+    /**
+     * Function used for testing - mocks a single move
+     */
     public void mockOneMove() {
         Handler h = new Handler();
         Runnable r = new Runnable() {
@@ -86,6 +89,9 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         h.postDelayed(r,2000);
     }
 
+    /**
+     * Function used for testing - populates the hashmap with a list of boards
+     */
     public void mockBoards() {
         boards.put(0, new Integer[][]{
                 {-9, -19, -29, -48, -39, -30, -20, -10},
@@ -179,6 +185,9 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the chessboard to a new game state
+     */
     public void initChessboard() {
         int width = getScreenWidth();
         int tileSize = width / 8;
@@ -283,6 +292,10 @@ public class ReplayPastGamesScreen extends AppCompatActivity {
         }
     }
 
+    /**
+     * Function that runs a Handler to replay a past game
+     * - sequentially renders game boards in order with a small delay
+     */
     public void replayGame() {
         int length = gameBoards.size();
         ArrayList<Integer> keys = new ArrayList<>(gameBoards.keySet());

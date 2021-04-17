@@ -1,19 +1,7 @@
 package com.example.chessiegame.components;
 
-import android.annotation.SuppressLint;
-import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.view.MotionEvent;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.view.View;
-import android.view.DragEvent;
-import android.widget.Toast;
-
-//import com.example.chessiegame.components.Board;
 
 public class Piece extends androidx.appcompat.widget.AppCompatImageView {
 
@@ -30,10 +18,6 @@ public class Piece extends androidx.appcompat.widget.AppCompatImageView {
         this.name = name;
         this.id = id;
     }
-
-    /*public void replaceID(int newID) {
-        this.id = newID;
-    }*/
 
     public void draw(Canvas canvas) {
         super.draw(canvas);

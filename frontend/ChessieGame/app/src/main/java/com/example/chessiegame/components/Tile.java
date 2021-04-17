@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -28,7 +27,7 @@ public class Tile extends CardView {
         this.piece = null;
         this.id = (8 * x) + y; // an int between 0 and 63
 
-        //Determining the color of the tile
+        // Determining the color of the tile
         if ((x + y) %2 == 0){
             tileColor.setColor(Color.WHITE);
         }
@@ -41,7 +40,6 @@ public class Tile extends CardView {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        //canvas.drawRect(square, tileColor);
     }
 
     //Will return true if x and y points are inside the tile

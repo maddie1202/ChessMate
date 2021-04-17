@@ -127,6 +127,9 @@ public class PastGamesScreen extends Fragment {
         return v;
     }
 
+    /**
+     * Fetches all of the user's past games
+     */
     public void fetchPastGames(String uid) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getallgames/" + uid;
 
@@ -151,6 +154,9 @@ public class PastGamesScreen extends Fragment {
         queue.add(stringRequest);
     }
 
+    /**
+     * Fetches the details of a game with gameID
+     */
     public void fetchGameDetails(int gameID, int gameIndex, int numGames) {
         String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgamedetails/" + gameID;
 
@@ -176,6 +182,9 @@ public class PastGamesScreen extends Fragment {
         queue.add(stringRequest);
     }
 
+    /**
+     * Renders the user's past games in a dynamically filled TableLayout
+     */
     public void renderPastGames() {
         int i = 0;
         int rowNum = 0;
@@ -195,10 +204,8 @@ public class PastGamesScreen extends Fragment {
 
             TableRow.LayoutParams rp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
             rp.height = 430;
-            //rp.width = 380;
             rp.rightMargin = 10;
             rp.leftMargin = 10;
-            //rp.topMargin = 5;
             rp.gravity = Gravity.CENTER;
             rp.gravity = Gravity.CENTER_HORIZONTAL;
 
@@ -209,8 +216,6 @@ public class PastGamesScreen extends Fragment {
             PastGame g = gameList.get(i);
             ImageView chessImage = new ImageView(getActivity());
             chessImage.setImageResource(R.drawable.chessimage);
-            //chessImage.setMaxWidth(20);
-           // chessImage.setMaxHeight(6);
             chessImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -224,22 +229,16 @@ public class PastGamesScreen extends Fragment {
             Log.d("Past Games Screen", g.date);
 
             LinearLayout.LayoutParams rp2 = new LinearLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-           // rp2.setMargins(10, 10, 10, 10);
 
             rp2.gravity = Gravity.CENTER;
             rp2.gravity = Gravity.CENTER_HORIZONTAL;
-            //rp2.height = 430;
             rp2.width = 380;
 
-            //gameDate.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
             String gDate = g.date;
             gameDate.setText("Played " + gDate); // g.date is date that the game was played
             gameDate.setTextColor(Color.BLACK);
             gameDate.setTextSize(14);
-            //gameDate.setPadding(5,5,5,5);
-            //rp2.setMargins(5,5,5,5);
             gameDate.setLayoutParams(rp2);
-            //gameItem.addView(gameDate, 1);
             gameItem.addView(gameDate, 1);
 
             row.addView(gameItem, colNum);
@@ -291,9 +290,6 @@ public class PastGamesScreen extends Fragment {
         int[][] layout = new int[size][size];
         String[] boardString = b.split("\\s+");
 
-        // layout[0][0] = boardString[7][0]
-        // layout[1][0] = boardString[6][0]
-        // layout[2][0] = boardString[5][0]
         for (int j = 0; j < size; j++) {
             for (int k = 0; k < size; k++) {
                 layout[j][k] = Integer.parseInt(boardString[(7 - j) * size + k]);
@@ -303,6 +299,9 @@ public class PastGamesScreen extends Fragment {
         return layout;
     }
 
+    /**
+     * Simple PastGame class to represent a past game
+     */
     class PastGame {
         String year = "2021";
         String timeOfDay;

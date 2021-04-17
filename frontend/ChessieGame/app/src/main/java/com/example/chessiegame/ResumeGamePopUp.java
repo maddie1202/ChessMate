@@ -36,8 +36,6 @@ public class ResumeGamePopUp extends Activity {
         sequenceNum = getIntent().getIntExtra("sequenceNum", 0);
         timeLeft = getIntent().getIntExtra("timeLeft", 0);
 
-        // TODO: show gameID in binary, get user to set switches, then press KEY2, then press start
-
         ImageButton closeButton = (ImageButton) findViewById(R.id.close_button2);
         Button startGame = (Button) findViewById(R.id.start_button2);
         TextView game = (TextView)findViewById(R.id.gameIDresume);
@@ -66,6 +64,9 @@ public class ResumeGamePopUp extends Activity {
         });
     }
 
+    /**
+     * Sends information and navigates to the chess screen
+     */
     private void navigateToChess(int gameID, int difficulty) {
         Intent intent = new Intent(ResumeGamePopUp.this, ChessScreen.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

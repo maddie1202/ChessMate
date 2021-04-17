@@ -18,21 +18,19 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Button;
 import android.content.res.ColorStateList;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,6 +56,9 @@ public class AchievementsScreen extends Fragment {
     private Button progressBtn;
     private Button doneBtn;
     private boolean progressPressed; // 1 if progress pressed, 0 otherwise
+
+    private FirebaseUser user;
+    private FirebaseAuth mAuth;
 
     public AchievementsScreen() {
         // Required empty public constructor
@@ -107,6 +108,9 @@ public class AchievementsScreen extends Fragment {
         progressBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E5E5E5")));
         progressBtn.setElevation((float) -2.0);
 
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+
         getStatusAchievements(true);
         getStatusAchievements(false);
         getAchievements(true);
@@ -152,15 +156,29 @@ public class AchievementsScreen extends Fragment {
         return v;
     }
 
+    /**
+     * Gets the status of all the user achievements and classifies them as either completed or in-progress
+     */
     private void getStatusAchievements(boolean progressSelected) {
-        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgoals";
+        String url = "http://ec2-user@ec2-54-153-82-188.us-west-1.compute.amazonaws.com:3000/getgoals" + user.getUid();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     try {
                         JSONArray arr = new JSONArray(response);
                         for (int i = 0; i < arr.length(); i++) {
-                            //TODO: Parse goals into array
+                            JSONObject elem = arr.getJSONObject(i);
+                            int reqCount = (int) elem.get("reqCount");
+                            int realCount = (int) elem.get("realCount");
+                            int difficulty = (int) elem.get("difficulty");
+                            String level = (difficulty == 1) ? "easy" :
+                                           (difficulty == 2) ? "medium" : "hard";
+                            boolean status = reqCount == realCount;
+                            if (status) {
+                                doneItems.add(new Achievement("Win " + reqCount + " " + level + " games", status));
+                            } else {
+                                progressItems.add(new Achievement("Win " + reqCount + " " + level + " games", status));
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -174,19 +192,21 @@ public class AchievementsScreen extends Fragment {
         queue.add(stringRequest);
     }
 
+    /**
+     * Populate the list of achievements to be displayed, depending on their status
+     */
     private void getAchievements(boolean progressSelected) {
         items.clear();
         if (progressSelected) {
-            items.add(new Achievement("Win 3 easy games", false));
-            items.add(new Achievement("Win 3 medium games", false));
-            items.add(new Achievement("Win 3 hard games", false));
+            items.addAll(progressItems);
         } else {
-            items.add(new Achievement("Win 1 easy game", true));
-            items.add(new Achievement("Win 1 medium game", true));
-            items.add(new Achievement("Win 1 hard game", true));
+            items.addAll(doneItems);
         }
     }
 
+    /**
+     * Custom Achievement class for RecyclerView
+     */
     public class Achievement {
         String achievement;
         boolean done;

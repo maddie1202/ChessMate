@@ -4,10 +4,7 @@ package com.example.chessiegame.components;
 import android.content.Context;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.RequiresApi;
 
 import com.example.chessiegame.R;
 
