@@ -423,6 +423,8 @@ bool send_put_request(char *url, char *body)
     return false;
 }
 
+// These next three functions are adapted from https://stackoverflow.com/questions/2329571/c-libcurl-get-output-into-a-string
+
 void init_string(struct string *s) {
     s->len = 0;
     s->ptr = malloc(s->len+1);
@@ -449,7 +451,7 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
 }
 
 /*
- * Sends a get request to the given url.  Saves the data received in a file???
+ * Sends a get request to the given url.
  */
 bool send_get_request(char *url, char **result)
 {

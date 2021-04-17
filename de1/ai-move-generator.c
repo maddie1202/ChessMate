@@ -160,7 +160,7 @@ game_t *update_game_state(game_t *current_game, board_t *new_board, char moved_l
     else if (pieces_moved[1] == BROOK1) new_game->brook1_has_moved = true;
     else if (pieces_moved[1] == BKING) new_game->bking_has_moved = true;
 
-    destroy_game(current_game);
+    //destroy_game(current_game);
     return new_game;    
 }
 
@@ -203,6 +203,7 @@ static double generate_ai_move_helper(game_t *game, int original_colour, int col
 }
 
 // Returns a game rather than a board now
+// Frees game (currently commented out for unit test compatibility)
 game_t *generate_ai_move(game_t *game, int colour, int depth)
 {
     if (game == NULL || game->board == NULL || 
