@@ -99,8 +99,6 @@ void printBits(char);
 void Init_BT(void) {
 	printf("InitBT start\n");
 	// set bit 7 of Line Control Register to 1, to gain access to the baud rate registers
-	//Bluetooth_LineControlReg |= 1 << 7;
-	//*BT_LineControlReg = 0x80;
 	Bluetooth_LineControlReg = 0x80;
 	printf("Bluetooth_LineControlReg is: ");
 	printBits((char) Bluetooth_LineControlReg);
@@ -164,12 +162,12 @@ void printBits(char a)
 // every BT message must end in \r\n
 int putcharBT(char c) {
 	// wait for Transmitter Holding Register bit (5) of line status register to be '1‘
-    //while (Bluetooth_LineStatusReg != (Bluetooth_LineStatusReg | 1 << 5));
 	while ((Bluetooth_LineStatusReg & 0x20) != 0x20);
-	// indicating we can write to the device
 
+	// indicating we can write to the device
 	// write character to Transmitter fifo register
 	Bluetooth_TransmitterFifo = c;
+
 	// return the character we printed
 	return c;
 }
@@ -186,20 +184,12 @@ int getcharBT( void ) {
 // has been received. It doesn't wait for one, or read it, it simply tests
 // to see if one is available to read from the FIFO
 int BTTestForReceivedData(void) {
-	//printf("BTT Test start\n");
 	// if Bluetooth LineStatusReg bit 0 is set to 1
-	//if (Bluetooth_LineStatusReg == (Bluetooth_LineStatusReg | 1 << 0)){
-	//if ((Bluetooth_LineStatusReg & 0x01) == 0x01) {
-	printf("Bluetooth_LineStatusReg is: ");
-	printBits((char) Bluetooth_LineStatusReg);
-	printf("\n");
-
 	if (Bluetooth_LineStatusReg & 1) {
-	//	printf("BTT Test end true\n");
 	    return TRUE;
 	}
+
 	// return TRUE, otherwise return FALSE
-	//printf("BTT Test end false\n");
 	return FALSE;
 }
 
@@ -316,38 +306,26 @@ void Wifi_Flush( void ) {
 
 
 void main(void) {
-	printf("Hello from the CPEN 391 System 1\n");
-    Init_BT();
+	printf("Hello from the CPEN 391 System\n");
+  Init_BT();
 
+  while (1) {
 
-	printf("Hello from the CPEN 391 System 2\n");
-	char t = 'p';
-	t = putcharBT('h');
-	printf("%c\n", t);
+		printf("first loop\n");
+    char* moves;
+    int counter = 0;
+    while (1) {
+			printf("second loop\n");
 
-    while(1) {
-
-		/*printf("first loop\n");
-        char* moves;
-        int counter = 0;
-        while(1) {*/
-
-		//printf("second loop\n");
-            /*if(counter == 86)
-                 break;*/
-            if(BTTestForReceivedData()) {
-
-				printf("BTTtestforreceive");
-                char data = getcharBT();
+      if (BTTestForReceivedData()) {
+        char data = getcharBT();
 				printf("Received data is: %c", data);
-                /**moves = data;
-                moves += 4;
-                counter++;*/
-            } else {
+        *moves = data;
+      	moves++;
+        counter++;
+      } else {
 				printf("No data\n");
 			}
-
-       // }
-
     }
+  }
 }
