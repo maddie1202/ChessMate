@@ -25,5 +25,5 @@ The majority of the processing is done on the ARM chip on the DE1-SoC with rende
 </br>
 
 # Demo
-[<img src="https://img.youtube.com/vi/cPS8bjH6wZc/hqdefault.jpg" width="600" height="300"
+[<img src="https://img.youtube.com/vi/cPS8bjH6wZc/hqdefault.jpg"
 />](https://www.youtube.com/embed/cPS8bjH6wZc)
