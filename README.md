@@ -6,11 +6,23 @@ The majority of the processing is done on the ARM chip on the DE1-SoC with rende
 # Project Overview
 ![Alt text](https://github.com/maddie1202/ChessMate/blob/main/product_idea.png)
 
+</br>
+</br>
+
 ![Alt text](https://github.com/maddie1202/ChessMate/blob/main/sys_arch.png)
+
+</br>
+</br>
 
 ![Alt text](https://github.com/maddie1202/ChessMate/blob/main/backend.png)
 
+</br>
+</br>
+
 ![Alt text](https://github.com/maddie1202/ChessMate/blob/main/frontend.png)
+
+</br>
+</br>
 
 # Demo
 [<img src="https://img.youtube.com/vi/cPS8bjH6wZc/hqdefault.jpg" width="600" height="300"
